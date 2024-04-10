@@ -69,8 +69,7 @@ typedef MatrixXd DMat; // <Eigen> library class, which declares a dense matrix t
 
 /// Technical variables
 string source_path = "../config/"s; char* sourcepath = const_cast<char*>(source_path.c_str()); // 'source_path' is a path to the directory reading from the 'config/main.ini' file
-string e_mode = "tutorial"; // '[execution_type]' (etype variable) from the config/main.ini file. The "tutorial" mode by default means the 'educational' mode, where the program learn of how to work with its input files and simulation types
-std::string main_type; /// SIMULATION MODE(LIST) or 'SIMULATION MODE(TASK) :: This define the global simulation mode: 'LIST' for the "list" of modules implementing one by one (if ON) and 'TASK' for the user-defined task scripts with modules and functions included from the project's libraries
+std::string main_type; /// 'mode' from the config/main.ini file: 'LIST' (execution one by one all the active (ON) project modules), 'TUTORIAL' as a specific education mode, 'PERFORMANCE_TEST' or the 'TASK' mode :: This define the global simulation mode: 'LIST' for the "list" of modules implementing one by one (if ON) and 'TASK' for the user-defined task scripts with modules and functions included from the project's libraries
 
 vector<char*> PCCpaths; // The vector containing the PCCpaths to all the PCC's matrices, measures and other supplementary data
 string source_dir, output_dir; // Input and output directories as it is written in the 'config/main.ini' file
@@ -94,14 +93,7 @@ vector<tuple<double, double, double>> node_coordinates_vector, edge_coordinates_
 // Measures
 std::vector<double> edge_lengths_vector, face_areas_vector, polyhedron_volumes_vector; // Global vectors of measures: edge lengths, face areas and polyhedra volumes
 
-/// PCC special structure-related variables
-// State_Vector in the form : [Element index] - > [Element type], like [0, 0, 2, 1, 1, 0, 2, 4, 3, 3, 2, 0,... ...,2] containing all CellNumb.at(*) element types
-std::vector<int> State_p_vector, State_f_vector, State_e_vector, State_n_vector; // Normally the State_<*>_vector of special cells can be calculated based on the corresonding special_cell_sequences
-std::vector<int> State_pfracture_vector, State_ffracture_vector, State_efracture_vector, State_nfracture_vector; // separate vectors containing the other 'fractured' labels different from the 'special' ones. To be calculated based on the corresonding fractured_cell_sequences
-/// Configuration_State = { State_p_vector, State_f_vector, State_e_vector, State_n_vector } is a list of all 'state vectors': from (1) State_p_vector (on top, id = 0) to (4) State_n_vector (bottom, id = 3)
-std::vector<std::vector<int>> Configuration_State = { State_p_vector, State_f_vector, State_e_vector, State_n_vector },
-    Configuration_cState = { State_pfracture_vector, State_ffracture_vector, State_efracture_vector, State_nfracture_vector }; //  is the list of all mentioned below State_<*>_vectors and State_<*>fracture_vectors as the output of the Processing module // is the list of 'state vectors' analogous to the Configuration_State but for 'cracked' (or induced) network of k-cells
-/* where 'n' :: "nodes", 'e' :: "edges", 'f' :: "faces", and 'p' :: "polyhedrons" */
+/// PCC special structure-related variables :: see class Config in Objects.h and Object.cpp files
 
 /// 'CPD Tutorial' :: educational course active in the 'TUTORIAL' (please see 'config/main.ini' file) code execution mode
 void tutorial();
@@ -138,7 +130,7 @@ double Main_time = 0.0, S_time = 0.0, P_time = 0.0, C_time = 0.0, M_time = 0.0, 
 #include "lib/PCC_Writer/PCC_Writer.h"
 
 /// Initial configuration as an object of the Config class described in Objects.cpp project library
-Config initial_configuration;
+Config initial_configuration, configuration;
 // void initial_configuration(const std::vector<int> &ConfigVector, const std::string &source_dir, int &dim, std::vector<char*> PCCpaths, std::vector<vector<int>> Configuration_State, std::vector<vector<int>> Configuration_cState); // Read the 'initial configuration' of the problem set in all the relevant '*.ini' files containing in the '\config' project directory using the functions from the 'ini_readers.cpp' project library (and only from there)
 
 ///* ........................................................................................    Main    ................................................................ *///
@@ -151,55 +143,87 @@ Config initial_configuration;
 */
 int main() {
     cout << "------------------------------------------------------------------------------------------------" << endl;
-    Out_logfile_stream.open(output_dir + "Processing_Design.log"s, ios::app); // this *.log stream will be closed at the end of the main function
-    Out_logfile_stream << "------------------------------------------------------------------------------------------------" << endl;
-
-/// Initial configuration reader and information output to the screen and into the '.log' file
-    initial_configuration.Read_config();
-    std::vector<int> ConfigVector = initial_configuration.Get_ConfVector();
-    /// alternatively :: set 'initial_configuration' object "manually"
-//    initial_configuration.Set_config(const std::vector<int> &initial_configuration.Get_ConfVector(), const std::string &initial_configuration.Get_source_dir(), int &initial_configuration.Get_dim(), std::vector<char*> &initial_configuration.Get_paths(), std::vector<vector<int>> &initial_configuration.Get_Configuration_State(), std::vector<vector<int>> &initial_configuration.Get_Configuration_cState());
-
-///    face_coordinates_vector = VectorDReader(PCCpaths.at(12?));
-///    grain_coordinates_vector = VectorDReader(PCCpaths.at(9));
 
     // ===== Elapsing time Main ================
     unsigned int Mn_time = clock();
     Main_time = (double) Mn_time;
-    cout << "-------------------------------------------------------------------------" << endl; Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
-    cout << "Main execution time before modules is equal to  " << Main_time/ pow(10.0,6.0) <<  "  seconds" << endl;     Out_logfile_stream << "Main execution time before modules is equal to  " << Main_time/ pow(10.0,6.0) <<  "  seconds" << endl;
+    cout << "-------------------------------------------------------------------------" << endl;
+    Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
+    cout << "Main execution time before modules is equal to  " << Main_time/ pow(10.0,6.0) <<  "  seconds" << endl;
+    Out_logfile_stream << "Main execution time before modules is equal to  " << Main_time/ pow(10.0,6.0) <<  "  seconds" << endl;
+    cout << endl;
+
+/// Initial configuration reader and information output to the screen and into the '.log' file
+    initial_configuration.Read_config();
+
+/// Setting values of the global variables
+    std::vector<int> ConfigVector = initial_configuration.Get_ConfVector();
+    dim = initial_configuration.Get_dim();
+    source_dir = initial_configuration.Get_source_dir();
+    output_dir = initial_configuration.Get_output_dir();
+    PCCpaths = initial_configuration.Get_paths();
+    main_type = initial_configuration.Get_main_type();
+    sim_task = initial_configuration.Get_sim_task();
+ /// ============================================================================== ///
+
+/// global log file output:
+    Out_logfile_stream.open(output_dir + "Processing_Design.log"s, ios::app); // this *.log stream will be closed at the end of the main function
+    Out_logfile_stream << "------------------------------------------------------------------------------------------------" << endl;
+
+
+/// PERFORMANCE TEST mode in the main.ini config file
+if (main_type == "PERFORMANCE_TEST"s) {
+    //    initial_configuration.Set_config(const std::vector<int> &initial_configuration.Get_ConfVector(), const std::string &initial_configuration.Get_source_dir(), int &initial_configuration.Get_dim(), std::vector<char*> &initial_configuration.Get_paths(), std::vector<vector<int>> &initial_configuration.Get_Configuration_State(), std::vector<vector<int>> &initial_configuration.Get_Configuration_cState());
+    std::vector<int> ConfigVector = initial_configuration.Get_ConfVector();
+    dim = initial_configuration.Get_dim();
+    source_dir = initial_configuration.Get_source_dir();
+    output_dir = initial_configuration.Get_output_dir();
+    PCCpaths = initial_configuration.Get_paths();
+} // end if (main_type == "PERFORMANCE_TEST")
 
 /// =========== TUTORIAL feature to facilitate the first acquaintance with the code ===================================
-    if (e_mode == "tutorial") // only in the 'tutorial' execution type -  'etype' variable in the main.ini config file.
+else if (main_type == "TUTORIAL"s) {// only in the 'tutorial' execution type -  'etype' variable in the main.ini config file.
         tutorial();
-
+    } // end else if (main_type == "TUTORIAL")
 /// ==========================================================================================================================================
 /// ================================================= THE LIST MODE STARTS HERE ==============================================================
 /// ==========================================================================================================================================
 // In the LIST mode all the functions are calling one after another without additional loops and intermediate data output
 // For all the more complicated simulation cases the TASK mode (see it following next after the 'LIST' module)
-CellsDesign new_cells_design; // A class (described in PCC_Objects.h) containing (1) all special k-cell sequences and (2) all the design_<*>_vectors for all k-cells
 
-if ( main_type == "LIST"s ) { // 'LIST module'
-// I: PCC_Section.h module
+else if ( main_type == "LIST"s ) { // 'LIST module'
+
+    /// Initialisation of the current_configuration = initial_configuration
+    configuration = initial_configuration;
+
+    // I: PCC_Section.h module
     if (ConfigVector.at(1) == 1) { // if PCC_Section is SWITCH ON in the main.ini file
             cout << " START of the PCC Subcomplex module " << endl;
             Out_logfile_stream << " START of the PCC Subcomplex module " << endl;
 
 ///* module */// Subcomplex();
 
-// ===== Elapsing time Subcomplex ================
+        // ===== Elapsing time Subcomplex ================
             unsigned int Subcomplex_time = clock();
             S_time = (double) Subcomplex_time - Main_time;
-            cout << "Section time is equal to  " << S_time/ pow(10.0,6.0) <<  "  seconds" << endl; cout << "-------------------------------------------------------" << endl; Out_logfile_stream << "Section time is equal to  " << S_time/ pow(10.0,6.0) <<  "  seconds" << endl; Out_logfile_stream << "-------------------------------------------------------" << endl;
+            cout << "Section time is equal to  " << S_time/ pow(10.0,6.0) <<  "  seconds" << endl;
+            cout << "-------------------------------------------------------" << endl;
+            Out_logfile_stream << "Section time is equal to  " << S_time/ pow(10.0,6.0) <<  "  seconds" << endl;
+            Out_logfile_stream << "-------------------------------------------------------" << endl;
     } // end if(SectionON)
+
+    CellsDesign new_cells_design; // A class (described in PCC_Objects.h) containing (1) all special k-cell sequences and (2) all the design_<*>_vectors for all k-cells
 
 /// II: PCC_Processing.h module
         if (ConfigVector.at(2) == 1) { // if PCC_Processing is SWITCH ON in the main.ini file
-            cout << "-------------------------------------------------------------------------" << endl; Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
-            cout << "START of the PCC Processing module " << endl; Out_logfile_stream << "START of the PCC Processing module " << endl;
+            cout << "-------------------------------------------------------------------------" << endl;
+            cout << "START of the PCC Processing module " << endl;
+            Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
+            Out_logfile_stream << "START of the PCC Processing module " << endl;
 
-            new_cells_design = PCC_Processing(Configuration_State, Configuration_cState);
+            std::vector<std::vector<int>> Processing_Configuration_State = configuration.Get_Configuration_State(),
+                                          Processing_Configuration_cState = configuration.Get_Configuration_cState();
+            new_cells_design = PCC_Processing(Processing_Configuration_State, Processing_Configuration_cState);
 
 // ===== Elapsing time Processing ================
             unsigned int Processing_time = clock();

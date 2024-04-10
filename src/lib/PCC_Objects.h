@@ -13,12 +13,20 @@
  */
 class Config {
     private:
-        int dim;
-        std::string source_dir;
-        std::vector<char*> PCCpaths;
-        std::vector<int> ConfVector; // main module keys
+        int config_dim;
+        std::string config_source_dir, config_output_dir; // Input and output directories as it is written in the 'config/main.ini' file
+        std::vector<char*> config_PCCpaths;
+        std::vector<int> config_ConfVector; // main module keys
+        std::string config_main_type; // 'mode' from the config/main.ini file: 'LIST' (execution one by one all the active (ON) project modules), 'TUTORIAL' as a specific education mode, 'PERFORMANCE_TEST' or the 'TASK' mode :: This define the global simulation mode: 'LIST' for the "list" of modules implementing one by one (if ON) and 'TASK' for the user-defined task scripts with modules and functions included from the project's libraries
+        std::string config_sim_task; // path to the corresponding *.cpp file containing a 'simulation task' (for 'TASK' execution mode only, not 'LIST') as it is written in the 'config/main.ini' file
 
-    /// Output:
+    /// The list of all mentioned below State_<*>_vectors and State_<*>fracture_vectors as the output of the Processing module // is the list of 'state vectors' analogous to the Configuration_State but for 'cracked' (or induced) network of k-cells
+    /* where 'n' :: "nodes", 'e' :: "edges", 'f' :: "faces", and 'p' :: "polyhedrons" */
+// State_Vector in the form : [Element index] - > [Element type], like [0, 0, 2, 1, 1, 0, 2, 4, 3, 3, 2, 0,... ...,2] containing all CellNumb.at(*) element types
+        std::vector<int> State_p_vector, State_f_vector, State_e_vector, State_n_vector; // Normally the State_<*>_vector of special cells can be calculated based on the corresonding special_cell_sequences
+        std::vector<int> State_pfracture_vector, State_ffracture_vector, State_efracture_vector, State_nfracture_vector; // separate vectors containing the other 'fractured' labels different from the 'special' ones. To be calculated based on the corresonding fractured_cell_sequences
+
+/// Configuration_State = { State_p_vector, State_f_vector, State_e_vector, State_n_vector } is a list of all 'state vectors': from (1) State_p_vector (on top, id = 0) to (4) State_n_vector (bottom, id = 3)
         std::vector<std::vector<int>> Configuration_State;
         std::vector<std::vector<int>> Configuration_cState;
 
@@ -27,11 +35,15 @@ public:
     void Set_config(const std::vector<int> &ConfigVector, const std::string &source_dir, int &dim, std::vector<char*> paths, std::vector<std::vector<int>> Configuration_State, std::vector<std::vector<int>> Configuration_cState); // manual setting of the configuration
 
     int Get_dim(); //@return dim
-    std::vector<int> Get_ConfVector(); //@return ConfVector
-    std::string Get_source_dir(); //@return source_dir
-    std::vector<char*> Get_paths(); //@return PCC PCCpaths
-    std::vector<std::vector<int>> Get_Configuration_State(); //@return Configuration_State
-    std::vector<std::vector<int>> Get_Configuration_cState(); //@return Configuration_State
+    std::vector<int> Get_ConfVector(); //!@return ConfVector
+    std::string Get_source_dir(); //!@return source_dir
+    std::string Get_output_dir(); //!@return output_dir
+    std::vector<char*> Get_paths(); //!@return PCC PCCpaths
+    std::string Get_main_type(); //!@return main_type
+    std::string Get_sim_task(); //!@return sim_task path to the corresponding *.cpp file containing the task code
+
+    std::vector<std::vector<int>> Get_Configuration_State(); //!@return Configuration_State
+    std::vector<std::vector<int>> Get_Configuration_cState(); //!@return Configuration_State
 };
 // ConfigVector (../config/main.ini) contains ALL the control variables needed for the program execution
 

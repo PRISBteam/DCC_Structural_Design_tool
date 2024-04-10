@@ -10,19 +10,10 @@
 using namespace std; // standard namespace
 using namespace Eigen; // standard namespace
 
-extern int dim;
-extern string source_path, e_mode, source_dir, output_dir, sim_task, main_type;
-extern std::vector<char*> PCCpaths;
-
 extern std::vector<std::tuple<double, double, double>> node_coordinates_vector, edge_coordinates_vector, face_coordinates_vector, grain_coordinates_vector; // coordinate vectors defined globally
 extern std::vector<unsigned int> CellNumbs; // number of cells in a PCC defined globally
-
-extern std::vector<int> State_p_vector, State_f_vector, State_e_vector, State_n_vector; // Normally the State_<*>_vector of special cells can be calculated based on the corresonding special_cell_sequences
-extern std::vector<int> State_pfracture_vector, State_ffracture_vector, State_efracture_vector, State_nfracture_vector; // separate vectors containing the other 'fractured' labels different from the 'special' ones. To be calculated based on the corresonding fractured_cell_sequences
-
-extern std::vector<std::vector<int>> Configuration_State, Configuration_cState; //  is the list of all mentioned below State_<*>_vectors and State_<*>fracture_vectors as the output of the Processing module // is the list of 'state vectors' analogous to the Configuration_State but for 'cracked' (or induced) network of k-cells
-
-extern std::ofstream Out_logfile_stream;
+extern std::string source_path, output_dir;
+std::ofstream Out_local_logstream;
 
 typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which declares a column-major sparse matrix type of doubles with the nickname 'SpMat'
 
@@ -37,35 +28,49 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
  */
 //class Config
     int Config::Get_dim() {
-        return dim;
-    }; //@return dim
+        return config_dim;
+    }; //!@return dim
 
     std::string Config::Get_source_dir() {
-        return source_dir;
-    }; //@return source_dir
+        return config_source_dir;
+    }; //!@return source_dir
+
+    std::string Config::Get_output_dir() {
+         return config_output_dir;
+    }; //!@return output_dir
 
     std::vector<char*> Config::Get_paths() {
-        return PCCpaths;
-    }; //@return PCCpaths
+        return config_PCCpaths;
+    }; //!@return PCCpaths
 
     std::vector<int> Config::Get_ConfVector() {
-        return ConfVector;
-    }; //@return ConfVector
+        return config_ConfVector;
+    }; //!@return ConfVector
 
-  ///  std::vector<vector<int>> Config::Get_Configuration_State() {
-  ///  }; //@return Configuration_State
+    std::string Config::Get_main_type() {
+         return config_main_type;
+    }; //!@return output_dir
 
-///    std::vector<vector<int>> Config::Get_Configuration_cState() {
-///    }; //@return Configuration_State
+    std::string Config::Get_sim_task() {
+        return config_sim_task;
+    }; //!@return output_dir
+
+  std::vector<std::vector<int>> Config::Get_Configuration_State() {
+      return Configuration_State;
+    }; //!@return Configuration_State
+
+    std::vector<std::vector<int>> Config::Get_Configuration_cState() {
+        return Configuration_cState;
+    }; //!@return Configuration_State
 
     void Config::Read_config(){
-        ConfVector = config_reader_main(source_path, source_dir, output_dir, main_type, e_mode);
+        config_ConfVector = config_reader_main(source_path, config_source_dir, config_output_dir, config_main_type);
 
-        dim = ConfVector.at(0); // [0] space dimension of the problem (dim = 1, 2 or 3);
-        if (dim != 1 && dim != 2 && dim != 3) {
+        config_dim = config_ConfVector.at(0); // [0] space dimension of the problem (dim = 1, 2 or 3);
+        if (config_dim != 1 && config_dim != 2 && config_dim != 3) {
             cout << "Wrong dimension ERROR! Please change 'dim' parameter in ../config/mail.ini file to 1, 2, or 3"
                  << endl;
-            Out_logfile_stream << "Wrong dimension ERROR! Please change 'dim' parameter in ../config/mail.ini file to 1, 2, or 3"
+            Out_local_logstream << "Wrong dimension ERROR! Please change 'dim' parameter in ../config/mail.ini file to 1, 2, or 3"
                     << endl;
             exit(1);
         }
@@ -75,93 +80,94 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 //  PCC matrices, metrices and coordinates
         std::string ssd0, ssd1, ssd2, ssd3, ssd4, ssd5, ssd6, ssd7, ssd8, ssd9, ssd10, ssd11, ssd12, ssd13, ssd14; // PCC matrices
 
-        if (is_file_exists(source_dir + "algebraic/A0.txt"s) && is_file_exists(source_dir + "algebraic/A1.txt"s) &&
-            is_file_exists(source_dir + "algebraic/B1.txt"s) && dim >= 0)
-            ssd0 = source_dir + "algebraic/A0.txt"s,
-            ssd1 = source_dir + "algebraic/A1.txt"s,
-            ssd4 = source_dir + "algebraic/B1.txt"s; // 1D
-        if (is_file_exists(source_dir + "/algebraic/A2.txt"s) && is_file_exists(source_dir + "algebraic/B2.txt"s) &&
-            dim >= 2)
-            ssd2 = source_dir + "algebraic/A2.txt"s,
-            ssd5 = source_dir + "algebraic/B2.txt"s; // 2D
-        if (is_file_exists(source_dir + "/algebraic/A3.txt"s) && is_file_exists(source_dir + "algebraic/B3.txt"s) &&
-            dim == 3)
-            ssd3 = source_dir + "algebraic/A3.txt"s,
-            ssd6 = source_dir + "algebraic/B3.txt"s; // 3D
-        if (dim > 3 || dim < 1) {
+        if (is_file_exists(config_source_dir + "algebraic/A0.txt"s) && is_file_exists(config_source_dir + "algebraic/A1.txt"s) &&
+            is_file_exists(config_source_dir + "algebraic/B1.txt"s) && config_dim >= 0)
+            ssd0 = config_source_dir + "algebraic/A0.txt"s,
+            ssd1 = config_source_dir + "algebraic/A1.txt"s,
+            ssd4 = config_source_dir + "algebraic/B1.txt"s; // 1D
+        if (is_file_exists(config_source_dir + "/algebraic/A2.txt"s) && is_file_exists(config_source_dir + "algebraic/B2.txt"s) &&
+                config_dim >= 2)
+            ssd2 = config_source_dir + "algebraic/A2.txt"s,
+            ssd5 = config_source_dir + "algebraic/B2.txt"s; // 2D
+        if (is_file_exists(config_source_dir + "/algebraic/A3.txt"s) && is_file_exists(config_source_dir + "algebraic/B3.txt"s) &&
+                config_dim == 3)
+            ssd3 = config_source_dir + "algebraic/A3.txt"s,
+            ssd6 = config_source_dir + "algebraic/B3.txt"s; // 3D
+        if (config_dim > 3 || config_dim < 1) {
             cout
                     << "INPUT DATA ERROR (!) dim > 3 or < 1 as it specified in the ../config/main.ini file. Please, make it equal to 1, 2 or 3."
                     << endl;
-            Out_logfile_stream
+            Out_local_logstream
                     << "INPUT DATA ERROR (!) dim > 3 or < 1 in the ../config/main.ini file. Please, make it equal to 1, 2 or 3."
                     << endl;
             exit(1);
         }
         //The next line just a technical procedure string to char arrays transformation needed to use them as the function arguments
-        PCCpaths.push_back(const_cast<char *>(ssd0.c_str())); // A0
-        PCCpaths.push_back(const_cast<char *>(ssd1.c_str())); // A1
-        PCCpaths.push_back(const_cast<char *>(ssd2.c_str())); // A2
-        PCCpaths.push_back(const_cast<char *>(ssd3.c_str())); // A3
-        PCCpaths.push_back(const_cast<char *>(ssd4.c_str())); // B1
-        PCCpaths.push_back(const_cast<char *>(ssd5.c_str())); // B2
-        PCCpaths.push_back(const_cast<char *>(ssd6.c_str())); // B3
+        config_PCCpaths.push_back(const_cast<char *>(ssd0.c_str())); // A0
+        config_PCCpaths.push_back(const_cast<char *>(ssd1.c_str())); // A1
+        config_PCCpaths.push_back(const_cast<char *>(ssd2.c_str())); // A2
+        config_PCCpaths.push_back(const_cast<char *>(ssd3.c_str())); // A3
+        config_PCCpaths.push_back(const_cast<char *>(ssd4.c_str())); // B1
+        config_PCCpaths.push_back(const_cast<char *>(ssd5.c_str())); // B2
+        config_PCCpaths.push_back(const_cast<char *>(ssd6.c_str())); // B3
 
 //  PCC measures
 /// ---> edge lengths HERE (!) // see next 'ssd14 = source_dir + "edge_lengths.txt"s;' and replace with 'ssd6'
-        if (is_file_exists(source_dir + "measures/face_areas.txt"s) && dim >= 2)
-            ssd7 = source_dir + "measures/face_areas.txt"s; // 2D face_areas
-        PCCpaths.push_back(const_cast<char *>(ssd7.c_str()));
-        if (is_file_exists(source_dir + "measures/polyhedron_volumes.txt"s) && dim == 3)
-            ssd8 = source_dir + "measures/polyhedron_volumes.txt"s; // 3D polyhedron_volumes
-        PCCpaths.push_back(const_cast<char *>(ssd8.c_str()));
+        if (is_file_exists(config_source_dir + "measures/face_areas.txt"s) && config_dim >= 2)
+            ssd7 = config_source_dir + "measures/face_areas.txt"s; // 2D face_areas
+        config_PCCpaths.push_back(const_cast<char *>(ssd7.c_str()));
+        if (is_file_exists(config_source_dir + "measures/polyhedron_volumes.txt"s) && config_dim == 3)
+            ssd8 = config_source_dir + "measures/polyhedron_volumes.txt"s; // 3D polyhedron_volumes
+        config_PCCpaths.push_back(const_cast<char *>(ssd8.c_str()));
         //    if (is_file_exists(source_dir + "measures/edge_lengths.txt"s) && dim >= 1) ssd14 = source_dir + "measures/edge_lengths.txt"s; // edge barycentres coordinates      PCCpaths.push_back(const_cast<char *>(ssd14.c_str()));
 
 ///  PCC geometry (barycenter coordinates)
 // In the for of vector<tuple<double, double, double>> vertex_coordinates_vector, edge_coordinates_vector, face_coordinates_vector, grain_coordinates_vector;
-        if (is_file_exists(source_dir + "coordinates/polyhedron_seeds.txt"s) && dim == 3)
-            ssd9 = source_dir + "coordinates/polyhedron_seeds.txt"s; // grain (polyhedron) seeds
-        PCCpaths.push_back(const_cast<char *>(ssd9.c_str()));
-        if (is_file_exists(source_dir + "coordinates/vertex_seeds.txt"s) && dim >= 1)
-            ssd10 = source_dir + "coordinates/vertex_seeds.txt"s; // vertex coordinates
-        PCCpaths.push_back(const_cast<char *>(ssd10.c_str()));
-        if (is_file_exists(source_dir + "other/face_normals.txt"s) && dim >= 2)
-            ssd11 = source_dir + "other/face_normals.txt"s; // face normal vectors
-        PCCpaths.push_back(const_cast<char *>(ssd11.c_str()));
-        if (is_file_exists(source_dir + "coordinates/edge_seeds.txt"s) && dim >= 1)
-            ssd12 = source_dir + "coordinates/edge_seeds.txt"s; // edge barycentres coordinates
-        PCCpaths.push_back(const_cast<char *>(ssd12.c_str()));
-        if (is_file_exists(source_dir + "coordinates/face_seeds.txt"s) && dim >= 2)
-            ssd13 = source_dir + "coordinates/face_seeds.txt"s; // face barycentres coordinates
-        PCCpaths.push_back(const_cast<char *>(ssd13.c_str()));
+        if (is_file_exists(config_source_dir + "coordinates/polyhedron_seeds.txt"s) && config_dim == 3)
+            ssd9 = config_source_dir + "coordinates/polyhedron_seeds.txt"s; // grain (polyhedron) seeds
+        config_PCCpaths.push_back(const_cast<char *>(ssd9.c_str()));
+        if (is_file_exists(config_source_dir + "coordinates/vertex_seeds.txt"s) && config_dim >= 1)
+            ssd10 = config_source_dir + "coordinates/vertex_seeds.txt"s; // vertex coordinates
+        config_PCCpaths.push_back(const_cast<char *>(ssd10.c_str()));
+        if (is_file_exists(config_source_dir + "other/face_normals.txt"s) && config_dim >= 2)
+            ssd11 = config_source_dir + "other/face_normals.txt"s; // face normal vectors
+        config_PCCpaths.push_back(const_cast<char *>(ssd11.c_str()));
+        if (is_file_exists(config_source_dir + "coordinates/edge_seeds.txt"s) && config_dim >= 1)
+            ssd12 = config_source_dir + "coordinates/edge_seeds.txt"s; // edge barycentres coordinates
+        config_PCCpaths.push_back(const_cast<char *>(ssd12.c_str()));
+        if (is_file_exists(config_source_dir + "coordinates/face_seeds.txt"s) && config_dim >= 2)
+            ssd13 = config_source_dir + "coordinates/face_seeds.txt"s; // face barycentres coordinates
+        config_PCCpaths.push_back(const_cast<char *>(ssd13.c_str()));
 
 /// Vector with rhe numbers of PCC k-cells for k\in{0,1,2,3} from file
-        if (is_file_exists(source_dir + "/combinatorial/number_of_cells.txt"s)) {
-            std::string ncells = source_dir + "/combinatorial/number_of_cells.txt"s;
+        if (is_file_exists(config_source_dir + "/combinatorial/number_of_cells.txt"s)) {
+            std::string ncells = config_source_dir + "/combinatorial/number_of_cells.txt"s;
             char *number_of_cells = const_cast<char *>(ncells.c_str());
 // :: CellNumbs vector components: [0] - Nodes number, [1] - Edges number, [2] - Faces number, [3] - Polyhedrons number
             CellNumbs = VectorIReader(number_of_cells); // VectorReader is a function from the PCC_SupportFunctions.h library; "number_of_cells" here if the PATH to file
 /// CellNumbs output
+        Out_local_logstream.open(config_output_dir + "Processing_Design.log"s, ios::app); // this *.log stream will be closed at the end of the main function
             cout << "=====================================================================================" << endl;
-            Out_logfile_stream
+            Out_local_logstream
                     << "=========================================================================================================================================================================="
                     << endl;
             unsigned int t_length = 0;
             for (int cell_numb: CellNumbs) {
-                cout << t_length++ << "-cells #\t" << cell_numb << endl;
-                Out_logfile_stream << t_length << "-cells #\t" << cell_numb << endl;
+                cout << t_length << "-cells #\t" << cell_numb << endl;
+                Out_local_logstream << t_length++ << "-cells #\t" << cell_numb << endl;
             } // end for (int cell_numb : CellNumbs)
         } // if voro_Ncells exists
         else
-            cout << "ERROR: The file " << source_dir + "/combinatorial/number_of_cells.txt"s
+            cout << "ERROR: The file " << config_source_dir + "/combinatorial/number_of_cells.txt"s
                  << " does not exists (!)" << endl;
 
         Configuration_State = { State_p_vector, State_f_vector, State_e_vector, State_n_vector },
         Configuration_cState = { State_pfracture_vector, State_ffracture_vector, State_efracture_vector, State_nfracture_vector }; //  is the list of all mentioned below State_<*>_vectors and State_<*>fracture_vectors as the output of the Processing module // is the list of 'state vectors' analogous to the Configuration_State but for 'cracked' (or induced) network of k-cells
 /// Initial state::
-        if (dim < 3) { // Does not exist in 2D: CellNumbs.at(3)
+        if (config_dim < 3) { // Does not exist in 2D: CellNumbs.at(3)
             State_p_vector.resize(0, 0);
             State_pfracture_vector.resize(0, 0);
-            if (dim == 1)
+            if (config_dim == 1)
                 State_f_vector.resize(0, 0);
             State_ffracture_vector.resize(0, 0);
         } else {
@@ -175,13 +181,13 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
         State_efracture_vector.resize(CellNumbs.at(1), 0);
         State_nfracture_vector.resize(CellNumbs.at(0), 0);
 
-        if (dim == 1) { // 1D case
+        if (config_dim == 1) { // 1D case
             Configuration_State.resize(2);
             Configuration_State = {State_n_vector, State_e_vector};
             Configuration_cState.resize(2);
             Configuration_cState = {State_nfracture_vector, State_efracture_vector};
         }
-        if (dim == 2) { // 2D case
+        if (config_dim == 2) { // 2D case
             Configuration_State.resize(3);
             Configuration_State = {State_n_vector, State_e_vector, State_f_vector};
             Configuration_cState.resize(3);
@@ -197,12 +203,14 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 /// Output PCCpaths.vector to console and logfile out
         int npath = 0;
         cout << "_____________________________________________________________________________________" << endl;
-        Out_logfile_stream
+        Out_local_logstream
                 << "_____________________________________________________________________________________" << endl;
-        for (auto path: PCCpaths) {
+        for (auto path: config_PCCpaths) {
             cout << "[" << npath++ << "]" << " PCCpaths:\t" << path << endl;
-            Out_logfile_stream << "[" << npath << "]" << " PCCpaths:\t" << path << endl;
+            Out_local_logstream << "[" << npath << "]" << " PCCpaths:\t" << path << endl;
         }
+
+        Out_local_logstream.close();
     }; /// Read the 'initial configuration' of the problem set in all the relevant '*.ini' files containing in the '\config' project directory using the functions from the 'ini_readers.cpp' project library (and only from there)
 
     /// --------------------------------------- *** END of void Config::Read_config() method *** ------------------------------------------------ ///

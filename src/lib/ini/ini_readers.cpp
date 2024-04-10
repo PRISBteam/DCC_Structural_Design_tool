@@ -12,7 +12,7 @@
 using namespace std; // standard namespace
 
 /// ================== # 1 # Initial configuration - reading and output ==================
-std::vector<int> config_reader_main(std::string &source_path, std::string &source_dir, std::string &output_dir, std::string &main_type, std::string &e_type) {
+std::vector<int> config_reader_main(std::string &source_path, std::string &source_dir, std::string &output_dir, std::string &main_type) {
 
     std::vector<int> res(7,0);
 /// [0] - > dim, [1] -> isSection, [2] -> isProcessing, [3] -> isCharacterisation, [4] -> isMultiphysics, [5] -> isKinetic, [6] -> isWriter
@@ -27,12 +27,13 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
     file.read(main_ini);
 
 // 0
-    if (main_ini.has("execution_type")) {
+/*    if (main_ini.has("execution_type")) {
         auto& collection = main_ini["execution_type"];
         if (collection.has("e_type"))
         {
             e_type = main_ini.get("execution_type").get("e_type");
         } }
+*/
 // I
     if (main_ini.has("simulation_mode")) {
         auto& collection = main_ini["simulation_mode"];
@@ -105,10 +106,9 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
 
 /// Output to the screen/console
     cout << "The problem dimension that is the maximum value k_max of k-cells in the PCC\t\t|\t\t"s << "dim = " << res.at(0) << endl;
-    cout << "Execution type:\t\t"s << e_type << endl;
-    cout << "Simulation type:\t"s << main_type << endl;
-    cout << "Source directory:\t"s << source_dir << endl;
-    cout << "Output directory:\t"s << output_dir << endl;
+    cout << "Simulation mode:\t"s << "\t" << main_type << endl;
+    cout << "Output directory:\t"s << "\t" << output_dir << endl;
+    cout << "PCC source directory:\t"s << source_dir << endl;
     cout << endl;
     if (isSectionON == 1) cout << "ON    | PCC_Section"s << endl;
     else cout << "OFF    | PCC_Section"s << endl;
@@ -130,11 +130,10 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
     Out_logfile_stream << endl;
     Out_logfile_stream << "The problem dimension that is the maximum value k_max of k-cells in the PCC:\t\t|\t\t"s << "dim = " << res.at(0) << endl;
     Out_logfile_stream << endl;
-    Out_logfile_stream << "Execution type:\t\t"s << e_type << endl;
-    Out_logfile_stream << "Simulation type:\t"s << main_type << endl;
-    Out_logfile_stream << endl;
-    Out_logfile_stream << "Source directory:\t"s << source_dir << endl;
-    Out_logfile_stream << "Output directory:\t"s << output_dir << endl;
+    Out_logfile_stream << "Simulation mode:\t"s << "\t" << main_type << endl;
+    Out_logfile_stream << "Output directory:\t"s << "\t" << output_dir << endl;
+    Out_logfile_stream << "PCC source directory:\t"s << "\t" << source_dir << endl;
+
     Out_logfile_stream << endl;
     if (isSectionON == 1) Out_logfile_stream << "ON    | PCC_Section"s << endl;
     else Out_logfile_stream << "OFF    | PCC_Section"s << endl;

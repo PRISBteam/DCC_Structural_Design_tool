@@ -183,22 +183,24 @@ CellsDesign PCC_Processing(std::vector<std::vector<int>> &Configuration_State,st
     } // for (int cell_type = 3; cell_type >= 0; --cell_type)
 
     cout << endl; Out_logfile_stream << endl;
-    cout << "p-sequence size: " << CD.Get_p_sequence().size() << endl; Out_logfile_stream << "p-sequence size: " << CD.Get_p_sequence().size() << endl;
-    cout << "f-sequence size: " << CD.Get_f_sequence().size() << endl; Out_logfile_stream << "f-sequence size: " << CD.Get_f_sequence().size() << endl;
-    cout << "e-sequence size: " << CD.Get_e_sequence().size() << endl; Out_logfile_stream << "e-sequence size: " << CD.Get_e_sequence().size() << endl;
     cout << "n-sequence size: " << CD.Get_n_sequence().size() << endl; Out_logfile_stream << "n-sequence size: " << CD.Get_n_sequence().size() << endl;
+    cout << "e-sequence size: " << CD.Get_e_sequence().size() << endl; Out_logfile_stream << "e-sequence size: " << CD.Get_e_sequence().size() << endl;
+    cout << "f-sequence size: " << CD.Get_f_sequence().size() << endl; Out_logfile_stream << "f-sequence size: " << CD.Get_f_sequence().size() << endl;
+    cout << "p-sequence size: " << CD.Get_p_sequence().size() << endl; Out_logfile_stream << "p-sequence size: " << CD.Get_p_sequence().size() << endl;
     cout << endl; Out_logfile_stream << endl;
 
-    cout << "p-induced-sequence size: " << CD.Get_p_induced_sequence().size() << endl; Out_logfile_stream << "p-sequence size: " << CD.Get_p_induced_sequence().size() << endl;
-    cout << "f-induced-sequence size: " << CD.Get_f_induced_sequence().size() << endl; Out_logfile_stream << "f-sequence size: " << CD.Get_f_induced_sequence().size() << endl;
-    cout << "e-induced-sequence size: " << CD.Get_e_induced_sequence().size() << endl; Out_logfile_stream << "e-sequence size: " << CD.Get_e_induced_sequence().size() << endl;
-    cout << "n-induced-sequence size: " << CD.Get_n_induced_sequence().size() << endl; Out_logfile_stream << "n-sequence size: " << CD.Get_n_induced_sequence().size() << endl;
+    cout << "n-induced-sequence size: " << CD.Get_n_induced_sequence().size() << endl; Out_logfile_stream << "n-induced-sequence size: " << CD.Get_n_induced_sequence().size() << endl;
+    cout << "e-induced-sequence size: " << CD.Get_e_induced_sequence().size() << endl; Out_logfile_stream << "e-induced-sequence size: " << CD.Get_e_induced_sequence().size() << endl;
+    cout << "f-induced-sequence size: " << CD.Get_f_induced_sequence().size() << endl; Out_logfile_stream << "f-induced-sequence size: " << CD.Get_f_induced_sequence().size() << endl;
+    cout << "p-induced-sequence size: " << CD.Get_p_induced_sequence().size() << endl; Out_logfile_stream << "p-induced-sequence size: " << CD.Get_p_induced_sequence().size() << endl;
+
     cout << endl; Out_logfile_stream << endl;
 
-    cout << "p-design vector size: " << CD.Get_p_design().size() << endl; Out_logfile_stream << "p-design vector size: " << CD.Get_p_design().size() << endl;
-    cout << "f-design vector size: " << CD.Get_f_design().size() << endl; Out_logfile_stream << "f-design vector size: " << CD.Get_f_design().size() << endl;
-    cout << "e-design vector size: " << CD.Get_e_design().size() << endl;  Out_logfile_stream << "e-design vector size: " << CD.Get_e_design().size() << endl;
     cout << "n-design vector size: " << CD.Get_n_design().size() << endl; Out_logfile_stream << "n-design vector size: " << CD.Get_n_design().size() << endl;
+    cout << "e-design vector size: " << CD.Get_e_design().size() << endl;  Out_logfile_stream << "e-design vector size: " << CD.Get_e_design().size() << endl;
+    cout << "f-design vector size: " << CD.Get_f_design().size() << endl; Out_logfile_stream << "f-design vector size: " << CD.Get_f_design().size() << endl;
+    cout << "p-design vector size: " << CD.Get_p_design().size() << endl; Out_logfile_stream << "p-design vector size: " << CD.Get_p_design().size() << endl;
+
     cout << endl; Out_logfile_stream << endl;
 
     return CD;
