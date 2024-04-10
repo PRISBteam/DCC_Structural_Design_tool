@@ -170,15 +170,39 @@ int main() {
     Out_logfile_stream.open(output_dir + "Processing_Design.log"s, ios::app); // this *.log stream will be closed at the end of the main function
     Out_logfile_stream << "------------------------------------------------------------------------------------------------" << endl;
 
-
 /// PERFORMANCE TEST mode in the main.ini config file
 if (main_type == "PERFORMANCE_TEST"s) {
-    //    initial_configuration.Set_config(const std::vector<int> &initial_configuration.Get_ConfVector(), const std::string &initial_configuration.Get_source_dir(), int &initial_configuration.Get_dim(), std::vector<char*> &initial_configuration.Get_paths(), std::vector<vector<int>> &initial_configuration.Get_Configuration_State(), std::vector<vector<int>> &initial_configuration.Get_Configuration_cState());
-    std::vector<int> ConfigVector = initial_configuration.Get_ConfVector();
-    dim = initial_configuration.Get_dim();
-    source_dir = initial_configuration.Get_source_dir();
-    output_dir = initial_configuration.Get_output_dir();
-    PCCpaths = initial_configuration.Get_paths();
+    CellsDesign new_cells_design;
+    std::vector<std::vector<int>> Processing_Configuration_State, Processing_Configuration_cState;
+
+    // times
+    double processing_execution_time = 0.0, full_processing_time = 0.0;
+    unsigned int prev_time, new_time;
+    prev_time = clock();
+
+    int counter_max = 100; //number of calculation series
+    for (int counter = 0; counter < counter_max; counter++ ) {
+        ConfigVector = initial_configuration.Get_ConfVector();
+        dim = initial_configuration.Get_dim();
+        source_dir = initial_configuration.Get_source_dir();
+        output_dir = initial_configuration.Get_output_dir();
+        PCCpaths = initial_configuration.Get_paths();
+        main_type = initial_configuration.Get_main_type();
+        sim_task = initial_configuration.Get_sim_task();
+        /// ---------------------------------------------------------------------- ///
+        Processing_Configuration_State = configuration.Get_Configuration_State(), Processing_Configuration_cState = configuration.Get_Configuration_cState();
+        new_cells_design = PCC_Processing(Processing_Configuration_State, Processing_Configuration_cState);
+
+// ===== Elapsing time Processing ================
+        new_time = clock();
+        processing_execution_time = (double) new_time - (double) prev_time;
+        full_processing_time += processing_execution_time;
+        prev_time = processing_execution_time;
+        cout << "Processing iteration " << counter << " tooks  " << P_time/ pow(10.0,6.0) <<  "  seconds" << endl; cout << "-------------------------------------------------------------------------" << endl; Out_logfile_stream << "Processing time is equal to  " << P_time/ pow(10.0,6.0) <<  "  seconds" << endl; Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
+    } // end of for (int counter = 0; counter < counter_max; counter++ ) loop
+    cout << "Full execution time for " <<  counter_max << " iterations is equal to  " << full_processing_time/ pow(10.0,6.0) <<  "  seconds" << endl;
+    cout << "-------------------------------------------------------------------------" << endl; Out_logfile_stream << "Processing time is equal to  " << P_time/ pow(10.0,6.0) <<  "  seconds" << endl; Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
+
 } // end if (main_type == "PERFORMANCE_TEST")
 
 /// =========== TUTORIAL feature to facilitate the first acquaintance with the code ===================================
