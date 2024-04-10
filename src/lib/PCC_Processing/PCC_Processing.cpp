@@ -46,7 +46,10 @@ extern int dim;
  * @return cells_design
  */
 /// All the initial settings are written in 'processing.ini' file, including PCCpaths to the corresponding directories and execution types
-CellsDesign PCC_Processing(std::vector<std::vector<int>> &Configuration_State,std::vector<std::vector<int>> &Configuration_cState) {
+CellsDesign PCC_Processing(Config &configuration) {
+std::vector<std::vector<int>>Configuration_State = configuration.Get_Configuration_State(), Configuration_cState = configuration.Get_Configuration_cState();
+//    std::vector<std::vector<int>> &Configuration_State, std::vector<std::vector<int>> &Configuration_cState
+
 // CellNumbs :: vector components: [0] - Node numbers, [1] - Edge numbers, [2] - Face numbers, [3] - Polyhedron numbers
 // Maximal fraction of max_sFaces_fraction \in [0,1] for the simulation loop
 /// Main output of the module 'special_cells_design' (CD) - vector of vectors containing :: (1) special_nodes_sequence, (2) special_edges_sequence, (3) special_faces_sequence, and (4) special_polyhedrons_sequence
@@ -78,6 +81,9 @@ CellsDesign PCC_Processing(std::vector<std::vector<int>> &Configuration_State,st
     for (int cell_type = (3 + (dim - 3)); cell_type >= 0; --cell_type) { // Loop over all types of k-cells in the PCC
 // both for 2D and 3D cases
         special_x_sequence = {0}; special_c_sequence = {0};
+
+/// I. Beginning of the processing of "special" k-cells
+
         if (ptype_vector.at(cell_type) == "R" && max_fractions_vectors.at(cell_type).size() > 0) { //  Random generation case
             cout << "Random processing in operation: cell_type : "s << cell_type << endl;
             Out_logfile_stream << "Random processing in operation: cell_type : "s << cell_type << endl;
@@ -154,7 +160,9 @@ CellsDesign PCC_Processing(std::vector<std::vector<int>> &Configuration_State,st
                 Configuration_State[cell_type].push_back(var);
         } // End of 'S' [reading from file] type simulations (elseif)
 //    else if (ctype_vector.at(cell_type + (3 - 3)) == "Km" && max_cfractions_vectors[cell_type + (3 - 3)].size() > 0) { // Maximum <functional> production
-        else cout << "ERROR [HAGBsProbability3D] : unknown simulation type - please replace with 'R', 'F' or 'I'..!" << endl;
+        else if(max_fractions_vectors[cell_type].size() > 0) cout << "ERROR [HAGBsProbability3D] : unknown simulation type - please replace with 'R', 'F' or 'I'..!" << endl;
+
+/// II. Beginning of the processing of "induced" (of 'fractured') k-cells
 
         if (ctype_vector.at(cell_type) == "Km" && max_cfractions_vectors[cell_type].size() > 0) { // Maximum <functional> production
             cout << "Induced processing in operation: cell_type : "s << cell_type << endl;
@@ -170,7 +178,7 @@ CellsDesign PCC_Processing(std::vector<std::vector<int>> &Configuration_State,st
 //        if (max_cfractions_vectors.at(cell_type).size() > 0)
             //        special_c_sequence = PCC_Kinetic_cracking(Configuration_State, face_elastic_energies, large_crack);
         } // End of 'Km' type simulations (elseif)
-        else cout << "ERROR [HAGBsProbability3D] : unknown induced simulation type - please replace with 'Km' or 'Kn'..!" << endl;
+        else if(max_cfractions_vectors[cell_type].size() > 0) cout << "ERROR [HAGBsProbability3D] : unknown induced simulation type - please replace with 'Km' or 'Kn'..!" << endl;
 
 //REPAIR    cout << "ctype_vector " << ctype_vector.at(cell_type + (3 - 3)) << "  " << max_cfractions_vectors[cell_type + (3 - 3)].size() << endl;
 
@@ -182,27 +190,44 @@ CellsDesign PCC_Processing(std::vector<std::vector<int>> &Configuration_State,st
 
     } // for (int cell_type = 3; cell_type >= 0; --cell_type)
 
-    cout << endl; Out_logfile_stream << endl;
-    cout << "n-sequence size: " << CD.Get_n_sequence().size() << endl; Out_logfile_stream << "n-sequence size: " << CD.Get_n_sequence().size() << endl;
-    cout << "e-sequence size: " << CD.Get_e_sequence().size() << endl; Out_logfile_stream << "e-sequence size: " << CD.Get_e_sequence().size() << endl;
-    cout << "f-sequence size: " << CD.Get_f_sequence().size() << endl; Out_logfile_stream << "f-sequence size: " << CD.Get_f_sequence().size() << endl;
-    cout << "p-sequence size: " << CD.Get_p_sequence().size() << endl; Out_logfile_stream << "p-sequence size: " << CD.Get_p_sequence().size() << endl;
-    cout << endl; Out_logfile_stream << endl;
+if (configuration.Get_main_type() == "LIST"s) {
+    cout << endl;
+    Out_logfile_stream << endl;
+    cout << "n-sequence size: " << CD.Get_n_sequence().size() << endl;
+    Out_logfile_stream << "n-sequence size: " << CD.Get_n_sequence().size() << endl;
+    cout << "e-sequence size: " << CD.Get_e_sequence().size() << endl;
+    Out_logfile_stream << "e-sequence size: " << CD.Get_e_sequence().size() << endl;
+    cout << "f-sequence size: " << CD.Get_f_sequence().size() << endl;
+    Out_logfile_stream << "f-sequence size: " << CD.Get_f_sequence().size() << endl;
+    cout << "p-sequence size: " << CD.Get_p_sequence().size() << endl;
+    Out_logfile_stream << "p-sequence size: " << CD.Get_p_sequence().size() << endl;
+    cout << endl;
+    Out_logfile_stream << endl;
 
-    cout << "n-induced-sequence size: " << CD.Get_n_induced_sequence().size() << endl; Out_logfile_stream << "n-induced-sequence size: " << CD.Get_n_induced_sequence().size() << endl;
-    cout << "e-induced-sequence size: " << CD.Get_e_induced_sequence().size() << endl; Out_logfile_stream << "e-induced-sequence size: " << CD.Get_e_induced_sequence().size() << endl;
-    cout << "f-induced-sequence size: " << CD.Get_f_induced_sequence().size() << endl; Out_logfile_stream << "f-induced-sequence size: " << CD.Get_f_induced_sequence().size() << endl;
-    cout << "p-induced-sequence size: " << CD.Get_p_induced_sequence().size() << endl; Out_logfile_stream << "p-induced-sequence size: " << CD.Get_p_induced_sequence().size() << endl;
+    cout << "n-induced-sequence size: " << CD.Get_n_induced_sequence().size() << endl;
+    Out_logfile_stream << "n-induced-sequence size: " << CD.Get_n_induced_sequence().size() << endl;
+    cout << "e-induced-sequence size: " << CD.Get_e_induced_sequence().size() << endl;
+    Out_logfile_stream << "e-induced-sequence size: " << CD.Get_e_induced_sequence().size() << endl;
+    cout << "f-induced-sequence size: " << CD.Get_f_induced_sequence().size() << endl;
+    Out_logfile_stream << "f-induced-sequence size: " << CD.Get_f_induced_sequence().size() << endl;
+    cout << "p-induced-sequence size: " << CD.Get_p_induced_sequence().size() << endl;
+    Out_logfile_stream << "p-induced-sequence size: " << CD.Get_p_induced_sequence().size() << endl;
 
-    cout << endl; Out_logfile_stream << endl;
+    cout << endl;
+    Out_logfile_stream << endl;
 
-    cout << "n-design vector size: " << CD.Get_n_design().size() << endl; Out_logfile_stream << "n-design vector size: " << CD.Get_n_design().size() << endl;
-    cout << "e-design vector size: " << CD.Get_e_design().size() << endl;  Out_logfile_stream << "e-design vector size: " << CD.Get_e_design().size() << endl;
-    cout << "f-design vector size: " << CD.Get_f_design().size() << endl; Out_logfile_stream << "f-design vector size: " << CD.Get_f_design().size() << endl;
-    cout << "p-design vector size: " << CD.Get_p_design().size() << endl; Out_logfile_stream << "p-design vector size: " << CD.Get_p_design().size() << endl;
+    cout << "n-design vector size: " << CD.Get_n_design().size() << endl;
+    Out_logfile_stream << "n-design vector size: " << CD.Get_n_design().size() << endl;
+    cout << "e-design vector size: " << CD.Get_e_design().size() << endl;
+    Out_logfile_stream << "e-design vector size: " << CD.Get_e_design().size() << endl;
+    cout << "f-design vector size: " << CD.Get_f_design().size() << endl;
+    Out_logfile_stream << "f-design vector size: " << CD.Get_f_design().size() << endl;
+    cout << "p-design vector size: " << CD.Get_p_design().size() << endl;
+    Out_logfile_stream << "p-design vector size: " << CD.Get_p_design().size() << endl;
 
-    cout << endl; Out_logfile_stream << endl;
-
+    cout << endl;
+    Out_logfile_stream << endl;
+}
     return CD;
 } /// The end of Processing()
 

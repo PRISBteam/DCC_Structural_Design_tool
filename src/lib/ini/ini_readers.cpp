@@ -685,15 +685,15 @@ int isBetti = 0; // Laplacians lab
 //    cout<< "______________________________________________________________________________________" << endl;
     cout << "The Writer module specifications:\t\t" << endl;
 //    cout << endl;
-    cout << "Sequences output \t\t\t"s << writer_specifications.at(0) << endl;
-    cout << "Design vectors output \t\t"s << writer_specifications.at(1) << endl;
-    cout << "Configuration Edges entropy \t\t\t"s << writer_specifications.at(2) << endl;
-    cout << "Special Edge fractions \t\t\t"s << writer_specifications.at(3) << endl;
-    cout << "Special Edge degree fractions \t\t\t"s << writer_specifications.at(4) << endl;
+    cout << "Sequences output \t\t\t\t\t"s << writer_specifications.at(0) << endl;
+    cout << "Design vectors output \t\t\t\t"s << writer_specifications.at(1) << endl;
+    cout << "Configuration Edges entropy \t\t"s << writer_specifications.at(2) << endl;
+    cout << "Special Edge fractions \t\t\t\t"s << writer_specifications.at(3) << endl;
+    cout << "Special Edge degree fractions \t\t"s << writer_specifications.at(4) << endl;
     cout << "Analytical Edge fractions \t\t\t"s << writer_specifications.at(5) << endl;
-    cout << "Analytical Edge degree fractions \t\t\t"s << writer_specifications.at(5) << endl;
-    cout << "Analytical configuration Edges entropy \t\t\t"s << writer_specifications.at(6) << endl;
-    cout << "Laplacians and Betti numbers \t\t\t"s << writer_specifications.at(7) << endl;
+    cout << "Analytical Edge degree fractions \t"s << writer_specifications.at(5) << endl;
+    cout << "Analytical Edges entropy \t\t\t"s << writer_specifications.at(6) << endl;
+    cout << "Laplacians and Betti numbers \t\t"s << writer_specifications.at(7) << endl;
     cout << endl;
 
 /// Output into .log file
@@ -701,15 +701,15 @@ int isBetti = 0; // Laplacians lab
 //    Out_logfile_stream<< "______________________________________________________________________________________" << endl;
     Out_logfile_stream << "The Writer module specifications:\t\t" << endl;
 //    Out_logfile_stream << endl;
-    Out_logfile_stream << "Sequences output \t\t\t"s << writer_specifications.at(0) << endl;
-    Out_logfile_stream << "Design vectors output \t\t"s << writer_specifications.at(1) << endl;
+    Out_logfile_stream << "Sequences output \t\t\t\t\t"s << writer_specifications.at(0) << endl;
+    Out_logfile_stream << "Design vectors output \t\t\t\t"s << writer_specifications.at(1) << endl;
     Out_logfile_stream << "Configuration Edges entropy \t\t\t"s << writer_specifications.at(2) << endl;
-    Out_logfile_stream << "Special Edge fractions \t\t\t"s << writer_specifications.at(3) << endl;
-    Out_logfile_stream << "Special Edge degree fractions \t\t\t"s << writer_specifications.at(4) << endl;
+    Out_logfile_stream << "Special Edge fractions \t\t\t\t"s << writer_specifications.at(3) << endl;
+    Out_logfile_stream << "Special Edge fractions \t\t\t\t"s << writer_specifications.at(4) << endl;
     Out_logfile_stream << "Analytical Edge fractions \t\t\t"s << writer_specifications.at(5) << endl;
-    Out_logfile_stream << "Analytical Edge degree fractions \t\t\t"s << writer_specifications.at(5) << endl;
-    Out_logfile_stream << "Analytical configuration Edges entropy \t\t\t"s << writer_specifications.at(6) << endl;
-    Out_logfile_stream << "Laplacians and Betti numbers \t\t\t"s << writer_specifications.at(7) << endl;
+    Out_logfile_stream << "Analytical Edge degree fractions \t"s << writer_specifications.at(5) << endl;
+    Out_logfile_stream << "Analytical Edges entropy \t\t\t"s << writer_specifications.at(6) << endl;
+    Out_logfile_stream << "Laplacians and Betti numbers \t\t"s << writer_specifications.at(7) << endl;
     Out_logfile_stream << endl;
 
     return;

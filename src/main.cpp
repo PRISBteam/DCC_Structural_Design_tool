@@ -173,33 +173,36 @@ int main() {
 /// PERFORMANCE TEST mode in the main.ini config file
 if (main_type == "PERFORMANCE_TEST"s) {
     CellsDesign new_cells_design;
-    std::vector<std::vector<int>> Processing_Configuration_State, Processing_Configuration_cState;
+    /// Initialisation of the current_configuration = initial_configuration
+    configuration = initial_configuration;
 
     // times
     double processing_execution_time = 0.0, full_processing_time = 0.0;
     unsigned int prev_time, new_time;
-    prev_time = clock();
 
     int counter_max = 100; //number of calculation series
-    for (int counter = 0; counter < counter_max; counter++ ) {
-        ConfigVector = initial_configuration.Get_ConfVector();
-        dim = initial_configuration.Get_dim();
-        source_dir = initial_configuration.Get_source_dir();
-        output_dir = initial_configuration.Get_output_dir();
-        PCCpaths = initial_configuration.Get_paths();
-        main_type = initial_configuration.Get_main_type();
-        sim_task = initial_configuration.Get_sim_task();
-        /// ---------------------------------------------------------------------- ///
-        Processing_Configuration_State = configuration.Get_Configuration_State(), Processing_Configuration_cState = configuration.Get_Configuration_cState();
-        new_cells_design = PCC_Processing(Processing_Configuration_State, Processing_Configuration_cState);
+    for (int counter = 0; counter < counter_max; counter++ ) { // TEST LOOP
+        prev_time = clock();
 
-// ===== Elapsing time Processing ================
+        ConfigVector = configuration.Get_ConfVector();
+        dim = configuration.Get_dim();
+        source_dir = configuration.Get_source_dir();
+        output_dir = configuration.Get_output_dir();
+        PCCpaths = configuration.Get_paths();
+        /// ---------------------------------------------------------------------- ///
+        new_cells_design = PCC_Processing(configuration);
+
+    /// ============= Elapsing time Processing ================ ///
         new_time = clock();
         processing_execution_time = (double) new_time - (double) prev_time;
         full_processing_time += processing_execution_time;
-        prev_time = processing_execution_time;
-        cout << "Processing iteration " << counter << " tooks  " << P_time/ pow(10.0,6.0) <<  "  seconds" << endl; cout << "-------------------------------------------------------------------------" << endl; Out_logfile_stream << "Processing time is equal to  " << P_time/ pow(10.0,6.0) <<  "  seconds" << endl; Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
+        //prev_time = processing_execution_time;
+
+        cout << "Processing iteration " << counter + 1 << " tooks  " << processing_execution_time/ pow(10.0,6.0) <<  "  seconds" << endl; cout << "-------------------------------------------------------------------------" << endl;
+        Out_logfile_stream << "Processing iteration " << counter + 1 << " tooks  " << processing_execution_time/ pow(10.0,6.0) <<  "  seconds" << endl; Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
+
     } // end of for (int counter = 0; counter < counter_max; counter++ ) loop
+
     cout << "Full execution time for " <<  counter_max << " iterations is equal to  " << full_processing_time/ pow(10.0,6.0) <<  "  seconds" << endl;
     cout << "-------------------------------------------------------------------------" << endl; Out_logfile_stream << "Processing time is equal to  " << P_time/ pow(10.0,6.0) <<  "  seconds" << endl; Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
 
@@ -245,9 +248,7 @@ else if ( main_type == "LIST"s ) { // 'LIST module'
             Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
             Out_logfile_stream << "START of the PCC Processing module " << endl;
 
-            std::vector<std::vector<int>> Processing_Configuration_State = configuration.Get_Configuration_State(),
-                                          Processing_Configuration_cState = configuration.Get_Configuration_cState();
-            new_cells_design = PCC_Processing(Processing_Configuration_State, Processing_Configuration_cState);
+            new_cells_design = PCC_Processing(configuration);
 
 // ===== Elapsing time Processing ================
             unsigned int Processing_time = clock();

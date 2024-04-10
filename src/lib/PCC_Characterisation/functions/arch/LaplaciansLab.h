@@ -3,7 +3,7 @@
 /** This sub file contain functions allowing to calculate the combinatorial Laplacian of the special k-cells graph with its spectrum and eigenvectors **/
 ///=======================================================================================================================///
 
-/// # 0 # reduced laplacians (vector of their sparse matrices)
+/// # 0 # reduced Laplacians (vector of their sparse matrices)
 std::vector<Eigen::SparseMatrix<double>> ReducedFaceLaplacians(std::vector<unsigned int> &face_sequence_vector, SpMat &ENS, SpMat &FES, SpMat &GFS) {
 std::vector<Eigen::SparseMatrix<double>> laplacians_vector; // function output: { ENM_laplacian, FEM_laplacian, GFM_laplacian }
 

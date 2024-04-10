@@ -10,7 +10,7 @@
 //#include "../PCC_Processing/functions/Processing_Imposed_functions.h"
 
 #include "functions/LaplaciansLab.h"
-#include "functions/analytical_solutions.h"
+#include "../analytical_solutions.h"
 ///-------------------------------------
 
 ///Structure characterisation tool
