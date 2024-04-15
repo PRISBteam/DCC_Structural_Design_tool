@@ -19,7 +19,9 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 
 #include "PCC_Support_Functions.h" // It must be here - first in this list (!)
 #include "PCC_Objects.h"
-#include "ini/ini_readers.h" // config_reader_main() function
+
+/// Tailored Reader for the main.ini file in the ../config/ subdirectory of the project based on the mINI C++ library (2018 Danijel Durakovic http://pulzed.com/, MIT license is included)
+#include "ini/ini_readers.h"
 
 /// # 0 # The class CONFIG ::
 /*!
@@ -85,14 +87,27 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
             ssd0 = config_source_dir + "algebraic/A0.txt"s,
             ssd1 = config_source_dir + "algebraic/A1.txt"s,
             ssd4 = config_source_dir + "algebraic/B1.txt"s; // 1D
+        else {
+            ssd0 = "PCC reading ERROR: there is no A0 file in the PCC directory"s;
+            ssd1 = "PCC reading ERROR: there is no A1 file in the PCC directory"s;
+            ssd4 = "PCC reading ERROR: there is no B1 file in the PCC directory"s;
+        }
         if (is_file_exists(config_source_dir + "/algebraic/A2.txt"s) && is_file_exists(config_source_dir + "algebraic/B2.txt"s) &&
                 config_dim >= 2)
             ssd2 = config_source_dir + "algebraic/A2.txt"s,
             ssd5 = config_source_dir + "algebraic/B2.txt"s; // 2D
+        else {
+            ssd2 = "PCC reading ERROR: there is no A2 file in the PCC directory"s;
+            ssd5 = "PCC reading ERROR: there is no B2 file in the PCC directory"s;
+        }
         if (is_file_exists(config_source_dir + "/algebraic/A3.txt"s) && is_file_exists(config_source_dir + "algebraic/B3.txt"s) &&
                 config_dim == 3)
             ssd3 = config_source_dir + "algebraic/A3.txt"s,
             ssd6 = config_source_dir + "algebraic/B3.txt"s; // 3D
+        else {
+            ssd3 = "PCC reading ERROR: there is no A3 file in the PCC directory"s;
+            ssd6 = "PCC reading ERROR: there is no B3 file in the PCC directory"s;
+        }
         if (config_dim > 3 || config_dim < 1) {
             cout
                     << "INPUT DATA ERROR (!) dim > 3 or < 1 as it specified in the ../config/main.ini file. Please, make it equal to 1, 2 or 3."
@@ -115,9 +130,11 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 /// ---> edge lengths HERE (!) // see next 'ssd14 = source_dir + "edge_lengths.txt"s;' and replace with 'ssd6'
         if (is_file_exists(config_source_dir + "measures/face_areas.txt"s) && config_dim >= 2)
             ssd7 = config_source_dir + "measures/face_areas.txt"s; // 2D face_areas
+        else ssd7 = "PCC reading ERROR: there is no 'face_areas' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd7.c_str()));
         if (is_file_exists(config_source_dir + "measures/polyhedron_volumes.txt"s) && config_dim == 3)
             ssd8 = config_source_dir + "measures/polyhedron_volumes.txt"s; // 3D polyhedron_volumes
+        else ssd8 = "PCC reading ERROR: there is no 'polyhedron_volumes' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd8.c_str()));
         //    if (is_file_exists(source_dir + "measures/edge_lengths.txt"s) && dim >= 1) ssd14 = source_dir + "measures/edge_lengths.txt"s; // edge barycentres coordinates      PCCpaths.push_back(const_cast<char *>(ssd14.c_str()));
 
@@ -125,18 +142,23 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 // In the for of vector<tuple<double, double, double>> vertex_coordinates_vector, edge_coordinates_vector, face_coordinates_vector, grain_coordinates_vector;
         if (is_file_exists(config_source_dir + "coordinates/polyhedron_seeds.txt"s) && config_dim == 3)
             ssd9 = config_source_dir + "coordinates/polyhedron_seeds.txt"s; // grain (polyhedron) seeds
+        else ssd9 = "PCC reading ERROR: there is no 'polyhedron_seeds' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd9.c_str()));
         if (is_file_exists(config_source_dir + "coordinates/vertex_seeds.txt"s) && config_dim >= 1)
             ssd10 = config_source_dir + "coordinates/vertex_seeds.txt"s; // vertex coordinates
+        else ssd10 = "PCC reading ERROR: there is no 'vertex_seeds' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd10.c_str()));
         if (is_file_exists(config_source_dir + "other/face_normals.txt"s) && config_dim >= 2)
             ssd11 = config_source_dir + "other/face_normals.txt"s; // face normal vectors
+        else ssd11 = "PCC reading ERROR: there is no 'face_normals' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd11.c_str()));
         if (is_file_exists(config_source_dir + "coordinates/edge_seeds.txt"s) && config_dim >= 1)
             ssd12 = config_source_dir + "coordinates/edge_seeds.txt"s; // edge barycentres coordinates
+        else ssd12 = "PCC reading ERROR: there is no 'edge_seeds' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd12.c_str()));
         if (is_file_exists(config_source_dir + "coordinates/face_seeds.txt"s) && config_dim >= 2)
             ssd13 = config_source_dir + "coordinates/face_seeds.txt"s; // face barycentres coordinates
+        else ssd13 = "PCC reading ERROR: there is no 'face_seeds' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd13.c_str()));
 
 /// Vector with rhe numbers of PCC k-cells for k\in{0,1,2,3} from file
@@ -209,6 +231,7 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
             cout << "[" << npath++ << "]" << " PCCpaths:\t" << path << endl;
             Out_local_logstream << "[" << npath << "]" << " PCCpaths:\t" << path << endl;
         }
+        cout << endl; Out_local_logstream << endl;
 
         Out_local_logstream.close();
     }; /// Read the 'initial configuration' of the problem set in all the relevant '*.ini' files containing in the '\config' project directory using the functions from the 'ini_readers.cpp' project library (and only from there)

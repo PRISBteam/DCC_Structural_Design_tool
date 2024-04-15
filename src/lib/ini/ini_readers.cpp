@@ -436,7 +436,6 @@ void config_reader_processing(std::string &source_path, std::vector<string> &seq
 
 vector<double> max_fractions_output(3, 0); // temporary vector serving as an output template for max fractions
 /// Output to the screen/console
-    cout<< "______________________________________________________________________________________" << endl;
     cout << "The Processing module simulation type and initial parameters:\t\t" << endl;
     cout << endl;
     if (ptypes_number_string != "0") {
@@ -509,10 +508,8 @@ vector<double> max_fractions_output(3, 0); // temporary vector serving as an out
     for (int i = 0; i < 3; ++i)
         if (max_fractions_vectors[0].size() > 0 && max_fractions_vectors[0][i] > 0) max_fractions_output.at(i) = max_fractions_vectors[0][i];
     cout << "Their maximum fractions:\t"s << max_fractions_output.at(0) << "\t\t" << max_fractions_output.at(1) << "\t\t"<< max_fractions_output.at(2) << "\t\t" << endl;
-    cout<< "______________________________________________________________________________________" << endl;
-
+    cout<< "______________________________________________________________________________________" << endl << endl;
 /// Output into .log file
-    Out_logfile_stream<< "______________________________________________________________________________________" << endl;
     Out_logfile_stream << "The Processing module simulation type and initial parameters:\t\t" << endl;
     Out_logfile_stream << endl;
     if (ptypes_number_string != "0") {
@@ -593,7 +590,7 @@ vector<double> max_fractions_output(3, 0); // temporary vector serving as an out
     for (int i = 0; i < 3; ++i)
         if (max_fractions_vectors[0].size() > 0 && max_fractions_vectors[0][i] > 0) max_fractions_output.at(i) = max_fractions_vectors[0][i];
     Out_logfile_stream << "Their maximum fractions:\t"s << max_fractions_output.at(0) << "\t\t" << max_fractions_output.at(1) << "\t\t"<< max_fractions_output.at(2) << "\t\t" << endl;
-    Out_logfile_stream<< "______________________________________________________________________________________" << endl;
+    Out_logfile_stream<< "______________________________________________________________________________________" << endl << endl;
 
     return;
 } /// END of config_reader_processing function

@@ -129,9 +129,8 @@ void PCC_CellSequences_Writer(CellsDesign &new_cells_design, int &output_counter
             for (auto rvit: new_p_design) Out_scells_file << rvit  << " ";
         else Out_scells_file << 0;
 
-        cout << "(" << output_counter++ << ")  " << "Random special k-cells for all k = {0,1,2,3} sequences has been successfully written in " << des_odir << endl;
-        Out_logfile_stream << "(" << output_counter << ")  " << "Random special k-cells for all k = {0,1,2,3} sequences has been successfully written in " << des_odir << endl;
-        cout << endl; Out_logfile_stream << endl;
+        cout << "(" << output_counter++ << ")  " << "Random special k-cells for all k = {0,1,2,3} sequences has been successfully written in " << des_odir << endl << endl;
+        Out_logfile_stream << "(" << output_counter << ")  " << "Random special k-cells for all k = {0,1,2,3} sequences has been successfully written in " << des_odir << endl << endl;
         Out_scells_file.close();
     } else cout << "Error: No such a directory for\t" << des_odir << endl;
 

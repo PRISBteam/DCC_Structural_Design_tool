@@ -62,8 +62,7 @@ std::vector<std::vector<int>>Configuration_State = configuration.Get_Configurati
     std::vector <unsigned int> special_x_sequence, current_sx_sequence; // variable sequences (in order of their generation) of special (SCS) and ordinary (OCS) k-cells
     std::vector <unsigned int> special_c_sequence; // variable sequences (in order of their generation) of "fractured" k-cells as the result of a kinetic process
 // State vector | Special faces IDs
-    cout << "=========================================================================" << endl << "\t\t\t\t\t[\tStart of the PCC Processing Tool\t]\t\t\t\t\t" << endl << "-------------------------------------------------------------------------" << endl;
-    Out_logfile_stream << "==============================================================================================================================================================" << endl << "\t\t\t\t\t[\tStart of the PCC Processing Tool\t]\t\t\t\t\t" << endl << "--------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "=========================================================================" << endl; Out_logfile_stream << "==============================================================================================================================================================" << endl;
 
 /// Read configuration from processing.ini file :: the number of special cell types and calculation parameters.
     std::vector<double> pindex_vector(4);

@@ -34,15 +34,11 @@ void PCC_Writer(CellsDesign &new_cells_design) {
     config_reader_writer(source_path, writer_specifications, Out_logfile_stream); // Read and output the initial configuration from the writer.ini file
 
     int output_counter = 0; // special counter for output numeration
-
-    /// Output special and ordinary face sequences to the output directory specified in config.txt
-    cout << writer_specifications.size() << endl;
-
+    
     if (writer_specifications.at(0) == 1)
         PCC_CellSequences_Writer(new_cells_design, output_counter);
-    cout << "1" << endl;
 
-    return ;
+    return;
 } /// END of PCC Writer module
 
 /// # 2 # overloaded
@@ -58,7 +54,6 @@ void PCC_Writer(CellsDesign &new_cells_design, ProcessedComplex &pcc_processed) 
 
     if (writer_specifications.at(0) == 1)
         PCC_CellSequences_Writer(new_cells_design, output_counter);
-    cout << "1" << endl;
 /**
     if (writer_specifications.at(2) == 1)
         PCC_Entropic_Writer(pcc_processed, output_counter);
