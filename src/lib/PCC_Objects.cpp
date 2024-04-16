@@ -18,10 +18,12 @@ std::ofstream Out_local_logstream;
 typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which declares a column-major sparse matrix type of doubles with the nickname 'SpMat'
 
 #include "PCC_Support_Functions.h" // It must be here - first in this list (!)
-#include "PCC_Objects.h"
 
 /// Tailored Reader for the main.ini file in the ../config/ subdirectory of the project based on the mINI C++ library (2018 Danijel Durakovic http://pulzed.com/, MIT license is included)
 #include "ini/ini_readers.h"
+
+// Local library
+#include "PCC_Objects.h"
 
 /// # 0 # The class CONFIG ::
 /*!
@@ -40,6 +42,10 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
     std::string Config::Get_output_dir() {
          return config_output_dir;
     }; //!@return output_dir
+
+    std::string Config::Get_pcc_standard(){
+        return pcc_standard;
+    }; //!@return pcc_standard
 
     std::vector<char*> Config::Get_paths() {
         return config_PCCpaths;
@@ -65,8 +71,8 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
         return Configuration_cState;
     }; //!@return Configuration_State
 
-    void Config::Read_config(){
-        config_ConfVector = config_reader_main(source_path, config_source_dir, config_output_dir, config_main_type);
+     void Config::Read_config(){
+        config_ConfVector = config_reader_main(source_path, config_source_dir, config_output_dir, pcc_standard, config_main_type);
 
         config_dim = config_ConfVector.at(0); // [0] space dimension of the problem (dim = 1, 2 or 3);
         if (config_dim != 1 && config_dim != 2 && config_dim != 3) {
@@ -76,7 +82,7 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
                     << endl;
             exit(1);
         }
-
+         if (pcc_standard == "pcc1s") {
 /// Several file PCCpaths to the sparse PCC's matrices which must already exit in the 'source_dir' and have the same names as below (!)
 // They can be obtained by the PCC Generator tool (https://github.com/PRISBteam/Voronoi_PCC_Analyser) based on the Neper output (*.tess file) (https://neper.info/) or PCC Structure Generator tool (https://github.com/PRISBteam/PCC_Structure_Generator) for plasticity problems
 //  PCC matrices, metrices and coordinates
@@ -130,11 +136,13 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 /// ---> edge lengths HERE (!) // see next 'ssd14 = source_dir + "edge_lengths.txt"s;' and replace with 'ssd6'
         if (is_file_exists(config_source_dir + "measures/face_areas.txt"s) && config_dim >= 2)
             ssd7 = config_source_dir + "measures/face_areas.txt"s; // 2D face_areas
-        else ssd7 = "PCC reading ERROR: there is no 'face_areas' file in the PCC directory"s;
+        else
+            ssd7 = "PCC reading ERROR: there is no 'face_areas' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd7.c_str()));
         if (is_file_exists(config_source_dir + "measures/polyhedron_volumes.txt"s) && config_dim == 3)
             ssd8 = config_source_dir + "measures/polyhedron_volumes.txt"s; // 3D polyhedron_volumes
-        else ssd8 = "PCC reading ERROR: there is no 'polyhedron_volumes' file in the PCC directory"s;
+        else
+            ssd8 = "PCC reading ERROR: there is no 'polyhedron_volumes' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd8.c_str()));
         //    if (is_file_exists(source_dir + "measures/edge_lengths.txt"s) && dim >= 1) ssd14 = source_dir + "measures/edge_lengths.txt"s; // edge barycentres coordinates      PCCpaths.push_back(const_cast<char *>(ssd14.c_str()));
 
@@ -142,23 +150,28 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 // In the for of vector<tuple<double, double, double>> vertex_coordinates_vector, edge_coordinates_vector, face_coordinates_vector, grain_coordinates_vector;
         if (is_file_exists(config_source_dir + "coordinates/polyhedron_seeds.txt"s) && config_dim == 3)
             ssd9 = config_source_dir + "coordinates/polyhedron_seeds.txt"s; // grain (polyhedron) seeds
-        else ssd9 = "PCC reading ERROR: there is no 'polyhedron_seeds' file in the PCC directory"s;
+        else
+            ssd9 = "PCC reading ERROR: there is no 'polyhedron_seeds' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd9.c_str()));
         if (is_file_exists(config_source_dir + "coordinates/vertex_seeds.txt"s) && config_dim >= 1)
             ssd10 = config_source_dir + "coordinates/vertex_seeds.txt"s; // vertex coordinates
-        else ssd10 = "PCC reading ERROR: there is no 'vertex_seeds' file in the PCC directory"s;
+        else
+            ssd10 = "PCC reading ERROR: there is no 'vertex_seeds' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd10.c_str()));
         if (is_file_exists(config_source_dir + "other/face_normals.txt"s) && config_dim >= 2)
             ssd11 = config_source_dir + "other/face_normals.txt"s; // face normal vectors
-        else ssd11 = "PCC reading ERROR: there is no 'face_normals' file in the PCC directory"s;
+        else
+            ssd11 = "PCC reading ERROR: there is no 'face_normals' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd11.c_str()));
         if (is_file_exists(config_source_dir + "coordinates/edge_seeds.txt"s) && config_dim >= 1)
             ssd12 = config_source_dir + "coordinates/edge_seeds.txt"s; // edge barycentres coordinates
-        else ssd12 = "PCC reading ERROR: there is no 'edge_seeds' file in the PCC directory"s;
+        else
+            ssd12 = "PCC reading ERROR: there is no 'edge_seeds' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd12.c_str()));
         if (is_file_exists(config_source_dir + "coordinates/face_seeds.txt"s) && config_dim >= 2)
             ssd13 = config_source_dir + "coordinates/face_seeds.txt"s; // face barycentres coordinates
-        else ssd13 = "PCC reading ERROR: there is no 'face_seeds' file in the PCC directory"s;
+        else
+            ssd13 = "PCC reading ERROR: there is no 'face_seeds' file in the PCC directory"s;
         config_PCCpaths.push_back(const_cast<char *>(ssd13.c_str()));
 
 /// Vector with rhe numbers of PCC k-cells for k\in{0,1,2,3} from file
@@ -166,7 +179,13 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
             std::string ncells = config_source_dir + "/combinatorial/number_of_cells.txt"s;
             char *number_of_cells = const_cast<char *>(ncells.c_str());
 // :: CellNumbs vector components: [0] - Nodes number, [1] - Edges number, [2] - Faces number, [3] - Polyhedrons number
-            CellNumbs = VectorIReader(number_of_cells); // VectorReader is a function from the PCC_SupportFunctions.h library; "number_of_cells" here if the PATH to file
+            CellNumbs = VectorIReader(
+                    number_of_cells); // VectorReader is a function from the PCC_SupportFunctions.h library; "number_of_cells" here if the PATH to file
+        } // end of  if (pcc_standard == "pcc1s")
+else {
+    cout << "ERROR in the reading PCC: please specify the correct 'pcc_standard' perameter in the config/main.ini file corresponding to the version of the PCC you use (please see technical documentation for more details, the first PCC standard has an ID 'pcc1s'" << endl;
+    exit(1);
+}
 /// CellNumbs output
         Out_local_logstream.open(config_output_dir + "Processing_Design.log"s, ios::app); // this *.log stream will be closed at the end of the main function
             cout << "=====================================================================================" << endl;
@@ -378,7 +397,8 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 
     /// Grains
     void Subcomplex::Set_grains_sequence(std::vector <unsigned int> new_sub_grains_sequence){
-        sub_grains_sequence = new_sub_grains_sequence; }
+        sub_grains_sequence = new_sub_grains_sequence;
+    }
 
     std::vector <unsigned int> Subcomplex::Get_grains_sequence(unsigned int subcomplex_id){
         if(sub_grains_sequence.size() != 0)
@@ -388,9 +408,11 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 
     /// geometry
     void Subcomplex::Set_sub_grain_coordinates(std::vector<tuple<double, double, double>> new_sub_grain_coordinates){
-        sub_grain_coordinates = new_sub_grain_coordinates; }
-    std::vector<tuple<double, double, double>> Subcomplex::Get_sub_grain_coordinates(unsigned int subcomplex_id){
-        return sub_grain_coordinates; }
+        sub_grain_coordinates = new_sub_grain_coordinates;
+    }
+    std::vector<std::tuple<double, double, double>> Subcomplex::Get_sub_grain_coordinates(unsigned int subcomplex_id){
+        return sub_grain_coordinates;
+    }
 
     //2
 //    std::vector <unsigned int>  Get_grains_sequence(unsigned int subcomplex_id, std::vector <unsigned int> new_sub_grains_sequence){
@@ -399,7 +421,8 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 
     /// Faces
     void Subcomplex::Set_faces_sequence(std::vector <unsigned int> new_sub_faces_sequence){
-        sub_faces_sequence = new_sub_faces_sequence; }
+        sub_faces_sequence = new_sub_faces_sequence;
+    }
     //1
     std::vector <unsigned int>  Subcomplex::Get_faces_sequence(unsigned int  subcomplex_id){
         if(sub_faces_sequence.size() != 0)

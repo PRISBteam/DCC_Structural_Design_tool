@@ -1,7 +1,7 @@
 ///******************************************************************************************************************************///
 ///************************   Polytopal Cell Complex (PCC) Processing Design :: (CPD code) (c)   *******************************///
 ///****************************************************************************************************************************///
-///*                                        Version 4.0 | 12/04/2024                                                         *///
+///*                                        Version 4.0 | 15/04/2024                                                         *///
 ///**************************************************************************************************************************///
 ///************************************ Dr Elijah Borodin, Manchester, UK **************************************************///
 ///**************************************** Spring 2022 - Spring 2024  ****************************************************///
@@ -11,15 +11,15 @@
 ///*    Documentation:  https://prisbteam.github.io/
 ///*    PCC sources:    https://materia.team/
 ///*
-///*  The project provides a reliable tool for 1. Obtaining, 2. Analysing and 3. Improving of 'design vectors' as the sequences                          *///
+///*  The project provides a reliable tool for 1. Obtaining, 2. Analysing and 3. Optimising of 'design vectors' as the sequences                         *///
 ///*  of k-cells containing in the k-skeletons, where k = {0,1,2,3}, of a Polytopal Cell Complex (PCC). Such PCCs can be created by external             *///
 ///*  codes based on the tessellation of 2D or 3D spaces by an agglomeration of polytopes (polygons in the 2D case or polyhedrons in 3D).                *///
 ///*  Graphs and networks (without loops) are considered as 1-complexes (1-PCCs) and also available for analysis similarly to the the 2D and 3D cases.   *///
 
-///* Key terminology:
-/// Material's elements         ::   'quadruple points', 'grain boundary junctions', 'grain boundaries', and 'grains' (with their orientations and barycenter coordinates)
-/// Tessellation's elements     ::   'nodes, 'edges', 'faces', 'polytopes' (with their measures - lengths, areas and volumes - and barycenter coordinates)
-/// PCC's elements              ::   'k-cells' containing in 'k-skeletons', where k = {0,1,2,3}, with their degree fractions, and incident (k-1)-cells and (k+1)-cells.
+///* Key terminology:                                                                                                                                                               *///
+/// Tessellation's elements     ::   'nodes, 'edges', 'faces', 'polytopes' (with their measures - lengths, areas and volumes - and barycenter coordinates)                         ///
+/// PCC's elements              ::   'k-cells' containing in 'k-skeletons', where k = {0,1,2,3}, with their degree fractions, and incident (k-1)-cells and (k+1)-cells.           ///
+/// Material's elements         ::   'quadruple points', 'grain boundary junctions', 'grain boundaries', and 'grains' (with their orientations and barycenter coordinates often taken from EBSD or X-ray analysis)  ///
 
 ///* ----------------------------------------- *
 ///* Standard C++ (STL) libraries
@@ -53,30 +53,30 @@ using namespace Eigen; // Eigen library namespace
 using namespace Spectra; // Spectra library namespace
 
 /// Eigen library-based classes
-typedef Triplet<double> Tr; // <Eigen> library class, which declares a triplet type with the nickname 'Tr' as the objects in the form T = T(i, j, value), where i and j are element's a(i, j) indices in the corresponding dense matrix and the third variable is its value
+typedef Triplet<double> Tr; // <Eigen> library class, which declares a triplet type with the nickname 'Tr' as the objects in the form T = T(i, j, value), where i and j are element's a(i,j) indices in the corresponding dense matrix and the third variable is its value
 typedef SparseMatrix<double> SpMat; // <Eigen> library class, which declares a column-major sparse matrix type of doubles with the nickname 'SpMat'
 typedef MatrixXd DMat; // <Eigen> library class, which declares a dense matrix type of doubles with the nickname 'DMat'
 
 /// * ---------------------------------------------------------------------------------------------------------- *///
-/// * ============================================ GLOBAL VARIABLES ============================================ *///
-/// * ----------- Declaration of GLOBAL variables (can be seen in all the project modules and libraries)-------- *///
+/// * ======================================== GLOBAL PROJECT VARIABLES ======================================== *///
+/// * ------ Declaration of GLOBAL variables which can be seen in all the project modules and libraries -------- *///
 
 /// Technical variables
 std::string source_path = "../config/"s; char* sourcepath = const_cast<char*>(source_path.c_str()); // 'source_path' is a path to the directory reading from the 'config/main.ini' file
-std::string main_type; // 'mode' from the config/main.ini file: 'LIST' (execution one by one all the active (ON) project modules), 'TUTORIAL' as a specific education mode, 'PERFORMANCE_TEST' (a special test for the computer performance and its ability to work with large PCC), 'TASK' mode (user-defined task scripts with modules and functions included from the project's libraries).
+std::string main_type; // 'mode' from the config/main.ini file: 'LIST' for the execution one by one all the active (ON in the config file) project modules; 'TUTORIAL' as a specific educational mode; 'PERFORMANCE_TEST' as a special test for a computer performance and its ability to work with large PCCs, and the 'TASK' mode, where user-defined task scripts described in separate 'tasks/*.cpp' files are included with all the necessary modules and functions from the project's libraries.
 
-std::vector<char*> PCCpaths; // The vector containing the PCCpaths to all the PCC's matrices, measures and other supplementary data
-std::string source_dir, output_dir; // Input and output directories as it is written in the 'config/main.ini' file
-std::string sim_task; // Path to the corresponding *.cpp file containing a 'simulation task' (for 'TASK' execution mode only, not 'LIST') as it is written in the 'config/main.ini' file
+std::vector<char*> PCCpaths; // The vector containing the paths to all the PCC's matrices, measures and other supplementary data files
+std::string source_dir, output_dir; // Input directory (if the initial configuration must be read from file) and output directory for the Writer module and the project log file as it is written in the 'config/main.ini' file
+std::string sim_task; // Path to the corresponding 'tasks/*.cpp' file containing a 'simulation task' (for 'TASK' execution mode only) as it is written in the 'config/main.ini' file
 
 /// Global 'log.txt' file output
 std::ofstream Out_logfile_stream; // 'Processing_Design.log' file output of the entire computation process as a copy of the console output
 
 /// PCC - related variables
-int dim; // Tessellation dimension corresponding to the maximal 'k' in the PCC's k-cells: dim = 1 for graphs and networks, dim = 2 for the 2D plane polygonal complexes, and dim = 3 for the 3D bulk polytopal complexes, as it is specified in the 'config/main.ini' file.
+int dim; // Tessellation dimension corresponding to the maximal 'k' in the PCC's k-cells: dim = 1 for graphs and networks, dim = 2 for the 2D plane polygonal tessellations, and dim = 3 for the 3D bulk volumetric tessellations, as it is specified in the 'config/main.ini' file.
 
-// Combinatorial
-std::vector<unsigned int> CellNumbs; // the vector named CellNumbs containing the numbers of k-cells of different types 'k'. It is read from the 'number_of_cells.txt' file.
+/// Combinatorial
+std::vector<unsigned int> CellNumbs; // the vector named CellNumbs containing the numbers of k-cells of different types 'k'. It is read from the 'number_of_cells.txt' file of a PCC.
 // First line here is the number of nodes (0-cells), second - edges (1-cells), third - faces (2-cells) (in the 2D and 3D cases only), fourth - polyhedra (3-cells) (in the 3D case only)
 
 /// Geometry
@@ -87,39 +87,42 @@ std::vector<std::tuple<double, double, double>> node_coordinates_vector, edge_co
 std::vector<double> edge_lengths_vector, face_areas_vector, polyhedron_volumes_vector; // Global vectors of measures: edge lengths, face areas and polyhedra volumes
 
 /// Time interval variables for different parts (modulus) of the CPD code
-double Main_time = 0.0, S_time = 0.0, P_time = 0.0, C_time = 0.0, M_time = 0.0, K_time = 0.0, W_time = 0.0;
+double Main_time = 0.0, S_time = 0.0, P_time = 0.0, C_time = 0.0, W_time = 0.0;
 
-/// * MODULES and LIBRARIES * ///
+/// * ===================== MODULES and LIBRARIES ==============================* ///
+///* =========================================================================== *///
 // * A task for the future: include all the code modules and functions as a single C++ library here placed in the STL directory #include <cpd_lib>
 
-/* Various useful functions  */
+/*! Various useful functions (mostly supplementary) are defined here */
 #include "lib/PCC_Support_Functions.h" // It must be here - first in this list of libraries (!)
 
-/* Various set measures */
+/*! Various set measures are defined here */
 #include "lib/PCC_Measures.h"
 
-/* Objects library contains classes of various objects related to PCC's substructures and k-cells */
+/*! An Objects library contains classes of various objects related to the PCC's substructures and k-cells */
  #include "lib/PCC_Objects.h"
 
-/* Section module calculates reduced PCC subcomplexes (including plain cuts) inheriting reduced sequences of special cells and 'state vectors' of the original PCC */
-#include "lib/PCC_Section/PCC_Subcomplex.h"
+/*! Section module calculates reduced PCC subcomplexes (parts of the initial PCC including plain cuts) inheriting reduced sequences of special cells and 'state vectors' of the original PCC */
+/// #include "lib/PCC_Section/PCC_Subcomplex.h"
 
-/* Processing module assigned special IDs for the various elements (Nodes, Edges, Faces, Polytopes/Polyhedrons) of the space tessellation */
+/*! Processing module assigned special IDs for the various elements (Nodes, Edges, Faces, Polytopes/Polyhedrons) of the space tessellation */
 /* Output: module generates a design_sequences as the lists containing the sequences of k-cells possessing "special" IDs including
  * (1) ASSIGNED: k-Cells, k={0,1,2,3}, corresponding to different generation principles (random, maximum entropy,.. etc.),
  * (2) IMPOSED: m-Cells (where m < k) directly labelled based on the HIGH-ORDER k-Cell IDs
- * (3) INDUCED: i-Cells generated as a result of some KINETIC process. They are always DEPEND on the ASSIGNED 'design_sequences' of special k-Cells (and maybe also imposed special m-Cells structures) */
+ * (3) INDUCED: i-Cells generated as a result of some KINETIC process. They are always DEPEND on the ASSIGNED design 's_cell_sequences' of special k-Cells and maybe also on the induced 's_induced_cell_sequences' of m-Cells */
 #include "lib/PCC_Processing/PCC_Processing.h"
+
+/*! The module provides vectors with the characteristics (entropic, spectral, etc.) representing evolution of state vectors as it given by the PCC_Processing module */
+#include "lib/PCC_Characterisation/PCC_Characterisation.h"
 
 /* Writer module performs formatted output of various data structures generated by other modules */
 #include "lib/PCC_Writer/PCC_Writer.h"
 
-/// PCC special structure-related variables :: see class 'Config' in Objects.h and Object.cpp files
-// Initial configuration as an object of the 'Config' class described in Objects.cpp project library
-Config initial_configuration, configuration; // class Config described in Objects.cpp
-
 /// 'CPD Tutorial' :: educational course active in the 'TUTORIAL' (please see 'config/main.ini' file) code execution mode
 void tutorial();
+
+/// PCC special structure-related variables :: see class 'Config' in Objects.h and Object.cpp files
+Config initial_configuration, configuration; // Initial configuration as an object of the 'Config' class described in Objects.cpp project library
 
 /// 'CPD PERFORMANCE_TEST' :: testing mode, please see 'config/main.ini' file
 void performance_test(Config &initial_configuration);
@@ -128,7 +131,7 @@ void performance_test(Config &initial_configuration);
 //* (.h files) * @brief, @param and @return
 //* (.cpp files) * @details (detailed descriptions)
 /*!
-* @details Implement the whole program execution according to the specifications written in 'config/*.ini' files.
+* @details Implement the whole program execution according to the specifications written in 'config/_.ini' files.
 * In particular, the LIST mode call the execution of the project modules one by one and compute the execution time for each of them.
 * @param void
 * @return 0 and the output to console and log file, if successful
@@ -145,9 +148,9 @@ int main() {
     cout << endl;
 
 /// Initial configuration reader and information output to the screen and into the 'Processing_Design.log' file
-    initial_configuration.Read_config();
+    initial_configuration.Read_config(); // Read_config() method of the class Config defined in Objects.h and described in Objects.cpp
 
-/// Setting values of the global variables
+/// Setting values of the global variables:: all the methods below are in the class Config defined in Objects.h and described in Objects.cpp
     std::vector<int> ConfigVector = initial_configuration.Get_ConfVector();
     dim = initial_configuration.Get_dim();
     source_dir = initial_configuration.Get_source_dir();
@@ -164,43 +167,44 @@ int main() {
 /// ========================================================================================================================================== ///
 /// ================================================= PERFORMANCE_TEST MODE STARTS HERE ================================================================== ///
 /// ========================================================================================================================================== ///
-if (main_type == "PERFORMANCE_TEST"s) { // testing mode 'PERFORMANCE_TEST' which should be further replaced in the 'config/main.ini' file with the 'TASK' or the 'LIST' mode.
+if (main_type == "PERFORMANCE_TEST"s) { // testing mode 'PERFORMANCE_TEST' which should be further replaced in the 'config/main.ini' file with the 'PERFORMANCE_TEST' and then the 'TASK' or the 'LIST' modes
     cout << "==================================================================================================================================================" << endl; Out_logfile_stream << "==============================================================================================================================================================" << endl;
     cout << "\t\t\t\t\t\t\t\t\t\t[\tStart of the PCC Processing Design code \t]\t\t\t\t\t\t\t\t\t\t" << endl << "--------------------------------------------------------------------------------------------------------------------------------------------------" << endl; Out_logfile_stream << "\t\t\t\t\t[\tStart of the PCC Processing Design code\t]\t\t\t\t\t" << endl << "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
 
-    performance_test(initial_configuration);
+    performance_test(initial_configuration); // output the 'performance_test.txt' file to the 'output_dir' showing the relative code execution times of the present server comparing with some reference execution times and suggest the preferable PCC sizes for various simulation tasks
 
 } // end if (main_type == "PERFORMANCE_TEST")
 
 /// ========================================================================================================================================== ///
 /// ================================================= TUTORIAL MODE STARTS HERE ================================================================== ///
 /// ========================================================================================================================================== ///
-else if (main_type == "TUTORIAL"s) { // only in the 'tutorial' execution type -  'mode' variable in the main.ini config file.
+else if (main_type == "TUTORIAL"s) { // TUTORIAL feature to facilitate the first acquaintance with the code: only in the 'TUTORIAL' execution type = the 'mode' variable in the config/main.ini file.
         cout << "==================================================================================================================================================" << endl; Out_logfile_stream << "==============================================================================================================================================================" << endl;
         cout << "\t\t\t\t\t\t\t\t\t\t[\tStart of the PCC Processing Design code \t]\t\t\t\t\t\t\t\t\t\t" << endl << "--------------------------------------------------------------------------------------------------------------------------------------------------" << endl; Out_logfile_stream << "\t\t\t\t\t[\tStart of the PCC Processing Design code\t]\t\t\t\t\t" << endl << "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
 
-        tutorial(); // TUTORIAL feature to facilitate the first acquaintance with the code
+        tutorial();
 } // end else if (main_type == "TUTORIAL")
 
 /// ========================================================================================================================================== ///
 /// ================================================= LIST MODE STARTS HERE ================================================================== ///
 /// ========================================================================================================================================== ///
 else if ( main_type == "LIST"s ) { // In the LIST mode all the functions are calling one after another without additional loops and intermediate data output
-// For all the more complicated simulation cases the TASK mode (see it following next after the 'LIST' module)
+/// For all the more complicated simulation cases the TASK mode should be used - see it following next after the 'LIST' module.
         cout << "==================================================================================================================================================" << endl; Out_logfile_stream << "=======================================================================================================================================================================================================================================" << endl;
         cout << "\t\t\t\t\t\t\t\t\t\t[\tStart of the PCC Processing Design code \t]\t\t\t\t\t\t\t\t\t\t" << endl << "--------------------------------------------------------------------------------------------------------------------------------------------------" << endl; Out_logfile_stream << "\t\t\t\t\t[\tStart of the PCC Processing Design code\t]\t\t\t\t\t" << endl << "--------------------------------------------------------------------------------------------------------------------------------------------------" << endl;
 
-    /// Initialisation of the current_configuration = initial_configuration
+    /// Initialisation of the current_configuration as equal to the initial_configuration
     configuration = initial_configuration;
 
-    // I: PCC_Section.h module
-    if (ConfigVector.at(1) == 1) { // if PCC_Section is SWITCH ON in the main.ini file
-            cout << " START of the PCC Subcomplex module " << endl;
-            Out_logfile_stream << " START of the PCC Subcomplex module " << endl;
+    /// ====================== I. PCC_Section.h module ======================
 
-///* module */// Subcomplex();
+    if (ConfigVector.at(1) == 1) { // if the 'PCC_Section' parameter is switched 'ON' in the config/main.ini file
+        cout << "-------------------------------------------------------------------------" << endl;             Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
+        cout << " START of the PCC Subcomplex module " << endl; Out_logfile_stream << " START of the PCC Subcomplex module " << endl;
 
-        // ===== Elapsing time Subcomplex ================
+///* past module here */// Subcomplex(configuration); // Subcomplex(configuration) function
+
+        // ================ Elapsing time for the Subcomplex module ================
             unsigned int Subcomplex_time = clock();
             S_time = (double) Subcomplex_time - Main_time;
             cout << "Section time is equal to  " << S_time/ pow(10.0,6.0) <<  "  seconds" << endl;
@@ -209,10 +213,12 @@ else if ( main_type == "LIST"s ) { // In the LIST mode all the functions are cal
             Out_logfile_stream << "-------------------------------------------------------" << endl;
     } // end if(SectionON)
 
-    CellsDesign new_cells_design; // A class (described in PCC_Objects.h) containing (1) all special k-cell sequences and (2) all the design_<*>_vectors for all k-cells
 
-/// II: PCC_Processing.h module
-        if (ConfigVector.at(2) == 1) { // if PCC_Processing is SWITCH ON in the main.ini file
+        /// ====================== II. PCC_Processing.h module ======================
+
+        CellsDesign new_cells_design; // A class (described in PCC_Objects.h) containing (1) all special k-cell sequences and (2) all the design_<*>_vectors for all k-cells
+
+        if (ConfigVector.at(2) == 1) { // if the 'PCC_Processing' parameter is switched 'ON' in the config/main.ini file
             cout << "-------------------------------------------------------------------------" << endl;             Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
             cout << "START of the PCC Processing module " << endl; Out_logfile_stream << "START of the PCC Processing module " << endl;
 
@@ -235,7 +241,7 @@ else if ( main_type == "LIST"s ) { // In the LIST mode all the functions are cal
 
 // ===== Elapsing time Writer ================
             unsigned int Writer_time = clock();
-            double W_time = (double) Writer_time - Main_time- C_time - S_time - P_time - M_time - K_time;
+            W_time = (double) Writer_time - Main_time- C_time - S_time - P_time;
             cout << "Writer time is equal to  " << W_time/ pow(10.0,6.0) <<  "  seconds" << endl;
     } // end if(WriterON)
 
@@ -282,6 +288,10 @@ void tutorial(){
     } /// END of the tutorial() function
 
 /// ====================# 2 #============================= PERFORMANCE TEST ================================================= ///
+/*!
+ * @details Output the 'performance_test.txt' file to the 'output_dir' showing the relative code execution times of the present server comparing with some reference execution times and suggest the preferable PCC sizes for various simulation tasks
+ * @param initial_configuration
+ */
 void performance_test(Config &initial_configuration) {
     CellsDesign new_cells_design;
 

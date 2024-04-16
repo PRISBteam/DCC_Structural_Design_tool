@@ -6,7 +6,7 @@
 /// ==== # 0 # =============== Structure for the initial configuration  ========================= ///
 
 /*!
- * @brief This class combine PCCpaths to directories and initial variables set in the config/*.ini files with the methods of their reading like
+ * @brief This class combine PCCpaths to directories and initial variables set in the config/_.ini files with the methods of their reading like
  * @public Get_config(), Set_config()
  * @param dim, source_dir, paths, ConfigVector
  * @return Configuration_State, Configuration_cState
@@ -15,6 +15,7 @@ class Config {
     private:
         int config_dim;
         std::string config_source_dir, config_output_dir; // Input and output directories as it is written in the 'config/main.ini' file
+        std::string pcc_standard; // PCC standard as specified in the technical documentation for the project
         std::vector<char*> config_PCCpaths;
         std::vector<int> config_ConfVector; // main module keys
         std::string config_main_type; // 'mode' from the config/main.ini file: 'LIST' (execution one by one all the active (ON) project modules), 'TUTORIAL' as a specific education mode, 'PERFORMANCE_TEST' or the 'TASK' mode :: This define the global simulation mode: 'LIST' for the "list" of modules implementing one by one (if ON) and 'TASK' for the user-defined task scripts with modules and functions included from the project's libraries
@@ -38,6 +39,7 @@ public:
     std::vector<int> Get_ConfVector(); //!@return ConfVector
     std::string Get_source_dir(); //!@return source_dir
     std::string Get_output_dir(); //!@return output_dir
+    std::string Get_pcc_standard(); //!@return pcc_standard
     std::vector<char*> Get_paths(); //!@return PCC PCCpaths
     std::string Get_main_type(); //!@return main_type
     std::string Get_sim_task(); //!@return sim_task path to the corresponding *.cpp file containing the task code
@@ -46,8 +48,6 @@ public:
     std::vector<std::vector<int>> Get_Configuration_cState(); //!@return Configuration_State
 };
 // ConfigVector (../config/main.ini) contains ALL the control variables needed for the program execution
-
-
 
 /// ==== # 1 # =============== CellsDesign class  ========================= ///
 class CellsDesign{

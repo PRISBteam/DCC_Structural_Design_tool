@@ -12,7 +12,7 @@
 using namespace std; // standard namespace
 
 /// ================== # 1 # Initial configuration - reading and output ==================
-std::vector<int> config_reader_main(std::string &source_path, std::string &source_dir, std::string &output_dir, std::string &main_type) {
+std::vector<int> config_reader_main(std::string &source_path, std::string &source_dir, std::string &output_dir, std::string &cell_complex_standard, std::string &main_type) {
 
     std::vector<int> res(7,0);
 /// [0] - > dim, [1] -> isSection, [2] -> isProcessing, [3] -> isCharacterisation, [4] -> isMultiphysics, [5] -> isKinetic, [6] -> isWriter
@@ -27,20 +27,21 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
     file.read(main_ini);
 
 // 0
-/*    if (main_ini.has("execution_type")) {
-        auto& collection = main_ini["execution_type"];
-        if (collection.has("e_type"))
-        {
-            e_type = main_ini.get("execution_type").get("e_type");
-        } }
-*/
+//    if (main_ini.has("execution_type")) {
+//        auto& collection = main_ini["execution_type"];
+//        if (collection.has("e_type"))
+//        {
+//            e_type = main_ini.get("execution_type").get("e_type");
+//        } }
+
 // I
     if (main_ini.has("simulation_mode")) {
         auto& collection = main_ini["simulation_mode"];
         if (collection.has("mode"))
         {
             main_type = main_ini.get("simulation_mode").get("mode");
-        } }
+        }
+    }
 // II
     std::string problem_dimension;
     if (main_ini.has("general")) {
@@ -61,23 +62,23 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
         if (collection.has("PCC_Processing"))
             isProcessing = main_ini.get("modules").get("PCC_Processing");
     }
-/*
-    if (main_ini.has("modules")) {
-        auto& collection = main_ini["modules"];
-        if (collection.has("PCC_Characterisation"))
-            isCharacterisation = main_ini.get("modules").get("PCC_Characterisation");
-    }
-    if (main_ini.has("modules")) {
-        auto& collection = main_ini["modules"];
-        if (collection.has("PCC_Multiphysics"))
-            isMultiphysics = main_ini.get("modules").get("PCC_Multiphysics");
-    }
-    if (main_ini.has("modules")) {
-        auto& collection = main_ini["modules"];
-        if (collection.has("PCC_Kinetic"))
-            isKinetic = main_ini.get("modules").get("PCC_Kinetic");
-    }
-*/
+
+//    if (main_ini.has("modules")) {
+//        auto& collection = main_ini["modules"];
+//        if (collection.has("PCC_Characterisation"))
+//            isCharacterisation = main_ini.get("modules").get("PCC_Characterisation");
+//    }
+//    if (main_ini.has("modules")) {
+//        auto& collection = main_ini["modules"];
+//        if (collection.has("PCC_Multiphysics"))
+//            isMultiphysics = main_ini.get("modules").get("PCC_Multiphysics");
+//    }
+//    if (main_ini.has("modules")) {
+//        auto& collection = main_ini["modules"];
+//        if (collection.has("PCC_Kinetic"))
+//            isKinetic = main_ini.get("modules").get("PCC_Kinetic");
+//    }
+
     if (main_ini.has("modules")) {
         auto& collection = main_ini["modules"];
         if (collection.has("PCC_Writer"))
@@ -98,6 +99,13 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
         if (collection.has("source_dir"))
             source_dir = main_ini.get("general").get("source_dir");
     }
+
+    if (main_ini.has("general")) {
+        auto& collection = main_ini["general"];
+        if (collection.has("pcc_standard"))
+            cell_complex_standard = main_ini.get("general").get("pcc_standard");
+    } // like 'pcc1s'
+
     if (main_ini.has("general")) {
         auto& collection = main_ini["general"];
         if (collection.has("output_dir"))
@@ -109,6 +117,7 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
     cout << "Simulation mode:\t"s << "\t" << main_type << endl;
     cout << "Output directory:\t"s << "\t" << output_dir << endl;
     cout << "PCC source directory:\t"s << source_dir << endl;
+    cout << "PCC standard ID:\t\t"s << cell_complex_standard << endl;
     cout << endl;
     if (isSectionON == 1) cout << "ON    | PCC_Section"s << endl;
     else cout << "OFF    | PCC_Section"s << endl;
@@ -129,6 +138,7 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
     Out_logfile_stream.open(output_dir + "Processing_Design.log"s, ios::trunc); // this *.log stream will be closed at the end of the main function
     Out_logfile_stream << endl;
     Out_logfile_stream << "The problem dimension that is the maximum value k_max of k-cells in the PCC:\t\t|\t\t"s << "dim = " << res.at(0) << endl;
+    Out_logfile_stream << "PCC standard ID:\t\t"s << cell_complex_standard << endl;
     Out_logfile_stream << endl;
     Out_logfile_stream << "Simulation mode:\t"s << "\t" << main_type << endl;
     Out_logfile_stream << "Output directory:\t"s << "\t" << output_dir << endl;
@@ -595,8 +605,271 @@ vector<double> max_fractions_output(3, 0); // temporary vector serving as an out
     return;
 } /// END of config_reader_processing function
 
-/// ================== # 6 # Initial WRITER module configuration - reading and output ==================
 
+/// ================== # 3 # Initial CHARACTERISATION module configuration - reading and output ==================
+std::vector<double> config_reader_characterisation(std::string const &source_path, std::vector<int> &charlabs_polyhedrons, std::vector<int> &charlabs_faces, std::vector<int> &charlabs_edges, std::vector<int> &charlabs_nodes, std::vector<int> &charlabs_laplacians, std::ofstream &Out_logfile_stream) {
+    std::vector<double> config_characterisation_vector;
+
+// ini files reader - external (MIT license) library
+    mINI::INIFile file(source_path + "characterisation.ini"s);
+    mINI::INIStructure char_ini;
+    file.read(char_ini);
+
+/// Polyhedrons
+    if (char_ini.has("polyhedrons_lab")) {
+        auto& collection = char_ini["polyhedrons_lab"];
+        if (collection.has("pl_active"))
+        {
+            charlabs_polyhedrons.push_back(stoi(char_ini.get("polyhedrons_lab").get("pl_active")));
+        } }
+
+    if (char_ini.has("polyhedrons_lab")) {
+        auto& collection = char_ini["polyhedrons_lab"];
+        if (collection.has("config_entropy"))
+        {
+            charlabs_polyhedrons.push_back(stoi(char_ini.get("polyhedrons_lab").get("config_entropy")));
+        } }
+
+    if (char_ini.has("polyhedrons_lab")) {
+        auto& collection = char_ini["polyhedrons_lab"];
+        if (collection.has("S_mean"))
+        {
+            charlabs_polyhedrons.push_back(stoi(char_ini.get("polyhedrons_lab").get("S_mean")));
+        } }
+
+    if (char_ini.has("polyhedrons_lab")) {
+        auto& collection = char_ini["polyhedrons_lab"];
+        if (collection.has("S_skew"))
+        {
+            charlabs_polyhedrons.push_back(stoi(char_ini.get("polyhedrons_lab").get("S_skew")));
+        } }
+
+/// Faces
+    if (char_ini.has("faces_lab")) {
+        auto& collection = char_ini["faces_lab"];
+        if (collection.has("fl_active"))
+        {
+            charlabs_faces.push_back(stoi(char_ini.get("faces_lab").get("fl_active")));
+        } }
+
+    if (char_ini.has("faces_lab")) {
+        auto& collection = char_ini["faces_lab"];
+        if (collection.has("config_entropy"))
+        {
+            charlabs_faces.push_back(stoi(char_ini.get("faces_lab").get("config_entropy")));
+        } }
+
+    if (char_ini.has("faces_lab")) {
+        auto& collection = char_ini["faces_lab"];
+        if (collection.has("S_mean"))
+        {
+            charlabs_faces.push_back(stoi(char_ini.get("faces_lab").get("S_mean")));
+        } }
+
+    if (char_ini.has("faces_lab")) {
+        auto& collection = char_ini["faces_lab"];
+        if (collection.has("S_skew"))
+        {
+            charlabs_faces.push_back(stoi(char_ini.get("faces_lab").get("S_skew")));
+        } }
+
+    if (char_ini.has("faces_lab")) {
+        auto& collection = char_ini["faces_lab"];
+        if (collection.has("j_fractions"))
+        {
+            charlabs_faces.push_back(stoi(char_ini.get("faces_lab").get("j_fractions")));
+        } }
+
+    if (char_ini.has("faces_lab")) {
+        auto& collection = char_ini["faces_lab"];
+        if (collection.has("d_fractions"))
+        {
+            charlabs_faces.push_back(stoi(char_ini.get("faces_lab").get("d_fractions")));
+        } }
+
+/// Edges
+    if (char_ini.has("edges_lab")) {
+        auto& collection = char_ini["edges_lab"];
+        if (collection.has("el_active"))
+        {
+            charlabs_edges.push_back(stoi(char_ini.get("edges_lab").get("el_active"))); // [0]
+        } }
+
+    if (char_ini.has("edges_lab")) {
+        auto& collection = char_ini["edges_lab"];
+        if (collection.has("config_entropy"))
+        {
+            charlabs_edges.push_back(stoi(char_ini.get("edges_lab").get("config_entropy"))); // [1]
+        } }
+
+    if (char_ini.has("edges_lab")) {
+        auto& collection = char_ini["edges_lab"];
+        if (collection.has("S_mean"))
+        {
+            charlabs_edges.push_back(stoi(char_ini.get("edges_lab").get("S_mean"))); // [2]
+        } }
+
+    if (char_ini.has("edges_lab")) {
+        auto& collection = char_ini["edges_lab"];
+        if (collection.has("S_skew"))
+        {
+            charlabs_edges.push_back(stoi(char_ini.get("edges_lab").get("S_skew"))); // [3]
+        } }
+
+    if (char_ini.has("edges_lab")) {
+        auto& collection = char_ini["edges_lab"];
+        if (collection.has("analytical"))
+        {
+            charlabs_edges.push_back(stoi(char_ini.get("edges_lab").get("analytical"))); // [4]
+        } }
+
+/// Nodes
+    if (char_ini.has("nodes_lab")) {
+        auto& collection = char_ini["nodes_lab"];
+        if (collection.has("nl_active"))
+        {
+            charlabs_nodes.push_back(stoi(char_ini.get("nodes_lab").get("nl_active")));
+        } }
+
+    if (char_ini.has("nodes_lab")) {
+        auto& collection = char_ini["nodes_lab"];
+        if (collection.has("config_entropy"))
+        {
+            charlabs_nodes.push_back(stoi(char_ini.get("nodes_lab").get("config_entropy")));
+        } }
+
+    if (char_ini.has("nodes_lab")) {
+        auto& collection = char_ini["nodes_lab"];
+        if (collection.has("S_mean"))
+        {
+            charlabs_nodes.push_back(stoi(char_ini.get("nodes_lab").get("S_mean")));
+        } }
+
+    if (char_ini.has("nodes_lab")) {
+        auto& collection = char_ini["nodes_lab"];
+        if (collection.has("S_skew"))
+        {
+            charlabs_nodes.push_back(stoi(char_ini.get("nodes_lab").get("S_skew")));
+        } }
+
+/// Laplacians
+    if (char_ini.has("spectra_lab")) {
+        auto& collection = char_ini["spectra_lab"];
+        if (collection.has("calc_steps_numb"))
+        {
+            charlabs_laplacians.push_back(stoi(char_ini.get("spectra_lab").get("calc_steps_numb"))); // 0
+        } }
+
+    if (char_ini.has("spectra_lab")) {
+        auto& collection = char_ini["spectra_lab"];
+        if (collection.has("laplacians"))
+        {
+            charlabs_laplacians.push_back(stoi(char_ini.get("spectra_lab").get("laplacians"))); // 1
+        } }
+
+    /// Output to the screen/console
+    cout<< "______________________________________________________________________________________" << endl;
+    cout << "The Characterisation module simulation type and initial parameters:\t\t" << endl;
+    cout << endl;
+    cout << "Polyhedrons lab ON/OFF:\t"s << charlabs_polyhedrons.at(0) << "\t\t" << endl;
+    cout << "Faces lab       ON/OFF:\t"s << charlabs_faces.at(0) << "\t\t" << endl;
+    cout << "Edges lab       ON/OFF:\t"s << charlabs_edges.at(0) << "\t\t" << endl;
+    cout << "Nodes lab       ON/OFF:\t"s << charlabs_nodes.at(0) << "\t\t" << endl;
+    cout << endl;
+
+    if(charlabs_polyhedrons.at(0) == 1) { // Polyhedrons
+        cout << "Polyhedrons configuration entropy:\t"s << charlabs_polyhedrons.at(0) << "\t\t" << endl;
+        cout << "Conf entropy mean part:\t"s << charlabs_polyhedrons.at(1) << "\t\t" << endl;
+        cout << "Conf entropy skew part:\t"s << charlabs_polyhedrons.at(2) << "\t\t" << endl;
+        cout << endl;
+    } // if(charlabs_polyhedrons.at(0) == 1)
+    if(charlabs_faces.at(0) == 1) { // Faces
+        cout << "Faces configuration entropy:\t"s << charlabs_faces.at(0) << "\t\t" << endl;
+        cout << "Conf entropy mean part:\t"s << charlabs_faces.at(1) << "\t\t" << endl;
+        cout << "Conf entropy skew part:\t"s << charlabs_faces.at(2) << "\t\t" << endl;
+        cout << "Edges fractions:\t"s << charlabs_faces.at(3) << "\t\t" << endl;
+        cout << "Edges degree fractions:\t"s << charlabs_faces.at(4) << "\t\t" << endl;
+        cout << endl;
+    } // if(charlabs_faces.at(0) == 1)
+    if(charlabs_edges.at(0) == 1) { // Edges
+        cout << "Edges configuration entropy:\t"s << charlabs_edges.at(0) << "\t\t" << endl;
+        cout << "Conf entropy Mean (-) Skew:\t"s << charlabs_edges.at(1) << "\t\t" << endl;
+        cout << "Conf entropy mean part:\t"s << charlabs_edges.at(2) << "\t\t" << endl;
+        cout << "Conf entropy skew part:\t"s << charlabs_edges.at(3) << "\t\t" << endl;
+        cout << "Analytical solutions :\t"s << charlabs_edges.at(4) << "\t\t" << endl;
+        cout << endl;
+    } // if(charlabs_edges.at(0) == 1)
+    if(charlabs_nodes.at(0) == 1) { // Nodes
+        cout << "Node configuration entropy:\t"s << charlabs_nodes.at(0) << "\t\t" << endl;
+        cout << "Conf entropy mean part:\t"s << charlabs_nodes.at(1) << "\t\t" << endl;
+        cout << "Conf entropy skew part:\t"s << charlabs_nodes.at(2) << "\t\t" << endl;
+        cout << endl;
+    } // if(charlabs_polyhedrons.at(0) == 1)
+
+    if(charlabs_laplacians.at(0) > 0) { // Laplacians lab
+        cout << "Laplacians: number of calculation steps \t"s << charlabs_laplacians.at(0) << "\t\t" << endl;
+        cout << endl;
+    } // if(charlabs_laplacians.at(0) == 1)
+
+    if(charlabs_laplacians.at(1) == 1) { // Laplacians lab
+        cout << "Special cell Laplacians:\t"s << charlabs_laplacians.at(1) << "\t\t" << endl;
+        cout << endl;
+    } // if(charlabs_laplacians.at(0) == 1)
+    cout<< "______________________________________________________________________________________" << endl;
+
+/// Output into .log file
+    Out_logfile_stream<< "______________________________________________________________________________________" << endl;
+    Out_logfile_stream << "The Characterisation module simulation type and initial parameters:\t\t" << endl;
+    Out_logfile_stream << endl;
+    Out_logfile_stream << "Polyhedrons lab ON/OFF:\t"s << charlabs_polyhedrons.at(0) << "\t\t" << endl;
+    Out_logfile_stream << "Faces lab       ON/OFF:\t"s << charlabs_faces.at(0) << "\t\t" << endl;
+    Out_logfile_stream << "Edges lab       ON/OFF:\t"s << charlabs_edges.at(0) << "\t\t" << endl;
+    Out_logfile_stream << "Nodes lab       ON/OFF:\t"s << charlabs_nodes.at(0) << "\t\t" << endl;
+    Out_logfile_stream << endl;
+
+    if(charlabs_polyhedrons.at(0) == 1) { // Polyhedrons
+        Out_logfile_stream << "Polyhedrons configuration entropy:\t"s << charlabs_polyhedrons.at(0) << "\t\t" << endl;
+        Out_logfile_stream << "Conf entropy mean part:\t"s << charlabs_polyhedrons.at(1) << "\t\t" << endl;
+        Out_logfile_stream << "Conf entropy skew part:\t"s << charlabs_polyhedrons.at(2) << "\t\t" << endl;
+        Out_logfile_stream << endl;
+    } // if(charlabs_polyhedrons.at(0) == 1)
+    if(charlabs_faces.at(0) == 1) { // Faces
+        Out_logfile_stream << "Faces configuration entropy:\t"s << charlabs_faces.at(0) << "\t\t" << endl;
+        Out_logfile_stream << "Conf entropy mean part:\t"s << charlabs_faces.at(1) << "\t\t" << endl;
+        Out_logfile_stream << "Conf entropy skew part:\t"s << charlabs_faces.at(2) << "\t\t" << endl;
+        Out_logfile_stream << "Edges fractions:\t"s << charlabs_faces.at(3) << "\t\t" << endl;
+        Out_logfile_stream << "Edges degree fractions:\t"s << charlabs_faces.at(4) << "\t\t" << endl;
+        Out_logfile_stream << endl;
+    } // if(charlabs_faces.at(0) == 1)
+    if(charlabs_edges.at(0) == 1) { // Edges
+        Out_logfile_stream << "Edges configuration entropy:\t"s << charlabs_edges.at(0) << "\t\t" << endl;
+        Out_logfile_stream << "Conf entropy mean part:\t"s << charlabs_edges.at(1) << "\t\t" << endl;
+        Out_logfile_stream << "Conf entropy skew part:\t"s << charlabs_edges.at(2) << "\t\t" << endl;
+        Out_logfile_stream << endl;
+    } // if(charlabs_edges.at(0) == 1)
+    if(charlabs_nodes.at(0) == 1) { // Nodes
+        Out_logfile_stream << "Node configuration entropy:\t"s << charlabs_nodes.at(0) << "\t\t" << endl;
+        Out_logfile_stream << "Conf entropy mean part:\t"s << charlabs_nodes.at(1) << "\t\t" << endl;
+        Out_logfile_stream << "Conf entropy skew part:\t"s << charlabs_nodes.at(2) << "\t\t" << endl;
+        Out_logfile_stream << endl;
+    } // if(charlabs_polyhedrons.at(0) == 1)
+
+    if(charlabs_laplacians.at(0) > 0) { // Laplacians lab
+        Out_logfile_stream << "Laplacians: number of calculation steps \t"s << charlabs_laplacians.at(0) << "\t\t" << endl;
+        Out_logfile_stream << endl;
+    } // if(charlabs_laplacians.at(0) == 1)
+
+    if(charlabs_laplacians.at(1) == 1) { // Laplacians lab
+        Out_logfile_stream << "Special cell Laplacians:\t"s << charlabs_laplacians.at(1) << "\t\t" << endl;
+        Out_logfile_stream << endl;
+    } // if(charlabs_laplacians.at(0) == 1)
+    Out_logfile_stream<< "______________________________________________________________________________________" << endl;
+
+    return config_characterisation_vector;
+} // END of config characterisation reader function
+
+
+/// ================== # 4 # Initial WRITER module configuration - reading and output ==================
 void config_reader_writer(std::string &source_path, std::vector<int> &writer_specifications, std::ofstream &Out_logfile_stream) {
 /// writer_specifications vector ::
 int    isSequencesOutput;      // - >     [0]
@@ -712,9 +985,10 @@ int isBetti = 0; // Laplacians lab
     return;
 } /// END of config_reader_writer function
 
+/*
 /// ================== # 5 # Initial SUBCOMPLEX module configuration - reading and output ==================
 void config_reader_subcomplex(std::string &source_path, std::string &sctype, double &cut_length, std::ofstream &Out_logfile_stream) {
-/*    std::string line;
+     std::string line;
     ifstream inConf(config);
     bool isSectionON = 0;
 
@@ -729,8 +1003,8 @@ void config_reader_subcomplex(std::string &source_path, std::string &sctype, dou
     } else cout << "SubcomplexON() error: The file " << config << " cannot be read" << endl; // If something goes wrong
 
     if (time_step_one == 1) cout << "OFF   | DCC_Section"s << endl;
+
     return isSectionON;
-    */
 } /// end of the bool SubcomplexON() function
 
 /// ================== # 6 # Initial MULTIPFYSICS module configuration - physical dimesions and all ==================
@@ -772,3 +1046,4 @@ void config_reader_multiphysics(std::string &source_path, std::tuple<double, dou
 
     return;
 } /// end of the bool MultiphysicsON() function
+*/

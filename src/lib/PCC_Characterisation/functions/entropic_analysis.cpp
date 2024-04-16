@@ -3,7 +3,27 @@
 /** This subfile calculates the statistical characteristics of Edges incuding their Face indices and configurational entropy  **/
 ///==============================================================================================================================///
 
-using namespace std; ///Standard namespace
+/// Standard C++ libraries (STL):
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <random> // Require C++ 11 and above
+// #include <execution> // Require C++ 17 and above
+
+// external libraries
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
+
+// local libraries
+#include "../../PCC_Objects.h"
+#include "../../PCC_Support_Functions.h" // It must be here - first in this list (!)
+
+using namespace std; // standard namespace
+
+typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which declares a column-major sparse matrix type of doubles with the nickname 'SpMat'
+
+/*
 vector<double> EdgesStat( std::vector<unsigned int> &s_faces_sequence, std::vector<unsigned int> const& CellNumbs, Eigen::SparseMatrix<double> const& FES, char* output_dir, double &Face_Entropy_Median, double &Face_Entropy_Skrew, double &informativeness, vector<double> &j_types_fractions)
 {
     vector<double> TJsTypes(CellNumbs.at(1),0);
@@ -91,8 +111,7 @@ vector<double> EdgesStat( std::vector<unsigned int> &s_faces_sequence, std::vect
     return TJsTypes;
 }
 
-/*
- * ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////// Обработка матриц соседей: начльная статистика связей и матрицы смежности /////////////////////////////////////////////////////
 	long lt=0; knn=1;
 // Для каждой грани мы строим матрицу JEdgeNeigh[i][j] где на первом месте ее собственный J-тип а дальше список J-типов ее соседей
@@ -183,14 +202,11 @@ for (int l = 0; l < 5; l++)
 		JENStream.open("C:\\Users\\v94623eb\\Dropbox\\Projects\\Current simmulation\\Voronois\\Voronois\\VAnRes\\(HAGBs)Jlk.txt", ios::trunc);  //			 JENStream << JEN[0][0] + JEN[1][1] + JEN[2][2] + JEN[3][3]<<"\t"<< JEN[0][1] + JEN[1][0] + JEN[0][2] + JEN[2][0] + JEN[0][3] + JEN[3][0] + JEN[1][2] + JEN[2][1] + JEN[1][3] + JEN[3][1] + JEN[2][3] + JEN[3][2]<< "\t"<< JEN[0][1] + JEN[1][0]<< "\t"<< JEN[0][2] + JEN[2][0]<< "\t"<< JEN[0][3] + JEN[0][3]<< "\t"<< JEN[1][2] + JEN[2][1]<< "\t"<< JEN[1][3] + JEN[3][1]<< "\t"<< JEN[2][3] + JEN[3][2];
 		JENStream.close();
 
- *
- */
 
-
-/*//-------------------------------------------------------------------------------------
-/*//------------------------------QUADRUPLE POINTS----------------------------
-/*//-------------------------------------------------------------------------------------
-/*//-------------------------------------------------------------------------------------
+//*-------------------------------------------------------------------------------------
+//*------------------------------QUADRUPLE POINTS----------------------------
+//*-------------------------------------------------------------------------------------
+//*-------------------------------------------------------------------------------------
 //Ji-Jj analyser
 //--------------------------------------------------------------------------------------
 for (int in = 0; in < Edgenumb; in++)
