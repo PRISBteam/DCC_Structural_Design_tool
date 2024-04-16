@@ -63,21 +63,11 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
             isProcessing = main_ini.get("modules").get("PCC_Processing");
     }
 
-//    if (main_ini.has("modules")) {
-//        auto& collection = main_ini["modules"];
-//        if (collection.has("PCC_Characterisation"))
-//            isCharacterisation = main_ini.get("modules").get("PCC_Characterisation");
-//    }
-//    if (main_ini.has("modules")) {
-//        auto& collection = main_ini["modules"];
-//        if (collection.has("PCC_Multiphysics"))
-//            isMultiphysics = main_ini.get("modules").get("PCC_Multiphysics");
-//    }
-//    if (main_ini.has("modules")) {
-//        auto& collection = main_ini["modules"];
-//        if (collection.has("PCC_Kinetic"))
-//            isKinetic = main_ini.get("modules").get("PCC_Kinetic");
-//    }
+    if (main_ini.has("modules")) {
+        auto& collection = main_ini["modules"];
+        if (collection.has("PCC_Characterisation"))
+            isCharacterisation = main_ini.get("modules").get("PCC_Characterisation");
+    }
 
     if (main_ini.has("modules")) {
         auto& collection = main_ini["modules"];
@@ -89,9 +79,7 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
 // ON/OFF IDs
     if (isSection == "ON") { isSectionON = 1; res.at(1) = 1; } else res.at(1) = 0; // res[1] - Section
     if (isProcessing == "ON") { isProcessingON = 1; res.at(2) = 1; } else res.at(2) = 0; // res[2] - Processing
-//    if (isCharacterisation == "ON") { isCharacterisationON = 1; res.at(3) = 1; } else res.at(3) = 0; // res[3] - Characterisation
-//    if (isMultiphysics == "ON") { isMultiphysicsON = 1; res.at(4) = 1; } else res.at(4) = 0; // res[4] - Multiphysics
-//    if (isKinetic == "ON") { isKineticON = 1; res.at(5) = 1; } else res.at(5) = 0; // res[5] - Kinetic
+    if (isCharacterisation == "ON") { isCharacterisationON = 1; res.at(3) = 1; } else res.at(3) = 0; // res[3] - Characterisation
     if (isWriter == "ON") { isWriterON = 1; res.at(6) = 1; } else res.at(6) = 0; // res[6] - Writer
 
     if (main_ini.has("general")) {
@@ -123,12 +111,8 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
     else cout << "OFF    | PCC_Section"s << endl;
     if (isProcessingON == 1) cout << "ON    | PCC_Processing"s << endl;
     else cout << "OFF    | PCC_Processing"s << endl;
-//    if (isCharacterisationON == 1) cout << "ON    | PCC_Characterisation"s << endl;
-//    else cout << "OFF    | PCC_Characterisation"s << endl;
-//    if (isMultiphysicsON == 1) cout << "ON    | PCC_Multiphysics"s << endl;
-//    else cout << "OFF    | PCC_Multiphysics"s << endl;
-//    if (isKineticON == 1) cout << "ON    | PCC_Kinetic"s << endl;
-//    else cout << "OFF    | PCC_Kinetic"s << endl;
+    if (isCharacterisationON == 1) cout << "ON    | PCC_Characterisation"s << endl;
+    else cout << "OFF    | PCC_Characterisation"s << endl;
     if (isWriterON == 1) cout << "ON    | PCC_Writer"s << endl;
     else cout << "OFF    | PCC_Writer"s << endl;
     cout << endl;
@@ -149,12 +133,8 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
     else Out_logfile_stream << "OFF    | PCC_Section"s << endl;
     if (isProcessingON == 1) Out_logfile_stream << "ON    | PCC_Processing"s << endl;
     else Out_logfile_stream << "OFF    | PCC_Processing"s << endl;
-//    if (isCharacterisationON == 1) Out_logfile_stream << "ON    | PCC_Characterisation"s << endl;
-//    else Out_logfile_stream << "OFF    | PCC_Characterisation"s << endl;
-//    if (isMultiphysicsON == 1) Out_logfile_stream << "ON    | PCC_Multiphysics"s << endl;
-//    else Out_logfile_stream << "OFF    | PCC_Multiphysics"s << endl;
-//    if (isKineticON == 1) Out_logfile_stream << "ON    | PCC_Kinetic"s << endl;
-//    else Out_logfile_stream << "OFF    | PCC_Kinetic"s << endl;
+    if (isCharacterisationON == 1) Out_logfile_stream << "ON    | PCC_Characterisation"s << endl;
+    else Out_logfile_stream << "OFF    | PCC_Characterisation"s << endl;
     if (isWriterON == 1) Out_logfile_stream << "ON    | PCC_Writer"s << endl;
     else Out_logfile_stream << "OFF    | PCC_Writer"s << endl;
     Out_logfile_stream << endl;
@@ -518,7 +498,7 @@ vector<double> max_fractions_output(3, 0); // temporary vector serving as an out
     for (int i = 0; i < 3; ++i)
         if (max_fractions_vectors[0].size() > 0 && max_fractions_vectors[0][i] > 0) max_fractions_output.at(i) = max_fractions_vectors[0][i];
     cout << "Their maximum fractions:\t"s << max_fractions_output.at(0) << "\t\t" << max_fractions_output.at(1) << "\t\t"<< max_fractions_output.at(2) << "\t\t" << endl;
-    cout<< "______________________________________________________________________________________" << endl << endl;
+    cout<< "_________________________________________________" << endl << endl;
 /// Output into .log file
     Out_logfile_stream << "The Processing module simulation type and initial parameters:\t\t" << endl;
     Out_logfile_stream << endl;
@@ -600,7 +580,7 @@ vector<double> max_fractions_output(3, 0); // temporary vector serving as an out
     for (int i = 0; i < 3; ++i)
         if (max_fractions_vectors[0].size() > 0 && max_fractions_vectors[0][i] > 0) max_fractions_output.at(i) = max_fractions_vectors[0][i];
     Out_logfile_stream << "Their maximum fractions:\t"s << max_fractions_output.at(0) << "\t\t" << max_fractions_output.at(1) << "\t\t"<< max_fractions_output.at(2) << "\t\t" << endl;
-    Out_logfile_stream<< "______________________________________________________________________________________" << endl << endl;
+    Out_logfile_stream<< "_________________________________________________" << endl << endl;
 
     return;
 } /// END of config_reader_processing function
@@ -767,8 +747,8 @@ std::vector<double> config_reader_characterisation(std::string const &source_pat
             charlabs_laplacians.push_back(stoi(char_ini.get("spectra_lab").get("laplacians"))); // 1
         } }
 
-    /// Output to the screen/console
-    cout<< "______________________________________________________________________________________" << endl;
+    /// Console output
+//    cout<< "______________________________________________________________________________________" << endl;
     cout << "The Characterisation module simulation type and initial parameters:\t\t" << endl;
     cout << endl;
     cout << "Polyhedrons lab ON/OFF:\t"s << charlabs_polyhedrons.at(0) << "\t\t" << endl;
@@ -815,10 +795,10 @@ std::vector<double> config_reader_characterisation(std::string const &source_pat
         cout << "Special cell Laplacians:\t"s << charlabs_laplacians.at(1) << "\t\t" << endl;
         cout << endl;
     } // if(charlabs_laplacians.at(0) == 1)
-    cout<< "______________________________________________________________________________________" << endl;
+//    cout<< "______________________________________________________________________________________" << endl;
 
-/// Output into .log file
-    Out_logfile_stream<< "______________________________________________________________________________________" << endl;
+/// Output into Processing_Design.log file
+//    Out_logfile_stream<< "______________________________________________________________________________________" << endl;
     Out_logfile_stream << "The Characterisation module simulation type and initial parameters:\t\t" << endl;
     Out_logfile_stream << endl;
     Out_logfile_stream << "Polyhedrons lab ON/OFF:\t"s << charlabs_polyhedrons.at(0) << "\t\t" << endl;
@@ -863,7 +843,7 @@ std::vector<double> config_reader_characterisation(std::string const &source_pat
         Out_logfile_stream << "Special cell Laplacians:\t"s << charlabs_laplacians.at(1) << "\t\t" << endl;
         Out_logfile_stream << endl;
     } // if(charlabs_laplacians.at(0) == 1)
-    Out_logfile_stream<< "______________________________________________________________________________________" << endl;
+//    Out_logfile_stream<< "______________________________________________________________________________________" << endl;
 
     return config_characterisation_vector;
 } // END of config characterisation reader function

@@ -196,7 +196,7 @@ else if ( main_type == "LIST"s ) { // In the LIST mode all the functions are cal
     /// Initialisation of the current_configuration as equal to the initial_configuration
     configuration = initial_configuration;
 
-    /// ====================== I. PCC_Section.h module ======================
+    /// ====================== I. PCC Section module ======================
 
     if (ConfigVector.at(1) == 1) { // if the 'PCC_Section' parameter is switched 'ON' in the config/main.ini file
         cout << "-------------------------------------------------------------------------" << endl;             Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
@@ -213,10 +213,8 @@ else if ( main_type == "LIST"s ) { // In the LIST mode all the functions are cal
             Out_logfile_stream << "-------------------------------------------------------" << endl;
     } // end if(SectionON)
 
-
-        /// ====================== II. PCC_Processing.h module ======================
-
-        CellsDesign new_cells_design; // A class (described in PCC_Objects.h) containing (1) all special k-cell sequences and (2) all the design_<*>_vectors for all k-cells
+        /// ====================== II. PCC Processing module ======================
+        CellsDesign new_cells_design; // a class described in PCC_Objects.h contained (1) all special k-cell sequences and (2) all the design_<*>_vectors for all k-cells in the PCC
 
         if (ConfigVector.at(2) == 1) { // if the 'PCC_Processing' parameter is switched 'ON' in the config/main.ini file
             cout << "-------------------------------------------------------------------------" << endl;             Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
@@ -224,25 +222,44 @@ else if ( main_type == "LIST"s ) { // In the LIST mode all the functions are cal
 
             new_cells_design = PCC_Processing(configuration);
 
-// ===== Elapsing time Processing ================
+// ================ Elapsing time for the Processing module ================
             unsigned int Processing_time = clock();
             P_time = (double) Processing_time - S_time - Main_time;
-            cout << "Processing time is equal to  " << P_time/ pow(10.0,6.0) <<  "  seconds" << endl; cout << "-------------------------------------------------------------------------" << endl; Out_logfile_stream << "Processing time is equal to  " << P_time/ pow(10.0,6.0) <<  "  seconds" << endl; Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
+            cout << "Processing time is equal to  " << P_time/ pow(10.0,6.0) <<  "  seconds" << endl << endl; //cout << "-------------------------------------------------------------------------" << endl;
+            Out_logfile_stream << "Processing time is equal to  " << P_time/ pow(10.0,6.0) <<  "  seconds" << endl << endl; //Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
         } // end if(ProcessingON)
 
-/// VI: PCC_Writing module
+        /// ====================== III. PCC Characterisation module ======================
+        ProcessedComplex pcc_processed;  // a class described in PCC_Objects.h
+
+        if (ConfigVector.at(3) == 1) { // if the 'PCC_Characterisation' parameter is switched 'ON' in the config/main.ini file
+            cout << "-------------------------------------------------------------------------" << endl;             Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
+            cout << "START of the PCC Characterisation module" << endl; Out_logfile_stream << "START of the PCC Characterisation module" << endl;
+            cout << "=========================================================================" << endl; Out_logfile_stream << "==============================================================================================================================================================" << endl;
+
+            pcc_processed = PCC_StructureCharacterisation(new_cells_design);
+
+// ===== Elapsing time for the Characterisation module ================
+            unsigned int Characterisation_time = clock();
+            C_time = (double) Characterisation_time - S_time - Main_time - P_time;
+            cout << "Characterisation time is equal to  " << C_time/ pow(10.0,6.0) <<  "  seconds" << endl << endl; //cout << "-------------------------------------------------------------------------" << endl;
+            Out_logfile_stream << "Characterisation time is equal to  " << C_time/ pow(10.0,6.0) <<  "  seconds" << endl << endl; //Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
+         }// end if(CharacterisationON)
+
+        /// ====================== IV. PCC Writer module ======================
+
     if (ConfigVector.at(6) == 1) { // simply output ON/OFF for the PCC_Writer module on the screen
         cout << "-------------------------------------------------------------------------" << endl;             Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
         cout << "START of the PCC Writer module" << endl; Out_logfile_stream << "START of the PCC Writer module" << endl;
         cout << "=========================================================================" << endl; Out_logfile_stream << "==============================================================================================================================================================" << endl;
 
 ///            if(pcc_processed) PCC_Writer(new_cells_design, pcc_processed); else
-            PCC_Writer(new_cells_design);
+            PCC_Writer(new_cells_design, pcc_processed);
 
-// ===== Elapsing time Writer ================
+// ================ Elapsing time for the Writer module ================
             unsigned int Writer_time = clock();
             W_time = (double) Writer_time - Main_time- C_time - S_time - P_time;
-            cout << "Writer time is equal to  " << W_time/ pow(10.0,6.0) <<  "  seconds" << endl;
+            cout << "Writer time is equal to  " << W_time/ pow(10.0,6.0) <<  "  seconds" << endl << endl;
     } // end if(WriterON)
 
 } /// end of the SIMULATION MODE "LIST" in the main.ini file
@@ -250,7 +267,7 @@ else if ( main_type == "LIST"s ) { // In the LIST mode all the functions are cal
 /// ==========================================================================================================================================
 /// ================================================= TASK MODE STARTS HERE ==============================================================
 /// ==========================================================================================================================================
-else if ( main_type == "TASK"s ) {
+else if ( main_type == "TASK"s ) { // In the TASK mode any piece of code using the project libraries can be included
 
 /// #include.. .cpp
 
@@ -269,14 +286,14 @@ else if ( main_type == "TASK"s ) {
     // closing off-stream 'Processing_Design.log' file
     Out_logfile_stream.close();
 
-    return 0;
+    return 0; // success!
 } /// The END of Main function
 
 /// ================================== FUNCTIONS DEFINED IN MAIN MODULE ==================================///
 
 /// ====================# 1 #============================= TUTORIAL ================================================= ///
 
-void tutorial(){
+void tutorial(){ // teaching function
     cout << "Hello there! This is the TEACHING mode of the program execution (!), \n"
     "where the user passes tutorial helping they to understand how to work with the CPD code. \n"
     "It can be changed by replacing the 'emode' variable with 'scientific' \n"
@@ -292,7 +309,7 @@ void tutorial(){
  * @details Output the 'performance_test.txt' file to the 'output_dir' showing the relative code execution times of the present server comparing with some reference execution times and suggest the preferable PCC sizes for various simulation tasks
  * @param initial_configuration
  */
-void performance_test(Config &initial_configuration) {
+void performance_test(Config &initial_configuration) { // execution test function
     CellsDesign new_cells_design;
 
     /// Initialisation of the current_configuration = initial_configuration

@@ -49,9 +49,6 @@ void PCC_Writer(CellsDesign &new_cells_design, ProcessedComplex &pcc_processed) 
 
     int output_counter = 0; // special counter for output numeration
 
-    /// Output special and ordinary face sequences to the output directory specified in config.txt
-    cout << writer_specifications.size() << endl;
-
     if (writer_specifications.at(0) == 1)
         PCC_CellSequences_Writer(new_cells_design, output_counter);
 /**

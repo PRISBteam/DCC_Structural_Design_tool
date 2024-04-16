@@ -82,7 +82,10 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
                     << endl;
             exit(1);
         }
-         if (pcc_standard == "pcc1s") {
+
+  if (pcc_standard == "pcc1s") {
+//  } // end of  if (pcc_standard == "pcc1s")
+
 /// Several file PCCpaths to the sparse PCC's matrices which must already exit in the 'source_dir' and have the same names as below (!)
 // They can be obtained by the PCC Generator tool (https://github.com/PRISBteam/Voronoi_PCC_Analyser) based on the Neper output (*.tess file) (https://neper.info/) or PCC Structure Generator tool (https://github.com/PRISBteam/PCC_Structure_Generator) for plasticity problems
 //  PCC matrices, metrices and coordinates
@@ -178,14 +181,13 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
         if (is_file_exists(config_source_dir + "/combinatorial/number_of_cells.txt"s)) {
             std::string ncells = config_source_dir + "/combinatorial/number_of_cells.txt"s;
             char *number_of_cells = const_cast<char *>(ncells.c_str());
-// :: CellNumbs vector components: [0] - Nodes number, [1] - Edges number, [2] - Faces number, [3] - Polyhedrons number
+            // :: CellNumbs vector components: [0] - Nodes number, [1] - Edges number, [2] - Faces number, [3] - Polyhedrons number
             CellNumbs = VectorIReader(
                     number_of_cells); // VectorReader is a function from the PCC_SupportFunctions.h library; "number_of_cells" here if the PATH to file
-        } // end of  if (pcc_standard == "pcc1s")
-else {
-    cout << "ERROR in the reading PCC: please specify the correct 'pcc_standard' perameter in the config/main.ini file corresponding to the version of the PCC you use (please see technical documentation for more details, the first PCC standard has an ID 'pcc1s'" << endl;
-    exit(1);
-}
+        } // if voro_Ncells exists
+        else cout << "ERROR: The file " << config_source_dir + "/combinatorial/number_of_cells.txt"s
+                  << " does not exists (!)" << endl;
+
 /// CellNumbs output
         Out_local_logstream.open(config_output_dir + "Processing_Design.log"s, ios::app); // this *.log stream will be closed at the end of the main function
             cout << "=====================================================================================" << endl;
@@ -197,10 +199,6 @@ else {
                 cout << t_length << "-cells #\t" << cell_numb << endl;
                 Out_local_logstream << t_length++ << "-cells #\t" << cell_numb << endl;
             } // end for (int cell_numb : CellNumbs)
-        } // if voro_Ncells exists
-        else
-            cout << "ERROR: The file " << config_source_dir + "/combinatorial/number_of_cells.txt"s
-                 << " does not exists (!)" << endl;
 
         Configuration_State = { State_p_vector, State_f_vector, State_e_vector, State_n_vector },
         Configuration_cState = { State_pfracture_vector, State_ffracture_vector, State_efracture_vector, State_nfracture_vector }; //  is the list of all mentioned below State_<*>_vectors and State_<*>fracture_vectors as the output of the Processing module // is the list of 'state vectors' analogous to the Configuration_State but for 'cracked' (or induced) network of k-cells
@@ -247,13 +245,17 @@ else {
         Out_local_logstream
                 << "_____________________________________________________________________________________" << endl;
         for (auto path: config_PCCpaths) {
-            cout << "[" << npath++ << "]" << " PCCpaths:\t" << path << endl;
-            Out_local_logstream << "[" << npath << "]" << " PCCpaths:\t" << path << endl;
+            cout << "[" << npath << "]" << " PCCpaths:\t" << path << endl;
+            Out_local_logstream << "[" << npath++ << "]" << " PCCpaths:\t" << path << endl;
         }
         cout << endl; Out_local_logstream << endl;
-
+  } // end of  if (pcc_standard == "pcc1s")
+  else {
+      cout << "ERROR in the reading PCC: please specify the correct 'pcc_standard' perameter in the config/main.ini file corresponding to the version of the PCC you use (please see technical documentation for more details, the first PCC standard has an ID 'pcc1s'" << endl;
+      exit(1);
+  }
         Out_local_logstream.close();
-    }; /// Read the 'initial configuration' of the problem set in all the relevant '*.ini' files containing in the '\config' project directory using the functions from the 'ini_readers.cpp' project library (and only from there)
+    }; // Read the 'initial configuration' of the problem set in all the relevant '_.ini' files containing in the '\config' project directory using the functions from the 'ini_readers.cpp' project library (and only from there)
 
     /// --------------------------------------- *** END of void Config::Read_config() method *** ------------------------------------------------ ///
 

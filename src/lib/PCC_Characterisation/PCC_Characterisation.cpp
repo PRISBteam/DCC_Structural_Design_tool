@@ -39,14 +39,16 @@ extern int dim;
 #include "PCC_Characterisation.h"
 ///* ========================================================= PCC CHARACTERISATION FUNCTION ======================================================= *///
 ///* ========================================================================================================================================= *///
-/*
 
-//ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
-//    ProcessedComplex PCC_characteristics; // module output
+ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
+
+/// Main output of the module
+    ProcessedComplex PCC_characteristics; // module output
+
 /// Read simulation configuration from file :: the number of special face types and calculating parameters. Then Output of the current configuration to the screen
     std::vector<int> charlabs_polyhedrons, charlabs_faces, charlabs_edges, charlabs_nodes, charlabs_laplacians;
     std::vector<double> ConfigVector = config_reader_characterisation(source_path, charlabs_polyhedrons, charlabs_faces, charlabs_edges, charlabs_nodes, charlabs_laplacians, Out_logfile_stream); // vector<double> (!) from ini_readers.h library
-
+/*
 /// # 1 # Creation of the State Vectors
 // Faces
     std::vector<unsigned int> face_sequences_vector; // number of different sequences based on the face design vector
@@ -174,6 +176,8 @@ extern int dim;
             PCC_characteristics.Betti_vector.push_back({new_current_seq.size()/(double) CellNumbs.at(2), new_Betti_numbers.at(0), new_Betti_numbers.at(1), new_Betti_numbers.at(2)});
         }
     } // end of  for (int i = 0; i < number_of_steps, ++i)
+
+    */
    return PCC_characteristics;
  } /// END of the ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) function
- */
+
