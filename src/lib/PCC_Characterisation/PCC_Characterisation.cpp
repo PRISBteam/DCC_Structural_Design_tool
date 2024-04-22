@@ -24,7 +24,7 @@
 
 // Local
 ///---------------------------------------------------------
-// #include "functions/entrop.h"
+#include "functions/spectral_analysis.h"
 // #include "functions/analytical_solutions.h"
 ///---------------------------------------------------------
 
@@ -34,7 +34,10 @@ using namespace std; // standard namespace
 extern string source_path;
 extern ofstream Out_logfile_stream;
 extern std::vector<unsigned int> CellNumbs;
+extern std::vector<std::string> PCCpaths;
 extern int dim;
+
+typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which declares a column-major sparse matrix type of doubles with the nickname 'SpMat'
 
 #include "PCC_Characterisation.h"
 ///* ========================================================= PCC CHARACTERISATION FUNCTION ======================================================= *///
@@ -45,10 +48,10 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
 /// Main output of the module
     ProcessedComplex PCC_characteristics; // module output
 
-/// Read simulation configuration from file :: the number of special face types and calculating parameters. Then Output of the current configuration to the screen
+/// Read simulation configuration from file :: the number of special face types and calculating parameters. Then Output of the current configuration to the screen.
     std::vector<int> charlabs_polyhedrons, charlabs_faces, charlabs_edges, charlabs_nodes, charlabs_laplacians;
     std::vector<double> ConfigVector = config_reader_characterisation(source_path, charlabs_polyhedrons, charlabs_faces, charlabs_edges, charlabs_nodes, charlabs_laplacians, Out_logfile_stream); // vector<double> (!) from ini_readers.h library
-/*
+
 /// # 1 # Creation of the State Vectors
 // Faces
     std::vector<unsigned int> face_sequences_vector; // number of different sequences based on the face design vector
@@ -61,7 +64,7 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
             PCC_characteristics.face_process_seq.push_back(face_sequences_vector);
 
     } // end for(auto fseq...)
-
+/**
     for (int i = 0; i < 4; ++i) { /// for all types of cells
 
         /// # 2 # Measures: fractions and entropies
@@ -69,8 +72,7 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
             if (charlabs_edges.at(0) == 1) {
                 vector<int> EdgeTypes_char(CellNumbs.at(1 + (dim - 3)),
                                            0); // vector<int> in the form [ 0 2 3 3 2 1 ...] with the TJs type ID as its values
-                std::vector<double> j_edge_fractions(dim + 1, 0), d_edge_fractions(dim,
-                                                                                   0); // fractions of (1) edges of different types and (2) edges of different degrees
+                std::vector<double> j_edge_fractions(dim + 1, 0), d_edge_fractions(dim,0); // fractions of (1) edges of different types and (2) edges of different degrees
 
                 /// for each state:
                 tuple<double, double> conf_entropy_t;
@@ -115,8 +117,9 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
         } //  end of if(i == 1 && charlabs_edges.at(0) == 1) { // Edges lab
 
     } // end for (int i = 0; i < 4; ++i)
+**/
 
-    /// # 3 # Laplacians of specail cells
+/// # 3 # Laplacians of specail cells
     if(charlabs_laplacians.at(1) == 1) {
 // AN - Nodes (Vertices or 0-Cells) sparse adjacency matrix  in the form of three column {i, j, value}, where i and j are the indices of elements with non-zero values
 // AE - Edges (Triple Junctions or 1-Cells) sparse adjacency matrix  in the form of three column {i, j, value}, where i and j are the indices of elements with non-zero values
@@ -141,10 +144,10 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
         SpMat ENS(CellNumbs.at(0), CellNumbs.at(1)), FES(CellNumbs.at(1 + (dim - 3)), CellNumbs.at(2 + (dim - 3))), GFS(
                 CellNumbs.at(2 + (dim - 3)), CellNumbs.at(3 + (dim - 3)));
 
-        ENS = SMatrixReader(paths.at(4 + (dim - 3)), (CellNumbs.at(0)), (CellNumbs.at(1))); //all Nodes-Edges
-        FES = SMatrixReader(paths.at(5 + (dim - 3)), (CellNumbs.at(1 + (dim - 3))),
+        ENS = SMatrixReader(PCCpaths.at(4 + (dim - 3)), (CellNumbs.at(0)), (CellNumbs.at(1))); //all Nodes-Edges
+        FES = SMatrixReader(PCCpaths.at(5 + (dim - 3)), (CellNumbs.at(1 + (dim - 3))),
                             (CellNumbs.at(2 + (dim - 3)))); //all Edges-Faces
-        GFS = SMatrixReader(paths.at(6 + (dim - 3)), (CellNumbs.at(2 + (dim - 3))),
+        GFS = SMatrixReader(PCCpaths.at(6 + (dim - 3)), (CellNumbs.at(2 + (dim - 3))),
                             (CellNumbs.at(3 + (dim - 3)))); //all Faces-Grains
 
         double number_of_steps = (double) charlabs_laplacians.at(0); // reading from Characterisation.ini file (!)
@@ -154,7 +157,7 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
 
         std::vector<unsigned int> Betti_calc_time;
 
-#pragma omp parallel for // parallel execution by OpenMP
+//#pragma omp parallel for // parallel execution by OpenMP
         for (unsigned int i = 0; i <= 10; ++i) {
             new_current_seq = PCC_characteristics.face_process_seq.at(i*d_seq);
             cout << "---------------------------------------------------------------------------" << endl;
@@ -177,7 +180,6 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
         }
     } // end of  for (int i = 0; i < number_of_steps, ++i)
 
-    */
    return PCC_characteristics;
  } /// END of the ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) function
 

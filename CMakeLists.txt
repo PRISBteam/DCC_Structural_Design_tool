@@ -15,7 +15,7 @@ add_executable( PCC_Processing_Design
         #       src/lib/PCC_Section/functions/Subcomplex_Planecut_functions.cpp
 
         src/lib/PCC_Processing/PCC_Processing.cpp
-        src/lib/PCC_Processing/functions/Processing_Assignment_functions.cpp
+        src/lib/PCC_Processing/functions/processing_assigned_labelling.cpp
 
         src/lib/PCC_Characterisation/PCC_Characterisation.cpp
         src/lib/PCC_Characterisation/functions/entropic_analysis.cpp
@@ -23,4 +23,5 @@ add_executable( PCC_Processing_Design
 
         src/lib/PCC_Writer/PCC_Writer.cpp
         src/lib/PCC_Writer/functions/Writer_functions.cpp
+        src/lib/PCC_Processing/functions/processing_induced_labelling.cpp
 )

@@ -1,28 +1,58 @@
 ///================================ A part of the PCC Processing module =============================================================///
 ///=================================================================================================================================///
-/** The library contains random and non-random functions for choice and generation of new "secondary" identifications of k-Cells   **/
-/**  in the PCC Processing module. It makes them "fractured" and can go alongside their special or ordinary primal types.         **/
-///==============================================================================================================================///
-// #include "Processing_Induced_functions.h"
+/** The library contains functions for choice and generation of new secondary 'induced' identifiers for k-Cells, k={0,1,2,3}       **/
+/**  in the PCC Processing module. It makes them labelled differently as 'induced' and takes out of the set of both 'ordinary'    **/
+/** (0-type) and 'special' (1,2 or 3-type) k-cells.                                                                              **/
+///=============================================================================================================================///
 
-std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<unsigned int> &s_faces_sequence, std::vector<vector<int>> &Configuration_cState, std::vector<vector<double>> const &max_cfractions_vectors) {
+/// Standard C++ libraries (STL):
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <random> // Require C++ 11 and above
+
+// external libraries
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
+
+// local libraries
+#include "../../PCC_Objects.h"
+#include "../../PCC_Support_Functions.h" // It must be here - first in this list (!)
+
+using namespace std; // standard namespace
+
+typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which declares a column-major sparse matrix type of doubles with the nickname 'SpMat'
+
+extern std::vector<unsigned int> CellNumbs;
+extern ofstream Out_logfile_stream;
+extern std::vector<std::string> PCCpaths;
+extern int dim;
+
+#include "processing_induced_labelling.h"
+
+/// ================== # 1 # Kinematic function for assigning induced labelling ==================
+/*!
+ * @details Kinematic generation of the induced ('fractured') k-cell indexing. The algorithm uses information about the information about cohesion and adhesion energies, but does not employ any forces to decide.
+ * @param cell_type
+ * @param s_faces_sequence
+ * @param Configuration_cState
+ * @param max_cfractions_vectors
+ * @return
+ */
+std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<unsigned int> &s_faces_sequence, std::vector<std::vector<unsigned int>> &Configuration_cState, std::vector<std::vector<double>> const &max_cfractions_vectors) {
     std::vector<unsigned int> crack_faces_sequence;// output of the function: sequence of the cracked Faces
-    std::vector<int> S_cVector(CellNumbs.at(cell_type), 0); // State Vector for fractured cells
-
-    vector<double> TJsTypes(CellNumbs.at(cell_type - 1), 0), TJsCrackTypes(CellNumbs.at(cell_type - 1), 0);
-    vector<double> newCrack_neigh_TJs, newCrack_neigh_Faces; // only for neighbouring faces
-    std::vector<double> Face_weight(CellNumbs.at(cell_type), 0), Face_inclusion_index(CellNumbs.at(cell_type),0), Face_crack_index(CellNumbs.at(cell_type), 0); // indexes for all GBs
-    std::vector<double> lsc_inclusion_energy(CellNumbs.at(cell_type), 0), lsc_crack_energy(CellNumbs.at(cell_type),
-                                                                                           0); // energies related with the local stress concentrators (lsc)
-    std::vector<double> Cell_energy(CellNumbs.at(cell_type), 0), Cell_current_energy(CellNumbs.at(cell_type),
-                                                                                     0); // energies for all GBs
+    std::vector<unsigned int> S_cVector(CellNumbs.at(cell_type), 0); // State Vector for fractured cells
+    std::vector<double> TJsTypes(CellNumbs.at(cell_type - 1), 0), TJsCrackTypes(CellNumbs.at(cell_type - 1), 0);
+    std::vector<double> newCrack_neigh_TJs, newCrack_neigh_Faces; // only for neighbouring faces
+    std::vector<double> Face_weight(CellNumbs.at(cell_type), 0), Face_inclusion_index(CellNumbs.at(cell_type), 0), Face_crack_index(CellNumbs.at(cell_type), 0); // indexes for all GBs
+    std::vector<double> lsc_inclusion_energy(CellNumbs.at(cell_type), 0), lsc_crack_energy(CellNumbs.at(cell_type), 0); // energies related with the local stress concentrators (lsc)
+    std::vector<double> Cell_energy(CellNumbs.at(cell_type), 0), Cell_current_energy(CellNumbs.at(cell_type), 0); // energies for all GBs
     double agglomeration_fraction; // a-fraction in the PCC
-    std::vector<int> agglomeration_SVector(CellNumbs.at(cell_type),
-                                           0); // numbers in this State vector are Agglomeration Powers
+    std::vector<int> agglomeration_SVector(CellNumbs.at(cell_type), 0); // numbers in this State vector are Agglomeration Powers
     std::vector<unsigned int> agglomerations_set; // (pre-initially empty) set of agglomeration numbers
-    std::vector<unsigned int> o_faces_set(CellNumbs.at(cell_type), 0), NotFracturedCellNumbs(CellNumbs.at(cell_type),
-                                                                                             0); // set of ordinary and not cells faces in a PCC [technical parameter]
 
+    std::vector<unsigned int> o_faces_set(CellNumbs.at(cell_type), 0), NotFracturedCellNumbs(CellNumbs.at(cell_type), 0); // set of ordinary and not cells faces in a PCC [technical parameter]
     for (unsigned int lit = 0; lit < CellNumbs.at(cell_type); ++lit)
         o_faces_set[lit] = lit; // Then the vector with the sequence of integers 1,2,3,... #Faces
 
@@ -46,12 +76,10 @@ std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<uns
         Cell_energy.at(ks) = sface_energy_inclusion; // assignments of the rGO defect surface energies
 
     /// Sparse Face-Edge Incidence matrix - reading from the file of the considered PCC
-    SpMat FES = SMatrixReader(paths.at(5 + (dim - 3)), CellNumbs.at(cell_type - 1),
-                              CellNumbs.at(cell_type)); // Edges-Faces sparse incidence matrix
+    SpMat FES = SMatrixReader(PCCpaths.at(5 + (dim - 3)), CellNumbs.at(cell_type - 1), CellNumbs.at(cell_type)); // Edges-Faces sparse incidence matrix
     /// Sparse Face Adjacency matrix - reading from the file of the considered PCC
-    SpMat AFS = SMatrixReader(paths.at(2 + (dim - 3)), (CellNumbs.at(cell_type)),
-                              (CellNumbs.at(cell_type))); //all Faces
-    AFS = 0.5 * (AFS + SparseMatrix<double>(AFS.transpose()));     //  Full symmetric AFS matrix instead of triagonal
+    SpMat AFS = SMatrixReader(PCCpaths.at(2 + (dim - 3)), (CellNumbs.at(cell_type)), (CellNumbs.at(cell_type))); //all Faces
+    AFS = 0.5 * (AFS + Eigen::SparseMatrix<double>(AFS.transpose()));     //  Full symmetric AFS matrix instead of triagonal
 
     /// Calculation of the TJs types
     if (dim == 3) TJsTypes = EdgesTypesCalc(CellNumbs, s_faces_sequence, FES);
@@ -60,8 +88,7 @@ std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<uns
     /// GB_indices calculation
     for (unsigned int fn = 0; fn < CellNumbs.at(cell_type); ++fn) {
 
-        vector<double> j_types_neigh_fractions = GBIndex(fn, FES,
-                                                         TJsTypes); // Types (up to 100 kinds) of the edges incident to the considered Face
+        std::vector<double> j_types_neigh_fractions = GBIndex(fn, FES, TJsTypes); // Types (up to 100 kinds) of the edges incident to the considered Face
         /// inclusion index calculation
         Face_inclusion_index.at(fn) = (j_types_neigh_fractions.at(1) + 2.0 * j_types_neigh_fractions.at(2) +
                                        3.0 * j_types_neigh_fractions.at(3));
@@ -188,6 +215,7 @@ std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<uns
         } // end of for ( fn < CellNumbs.at(cell_type))
 //////// ????
 */
+
         newCrack_neigh_TJs.clear();
         if (dim == 3) TJsCrackTypes = EdgesTypesCalc(CellNumbs,crack_faces_sequence, FES);
         else if (dim == 2) TJsCrackTypes = NodesTypesCalc(CellNumbs, crack_faces_sequence, FES);
@@ -208,8 +236,8 @@ std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<uns
         } // end if (new_crack_neigh_Faces.size() > 0)
 
         // current fractions of cracked cells
-             undamaged_cells_fraction = NotFracturedCellNumbs.size() / (double) CellNumbs.at(cell_type);
-             crack_cells_fraction = 1.0 - undamaged_cells_fraction; // special face vecror definition based on the ordinary face vector
+        undamaged_cells_fraction = NotFracturedCellNumbs.size() / (double) CellNumbs.at(cell_type);
+        crack_cells_fraction = 1.0 - undamaged_cells_fraction; // special face vecror definition based on the ordinary face vector
 
         // if(10000*std::ceil(crack_cells_fraction) % 2 == 1)
         cout << "fractured cells fraction:   " << crack_cells_fraction << " < total_max_cCells_fraction "
@@ -217,6 +245,7 @@ std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<uns
 
 //    } while (crack_cells_fraction < total_max_cCells_fraction); /// End of the PCC_Kinematic_cracking
     } while(crack_cells_fraction < total_max_cCells_fraction);
+
 
 /*
 
@@ -260,21 +289,30 @@ std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<uns
         //REPAIR cout << crack_fraction << endl;
     } // end for ( i < CellNumbs.at(2) )
 */
+
     crack_fraction = crack_faces_sequence.size() / (double) CellNumbs.at(cell_type);
 
     return crack_faces_sequence;
 } /// end of Kinematic_cracking
 
-/// -----------------------------------------------------------------------------------------------------------------///
-/// #2# Kinetic function for multiple cracking
-//std::vector <unsigned int> PCC_Kinetic_cracking(std::vector <double> &face_elastic_energies, std::vector<unsigned int> &frac_sfaces_sequence, macrocrack &large_crack, Eigen::SparseMatrix<double> const& AFS, Eigen::SparseMatrix<double> const& FES) {
 
-std::vector <unsigned int> PCC_Kineic_cracking(int cell_type, std::vector<unsigned int> &s_faces_sequence, std::vector<vector<int>> &Configuration_cState, std::vector<vector<double>> const &max_cfractions_vectors) {
+
+/// ================== # 2 # Kinetic function for multiple cracking ==================
+/*!
+ * @details
+ * @param cell_type
+ * @param s_faces_sequence
+ * @param Configuration_cState
+ * @param max_cfractions_vectors
+ * @return
+ */
+std::vector <unsigned int> PCC_Kineic_cracking(int cell_type, std::vector<unsigned int> &s_faces_sequence, std::vector<std::vector<int>> &Configuration_cState, std::vector<std::vector<double>> const &max_cfractions_vectors) {
+//std::vector <unsigned int> PCC_Kinetic_cracking(std::vector <double> &face_elastic_energies, std::vector<unsigned int> &frac_sfaces_sequence, macrocrack &large_crack, Eigen::SparseMatrix<double> const& AFS, Eigen::SparseMatrix<double> const& FES) {
     std::vector<unsigned int> crack_faces_sequence;// output of the function: sequence of the cracked Faces
     std::vector<int> S_cVector(CellNumbs.at(cell_type), 0); // State Vector for fractured cells
-
-    vector<double> TJsTypes(CellNumbs.at(cell_type - 1), 0), TJsCrackTypes(CellNumbs.at(cell_type - 1), 0);
-    vector<double> newCrack_neigh_TJs, newCrack_neigh_Faces; // only for neighbouring faces
+/**
+    std::vector<double> TJsTypes(CellNumbs.at(cell_type - 1), 0), TJsCrackTypes(CellNumbs.at(cell_type - 1), 0);
+    std::vector<double> newCrack_neigh_TJs, newCrack_neigh_Faces; // only for neighbouring faces
     std::vector<double> Face_weight(CellNumbs.at(cell_type), 0), Face_inclusion_index(CellNumbs.at(cell_type),0), Face_crack_index(CellNumbs.at(cell_type), 0); // indexes for all GBs
     std::vector<double> lsc_inclusion_energy(CellNumbs.at(cell_type), 0), lsc_crack_energy(CellNumbs.at(cell_type),
                                                                                            0); // energies related with the local stress concentrators (lsc)
@@ -429,7 +467,7 @@ std::vector <unsigned int> PCC_Kineic_cracking(int cell_type, std::vector<unsign
                        std::begin(Cell_current_energy); // gives index of the min element
 ///        NewCrackNumb_set.push_back()
 
-                       // REPAIR        cout << "NewCrackNumb:  " << NewCrackNumb << "   NotFracturedCellNumbs.size():  " << NotFracturedCellNumbs.size() << endl;
+        // REPAIR        cout << "NewCrackNumb:  " << NewCrackNumb << "   NotFracturedCellNumbs.size():  " << NotFracturedCellNumbs.size() << endl;
 
         if (std::find(crack_faces_sequence.begin(), crack_faces_sequence.end(), NewCrackNumb) == crack_faces_sequence.end()) {
             crack_faces_sequence.push_back(NewCrackNumb); // if the element is NOT in the crack faces sequence (already fractured) - add it
@@ -441,158 +479,158 @@ std::vector <unsigned int> PCC_Kineic_cracking(int cell_type, std::vector<unsign
         } // end if (std::find(...))
 
         /// Recalculation of the new crack index (CL) ///
-newCrack_neigh_TJs.clear();
-if (dim == 3) TJsCrackTypes = EdgesTypesCalc(CellNumbs,crack_faces_sequence, FES);
-else if (dim == 2) TJsCrackTypes = NodesTypesCalc(CellNumbs, crack_faces_sequence, FES);
+        newCrack_neigh_TJs.clear();
+        if (dim == 3) TJsCrackTypes = EdgesTypesCalc(CellNumbs,crack_faces_sequence, FES);
+        else if (dim == 2) TJsCrackTypes = NodesTypesCalc(CellNumbs, crack_faces_sequence, FES);
 
-newCrack_neigh_Faces.clear();
-for (int m = 0; m < CellNumbs.at(cell_type); ++m) // Loop over all the Faces
-if (AFS.coeff(NewCrackNumb, m) == 1 && S_cVector.at(m) == 0)
-newCrack_neigh_Faces.push_back(m);
+        newCrack_neigh_Faces.clear();
+        for (int m = 0; m < CellNumbs.at(cell_type); ++m) // Loop over all the Faces
+            if (AFS.coeff(NewCrackNumb, m) == 1 && S_cVector.at(m) == 0)
+                newCrack_neigh_Faces.push_back(m);
 
-if (newCrack_neigh_Faces.size() > 0) {
-for (auto fn: newCrack_neigh_Faces) {
-vector<double> j_types_crack_n_fractions = GBIndex(fn, FES,TJsCrackTypes); //Types (up to 100 kinds) of the edges incident to the considered Face
+        if (newCrack_neigh_Faces.size() > 0) {
+            for (auto fn: newCrack_neigh_Faces) {
+                vector<double> j_types_crack_n_fractions = GBIndex(fn, FES,TJsCrackTypes); //Types (up to 100 kinds) of the edges incident to the considered Face
 
 /// New crack index
-Face_crack_index.at(fn) = (j_types_crack_n_fractions.at(1) + 2.0 * j_types_crack_n_fractions.at(2) +
-                           3.0 * j_types_crack_n_fractions.at(3));
-} // end for (auto fn: new_crack_neigh_Faces)
-} // end if (new_crack_neigh_Faces.size() > 0)
+                Face_crack_index.at(fn) = (j_types_crack_n_fractions.at(1) + 2.0 * j_types_crack_n_fractions.at(2) +
+                                           3.0 * j_types_crack_n_fractions.at(3));
+            } // end for (auto fn: new_crack_neigh_Faces)
+        } // end if (new_crack_neigh_Faces.size() > 0)
 
 // current fractions of cracked cells
-undamaged_cells_fraction = NotFracturedCellNumbs.size() / (double) CellNumbs.at(cell_type);
-crack_cells_fraction = 1.0 - undamaged_cells_fraction; // special face vecror definition based on the ordinary face vector
+        undamaged_cells_fraction = NotFracturedCellNumbs.size() / (double) CellNumbs.at(cell_type);
+        crack_cells_fraction = 1.0 - undamaged_cells_fraction; // special face vecror definition based on the ordinary face vector
 
 // if(10000*std::ceil(crack_cells_fraction) % 2 == 1)
-cout << "fractured cells fraction:   " << crack_cells_fraction << " < total_max_cCells_fraction " << total_max_cCells_fraction << endl;
+        cout << "fractured cells fraction:   " << crack_cells_fraction << " < total_max_cCells_fraction " << total_max_cCells_fraction << endl;
 
-} while(crack_cells_fraction < 1.0);
+    } while(crack_cells_fraction < 1.0);
 
-crack_fraction = crack_faces_sequence.size() / (double) CellNumbs.at(cell_type);
-
-return crack_faces_sequence;
+    crack_fraction = crack_faces_sequence.size() / (double) CellNumbs.at(cell_type);
+**/
+    return crack_faces_sequence;
 } /// end of Kinetic_cracking
 
 /// ARCHIVE
- /*
+/*
 std::vector <unsigned int> PCC_Kinetic_cracking(std::vector <double> &face_elastic_energies, std::vector<unsigned int> &frac_sfaces_sequence, macrocrack &large_crack, Eigen::SparseMatrix<double> const& AFS, Eigen::SparseMatrix<double> const& FES) {
 
-    std::vector <unsigned int> crack_faces_sequence, S_crackVector(CellNumbs.at(2), 0); // sequence of the cracked Faces and State vector for cracks
-    vector<double> TJsTypes(CellNumbs.at(1), 0), TJsCrackTypes(CellNumbs.at(1), 0); // calculations of TJs related to inclusions and cracks
-    vector<double> newCrack_neigh_TJs, newCrack_neigh_Faces; // only for neighbouring faces
-    std::vector <double> Face_weight(CellNumbs.at(2),0), Face_rGO_index(CellNumbs.at(2),0), Face_crack_index(CellNumbs.at(2),0); // face weight (number of neighbours) and indexes for all GBs
-    std::vector <double> lsc_rGO_energy(CellNumbs.at(2),0), lsc_crack_energy(CellNumbs.at(2),0); // energies related with the local stress concentrators Bl and Cl
-    std::vector <double> Face_energy(CellNumbs.at(2),0), Face_current_energy(CellNumbs.at(2),0); // energies for all GBs
-    double crack_fraction = 0.0;
-    double total_crack_energies = 0.0;
+   std::vector <unsigned int> crack_faces_sequence, S_crackVector(CellNumbs.at(2), 0); // sequence of the cracked Faces and State vector for cracks
+   vector<double> TJsTypes(CellNumbs.at(1), 0), TJsCrackTypes(CellNumbs.at(1), 0); // calculations of TJs related to inclusions and cracks
+   vector<double> newCrack_neigh_TJs, newCrack_neigh_Faces; // only for neighbouring faces
+   std::vector <double> Face_weight(CellNumbs.at(2),0), Face_rGO_index(CellNumbs.at(2),0), Face_crack_index(CellNumbs.at(2),0); // face weight (number of neighbours) and indexes for all GBs
+   std::vector <double> lsc_rGO_energy(CellNumbs.at(2),0), lsc_crack_energy(CellNumbs.at(2),0); // energies related with the local stress concentrators Bl and Cl
+   std::vector <double> Face_energy(CellNumbs.at(2),0), Face_current_energy(CellNumbs.at(2),0); // energies for all GBs
+   double crack_fraction = 0.0;
+   double total_crack_energies = 0.0;
 
-    double sface_energy_matrix = 2.0, sface_energy_rGO = 1.0, sface_energy_aggl = 0.4;
-    /// still arbitrarily chosen!
-    double  lsc_rGO = 4.0*sface_energy_rGO, lsc_crack = 2.0*sface_energy_rGO; // energy values related with the stress concentrators //    double kB = 1.3807*pow(10,-23); // Boltzmann constant
+   double sface_energy_matrix = 2.0, sface_energy_rGO = 1.0, sface_energy_aggl = 0.4;
+   /// still arbitrarily chosen!
+   double  lsc_rGO = 4.0*sface_energy_rGO, lsc_crack = 2.0*sface_energy_rGO; // energy values related with the stress concentrators //    double kB = 1.3807*pow(10,-23); // Boltzmann constant
 
-    /// Initial energies of special faces
-    for (unsigned int i = 0; i < CellNumbs.at(2); ++i) Face_energy.at(i) = sface_energy_matrix * face_areas_vector.at(i) * sample_dimensions.at(0) * sample_dimensions.at(1); // assignments of the matrix surface energies
-    for (auto ks : frac_sfaces_sequence) Face_energy.at(ks) = sface_energy_rGO * face_areas_vector.at(ks) * sample_dimensions.at(0) * sample_dimensions.at(1); // assignments of the rGO defect surface energies
+   /// Initial energies of special faces
+   for (unsigned int i = 0; i < CellNumbs.at(2); ++i) Face_energy.at(i) = sface_energy_matrix * face_areas_vector.at(i) * sample_dimensions.at(0) * sample_dimensions.at(1); // assignments of the matrix surface energies
+   for (auto ks : frac_sfaces_sequence) Face_energy.at(ks) = sface_energy_rGO * face_areas_vector.at(ks) * sample_dimensions.at(0) * sample_dimensions.at(1); // assignments of the rGO defect surface energies
 
-    ///Calculation of the TJs types
-    TJsTypes = EdgesTypesCalc(CellNumbs, frac_sfaces_sequence, FES);
+   ///Calculation of the TJs types
+   TJsTypes = EdgesTypesCalc(CellNumbs, frac_sfaces_sequence, FES);
 
-    /// GB_indices calculation
-    for (unsigned int fn = 0; fn < CellNumbs.at(2); ++fn) {
-        vector<double> j_types_neigh_fractions = GBIndex(fn, FES, TJsTypes); //Types (up to 100 kinds) of the edges incident to the considered Face
+   /// GB_indices calculation
+   for (unsigned int fn = 0; fn < CellNumbs.at(2); ++fn) {
+       vector<double> j_types_neigh_fractions = GBIndex(fn, FES, TJsTypes); //Types (up to 100 kinds) of the edges incident to the considered Face
 //REPAIR   for(auto kl : j_types_neigh_fractions) cout << " " <<kl ; cout << endl;
 
-        // rGO (Bl) index calculation
-        Face_rGO_index.at(fn) = (j_types_neigh_fractions.at(0) + 2.0 * j_types_neigh_fractions.at(1) + 3.0 * j_types_neigh_fractions.at(2)) / 3.0;
+       // rGO (Bl) index calculation
+       Face_rGO_index.at(fn) = (j_types_neigh_fractions.at(0) + 2.0 * j_types_neigh_fractions.at(1) + 3.0 * j_types_neigh_fractions.at(2)) / 3.0;
 
-    } // end of for ( fn < CellNumbs.at(2)) GB_indices calculation
+   } // end of for ( fn < CellNumbs.at(2)) GB_indices calculation
 
-    /// Local stress concentrators and related energies
-    // Face weights calculation
-    for (unsigned int i = 0; i < CellNumbs.at(2); ++i)
-        for (int l = 0; l < AFS.rows(); l++) // Loop over all Faces
-            if (AFS.coeff( l, i) == 1) Face_weight.at(i)++;
+   /// Local stress concentrators and related energies
+   // Face weights calculation
+   for (unsigned int i = 0; i < CellNumbs.at(2); ++i)
+       for (int l = 0; l < AFS.rows(); l++) // Loop over all Faces
+           if (AFS.coeff( l, i) == 1) Face_weight.at(i)++;
 
-    // Energies
-    for (unsigned int j = 0; j < CellNumbs.at(2); ++j) lsc_rGO_energy.at(j) = lsc_rGO * face_areas_vector.at(j) * sample_dimensions.at(0) * sample_dimensions.at(1) * (Face_rGO_index.at(j) / Face_weight.at(j));
-    for (unsigned int k = 0; k < CellNumbs.at(2); ++k) lsc_crack_energy.at(k) = lsc_crack * face_areas_vector.at(k) * sample_dimensions.at(0) * sample_dimensions.at(1) * (Face_crack_index.at(k) / Face_weight.at(k));
+   // Energies
+   for (unsigned int j = 0; j < CellNumbs.at(2); ++j) lsc_rGO_energy.at(j) = lsc_rGO * face_areas_vector.at(j) * sample_dimensions.at(0) * sample_dimensions.at(1) * (Face_rGO_index.at(j) / Face_weight.at(j));
+   for (unsigned int k = 0; k < CellNumbs.at(2); ++k) lsc_crack_energy.at(k) = lsc_crack * face_areas_vector.at(k) * sample_dimensions.at(0) * sample_dimensions.at(1) * (Face_crack_index.at(k) / Face_weight.at(k));
 
-    /// Final surface energy - a single calculation of Bl concentrators effect on face energies
-    for (unsigned int i = 0; i < CellNumbs.at(2); ++i) Face_energy.at(i) -= lsc_rGO_energy.at(i);
+   /// Final surface energy - a single calculation of Bl concentrators effect on face energies
+   for (unsigned int i = 0; i < CellNumbs.at(2); ++i) Face_energy.at(i) -= lsc_rGO_energy.at(i);
 
-    /// Crack face sequence creation
-    // (1) FAST case : cracks do NOT affect the process of the further fracture`
-    //     for (unsigned int i = 0; i < CellNumbs.at(2); ++i){ ;}
+   /// Crack face sequence creation
+   // (1) FAST case : cracks do NOT affect the process of the further fracture`
+   //     for (unsigned int i = 0; i < CellNumbs.at(2); ++i){ ;}
 
-    // (2) SLOW case : cracks affect the process of the further fracture`
-    /// "Infinite" loop before there are new fractured faces
-    bool is_fractured = 1; // id signifying that some GBs was fractured - the infinite loop stops when no one no crack is appeared during an iteration
-    do {
-        is_fractured = 0; // initial assumption
+   // (2) SLOW case : cracks affect the process of the further fracture`
+   /// "Infinite" loop before there are new fractured faces
+   bool is_fractured = 1; // id signifying that some GBs was fractured - the infinite loop stops when no one no crack is appeared during an iteration
+   do {
+       is_fractured = 0; // initial assumption
 
-        double NewCrackNumb = 0;
-        /// Loop over all faces in PCC
-        for (unsigned int i = 0; i < CellNumbs.at(2); ++i) { // crack loop over all the GBs
-            // Update for local stress concentrators (Cl) and related energies
-            for (unsigned int k = 0; k < CellNumbs.at(2); ++k)
-                lsc_crack_energy.at(k) = lsc_crack * face_areas_vector.at(k) * sample_dimensions.at(0) * sample_dimensions.at(1) * (Face_crack_index.at(k) / Face_weight.at(k));
+       double NewCrackNumb = 0;
+       /// Loop over all faces in PCC
+       for (unsigned int i = 0; i < CellNumbs.at(2); ++i) { // crack loop over all the GBs
+           // Update for local stress concentrators (Cl) and related energies
+           for (unsigned int k = 0; k < CellNumbs.at(2); ++k)
+               lsc_crack_energy.at(k) = lsc_crack * face_areas_vector.at(k) * sample_dimensions.at(0) * sample_dimensions.at(1) * (Face_crack_index.at(k) / Face_weight.at(k));
 
-            /// Current GB energies
-            /// New surface energy - calculation of Cl concentrators effect on face energies
-            for (unsigned int l = 0; l < CellNumbs.at(2); ++l)
-                Face_current_energy.at(l) = Face_energy.at(l) - lsc_crack_energy.at(l);
+           /// Current GB energies
+           /// New surface energy - calculation of Cl concentrators effect on face energies
+           for (unsigned int l = 0; l < CellNumbs.at(2); ++l)
+               Face_current_energy.at(l) = Face_energy.at(l) - lsc_crack_energy.at(l);
 
-            /// New surface energy - the effect of external elastic stresses (!)
-            for (unsigned int m = 0; m < CellNumbs.at(2); ++m)
-                Face_current_energy.at(m) -= face_elastic_energies.at(m);
+           /// New surface energy - the effect of external elastic stresses (!)
+           for (unsigned int m = 0; m < CellNumbs.at(2); ++m)
+               Face_current_energy.at(m) -= face_elastic_energies.at(m);
 
-            /// New fractured face of elements
-            NewCrackNumb = i;
-            /// if the face is not already fractured and its full energy less than 0 (including the "-" full external elastic energy)
-            if (S_crackVector.at(NewCrackNumb) != 1 && Face_current_energy.at(NewCrackNumb) < 0) {
-                crack_faces_sequence.push_back(NewCrackNumb); // if the element is not in the sequence - add
-                is_fractured = 1; // there is at least one fractured GB
-                S_crackVector.at(NewCrackNumb) = 1;
-                if (find(frac_sfaces_sequence.begin(), frac_sfaces_sequence.end(), NewCrackNumb) == frac_sfaces_sequence.end()) // is matrix boundary without inclusion
-                    Face_energy.at(NewCrackNumb) = 2.0 * sface_energy_matrix * face_areas_vector.at(NewCrackNumb) * sample_dimensions.at(0) * sample_dimensions.at(1);
-                else Face_energy.at(NewCrackNumb) = 2.0 * sface_energy_rGO * face_areas_vector.at(NewCrackNumb) * sample_dimensions.at(0) * sample_dimensions.at(1);
+           /// New fractured face of elements
+           NewCrackNumb = i;
+           /// if the face is not already fractured and its full energy less than 0 (including the "-" full external elastic energy)
+           if (S_crackVector.at(NewCrackNumb) != 1 && Face_current_energy.at(NewCrackNumb) < 0) {
+               crack_faces_sequence.push_back(NewCrackNumb); // if the element is not in the sequence - add
+               is_fractured = 1; // there is at least one fractured GB
+               S_crackVector.at(NewCrackNumb) = 1;
+               if (find(frac_sfaces_sequence.begin(), frac_sfaces_sequence.end(), NewCrackNumb) == frac_sfaces_sequence.end()) // is matrix boundary without inclusion
+                   Face_energy.at(NewCrackNumb) = 2.0 * sface_energy_matrix * face_areas_vector.at(NewCrackNumb) * sample_dimensions.at(0) * sample_dimensions.at(1);
+               else Face_energy.at(NewCrackNumb) = 2.0 * sface_energy_rGO * face_areas_vector.at(NewCrackNumb) * sample_dimensions.at(0) * sample_dimensions.at(1);
 
-                /// Update for total surface energy of all the fractured GBs
-                total_crack_energies += Face_energy.at(NewCrackNumb);
+               /// Update for total surface energy of all the fractured GBs
+               total_crack_energies += Face_energy.at(NewCrackNumb);
 
-                /// New cracked neighbours of the converted NewCrackNumb Face
-                newCrack_neigh_TJs.clear();
-                newCrack_neigh_Faces.clear();
-                for (int k = 0; k < CellNumbs.at(1); ++k) // Loop over all the Edges
-                    if (FES.coeff(k, NewCrackNumb) == 1) newCrack_neigh_TJs.push_back(k);
-                // update for cracked TJs types
-                if (newCrack_neigh_TJs.size() > 0) for (auto itr: newCrack_neigh_TJs) TJsCrackTypes.at(itr)++;
+               /// New cracked neighbours of the converted NewCrackNumb Face
+               newCrack_neigh_TJs.clear();
+               newCrack_neigh_Faces.clear();
+               for (int k = 0; k < CellNumbs.at(1); ++k) // Loop over all the Edges
+                   if (FES.coeff(k, NewCrackNumb) == 1) newCrack_neigh_TJs.push_back(k);
+               // update for cracked TJs types
+               if (newCrack_neigh_TJs.size() > 0) for (auto itr: newCrack_neigh_TJs) TJsCrackTypes.at(itr)++;
 
-                for (int m = 0; m < CellNumbs.at(2); ++m) // Loop over all the Faces
-                    // update for crack neighbour faces
-                    if (AFS.coeff(NewCrackNumb, m) == 1 && S_crackVector.at(m) == 0) newCrack_neigh_Faces.push_back(m);
+               for (int m = 0; m < CellNumbs.at(2); ++m) // Loop over all the Faces
+                   // update for crack neighbour faces
+                   if (AFS.coeff(NewCrackNumb, m) == 1 && S_crackVector.at(m) == 0) newCrack_neigh_Faces.push_back(m);
 
-                // new GB index calculation
-                if (newCrack_neigh_Faces.size() > 0) {
-                    for (auto fn: newCrack_neigh_Faces) {
-                        vector<double> j_types_crack_n_fractions = GBIndex(fn, FES,TJsCrackTypes); //Types (up to 100 kinds) of the edges incident to the considered Face
-                        /// New crack index
-                        Face_crack_index.at(fn) = (j_types_crack_n_fractions.at(0) + 2.0 * j_types_crack_n_fractions.at(1) + 3.0 * j_types_crack_n_fractions.at(2)) / 3.0;
-                    } // end for (auto fn: new_crack_neigh_Faces)
-                } // end if (new_crack_neigh_Faces.size() > 0)
+               // new GB index calculation
+               if (newCrack_neigh_Faces.size() > 0) {
+                   for (auto fn: newCrack_neigh_Faces) {
+                       vector<double> j_types_crack_n_fractions = GBIndex(fn, FES,TJsCrackTypes); //Types (up to 100 kinds) of the edges incident to the considered Face
+                       /// New crack index
+                       Face_crack_index.at(fn) = (j_types_crack_n_fractions.at(0) + 2.0 * j_types_crack_n_fractions.at(1) + 3.0 * j_types_crack_n_fractions.at(2)) / 3.0;
+                   } // end for (auto fn: new_crack_neigh_Faces)
+               } // end if (new_crack_neigh_Faces.size() > 0)
 
-            } /// end if (S_crackVector.at(NewCrackNumb) != 1 && Face_current_energy.at(NewCrackNumb) < 0)
+           } /// end if (S_crackVector.at(NewCrackNumb) != 1 && Face_current_energy.at(NewCrackNumb) < 0)
 
-            crack_fraction = crack_faces_sequence.size() / (double) CellNumbs.at(2);
+           crack_fraction = crack_faces_sequence.size() / (double) CellNumbs.at(2);
 //REPAIR    cout << "crack_fraction = " << crack_fraction <<"  " << "Total crack surfaces energy = " << total_crack_energies << endl;
-        } // end for ( i < CellNumbs.at(2) )
+       } // end for ( i < CellNumbs.at(2) )
 
-    } while (is_fractured);
+   } while (is_fractured);
 
-    large_crack.Set_multiple_cracking_energy(total_crack_energies); //Set_multiple_cracking_energy(double total_energy)
+   large_crack.Set_multiple_cracking_energy(total_crack_energies); //Set_multiple_cracking_energy(double total_energy)
 
-    return crack_faces_sequence;
+   return crack_faces_sequence;
 } /// end of Kinetic_cracking
 /// -----------------------------------------------------------------------------------------------------------------///
 */

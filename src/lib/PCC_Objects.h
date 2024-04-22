@@ -16,7 +16,8 @@ class Config {
         int config_dim;
         std::string config_source_dir, config_output_dir; // Input and output directories as it is written in the 'config/main.ini' file
         std::string pcc_standard; // PCC standard as specified in the technical documentation for the project
-        std::vector<char*> config_PCCpaths;
+        //std::vector<char*> config_PCCpaths;
+        std::vector<std::string> config_PCCpaths;
         std::vector<int> config_ConfVector; // main module keys
         std::string config_main_type; // 'mode' from the config/main.ini file: 'LIST' (execution one by one all the active (ON) project modules), 'TUTORIAL' as a specific education mode, 'PERFORMANCE_TEST' or the 'TASK' mode :: This define the global simulation mode: 'LIST' for the "list" of modules implementing one by one (if ON) and 'TASK' for the user-defined task scripts with modules and functions included from the project's libraries
         std::string config_sim_task; // path to the corresponding *.cpp file containing a 'simulation task' (for 'TASK' execution mode only, not 'LIST') as it is written in the 'config/main.ini' file
@@ -24,12 +25,12 @@ class Config {
     /// The list of all mentioned below State_<*>_vectors and State_<*>fracture_vectors as the output of the Processing module // is the list of 'state vectors' analogous to the Configuration_State but for 'cracked' (or induced) network of k-cells
     /* where 'n' :: "nodes", 'e' :: "edges", 'f' :: "faces", and 'p' :: "polyhedrons" */
 // State_Vector in the form : [Element index] - > [Element type], like [0, 0, 2, 1, 1, 0, 2, 4, 3, 3, 2, 0,... ...,2] containing all CellNumb.at(*) element types
-        std::vector<int> State_p_vector, State_f_vector, State_e_vector, State_n_vector; // Normally the State_<*>_vector of special cells can be calculated based on the corresonding special_cell_sequences
-        std::vector<int> State_pfracture_vector, State_ffracture_vector, State_efracture_vector, State_nfracture_vector; // separate vectors containing the other 'fractured' labels different from the 'special' ones. To be calculated based on the corresonding fractured_cell_sequences
+        std::vector<unsigned int> State_p_vector, State_f_vector, State_e_vector, State_n_vector; // Normally the State_<*>_vector of special cells can be calculated based on the corresonding special_cell_sequences
+        std::vector<unsigned int> State_pfracture_vector, State_ffracture_vector, State_efracture_vector, State_nfracture_vector; // separate vectors containing the other 'fractured' labels different from the 'special' ones. To be calculated based on the corresonding fractured_cell_sequences
 
 /// Configuration_State = { State_p_vector, State_f_vector, State_e_vector, State_n_vector } is a list of all 'state vectors': from (1) State_p_vector (on top, id = 0) to (4) State_n_vector (bottom, id = 3)
-        std::vector<std::vector<int>> Configuration_State;
-        std::vector<std::vector<int>> Configuration_cState;
+        std::vector<std::vector<unsigned int>> Configuration_State;
+        std::vector<std::vector<unsigned int>> Configuration_cState;
 
 public:
     void Read_config(); // Read the 'initial configuration' of the problem set in all the relevant '*.ini' files containing in the '\config' project directory using the functions from the 'ini_readers.cpp' project library (and only from there)
@@ -40,12 +41,12 @@ public:
     std::string Get_source_dir(); //!@return source_dir
     std::string Get_output_dir(); //!@return output_dir
     std::string Get_pcc_standard(); //!@return pcc_standard
-    std::vector<char*> Get_paths(); //!@return PCC PCCpaths
+    std::vector<std::string> Get_paths(); //!@return PCC PCCpaths
     std::string Get_main_type(); //!@return main_type
     std::string Get_sim_task(); //!@return sim_task path to the corresponding *.cpp file containing the task code
 
-    std::vector<std::vector<int>> Get_Configuration_State(); //!@return Configuration_State
-    std::vector<std::vector<int>> Get_Configuration_cState(); //!@return Configuration_State
+    std::vector<std::vector<unsigned int>> Get_Configuration_State(); //!@return Configuration_State
+    std::vector<std::vector<unsigned int>> Get_Configuration_iState(); //!@return Configuration_iState
 };
 // ConfigVector (../config/main.ini) contains ALL the control variables needed for the program execution
 
@@ -55,20 +56,20 @@ private:
     std::vector<unsigned int> p_sequence, f_sequence, e_sequence, n_sequence;
     std::vector<unsigned int> p_induced_sequence, f_induced_sequence, e_induced_sequence, n_induced_sequence;
 
-    std::vector<int> p_design, f_design, e_design, n_design;
-    std::vector<int> p_induced_design, f_induced_design, e_induced_design, n_induced_design;
+    std::vector<unsigned int> p_design, f_design, e_design, n_design;
+    std::vector<unsigned int> p_induced_design, f_induced_design, e_induced_design, n_induced_design;
 
 public:
     /// Set of variables
     CellsDesign() {}; // constructor
     void Set_sequences(std::vector<unsigned int> psequence, std::vector<unsigned int> fsequence, std::vector<unsigned int> esequence, std::vector<unsigned int> nsequence);
     void Set_induced_sequences(std::vector<unsigned int> p_ind_sequence, std::vector<unsigned int> f_ind_sequence, std::vector<unsigned int> e_ind_sequence, std::vector<unsigned int> n_ind_sequence);
-    void Set_designes(std::vector<int> pdesign, std::vector<int> fdesign, std::vector<int> edesign, std::vector<int> ndesign);
-    void Set_induced_designs(std::vector<int> p_ind_design, std::vector<int> f_ind_design, std::vector<int> e_ind_design, std::vector<int> n_ind_design);
+    void Set_designes(std::vector<unsigned int> pdesign, std::vector<unsigned int> fdesign, std::vector<unsigned int> edesign, std::vector<unsigned int> ndesign);
+    void Set_induced_designs(std::vector<unsigned int> p_ind_design, std::vector<unsigned int> f_ind_design, std::vector<unsigned int> e_ind_design, std::vector<unsigned int> n_ind_design);
     void Set_sequence(std::vector<unsigned int> sequence, int ctype);
     void Set_induced_sequence(std::vector<unsigned int> ind_sequence, int ctype);
-    void Set_design(std::vector<int> design, int ctype);
-    void Set_induced_design(std::vector<int> ind_design, int ctype);
+    void Set_design(std::vector<unsigned int> design, int ctype);
+    void Set_induced_design(std::vector<unsigned int> ind_design, int ctype);
 
     // Get
     std::vector<unsigned int> Get_p_sequence(void);
@@ -80,10 +81,10 @@ public:
     std::vector<unsigned int> Get_e_induced_sequence(void);
     std::vector<unsigned int> Get_n_induced_sequence(void);
 
-    std::vector<int> Get_p_design(void);
-    std::vector<int> Get_f_design(void);
-    std::vector<int> Get_e_design(void);
-    std::vector<int> Get_n_design(void);
+    std::vector<unsigned int> Get_p_design(void);
+    std::vector<unsigned int> Get_f_design(void);
+    std::vector<unsigned int> Get_e_design(void);
+    std::vector<unsigned int> Get_n_design(void);
 };
 
 /// ==== # 2 # =============== Processed Complex class  ========================= ///

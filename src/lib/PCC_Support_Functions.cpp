@@ -10,6 +10,15 @@
 using namespace std; // standard namespace
 using namespace Eigen; // standard namespace
 
+extern int dim; // tessellation/PCC dimension
+extern std::vector<std::string> PCCpaths;
+extern std::vector<unsigned int> CellNumbs; // number of cells in a PCC defined globally
+//extern std::string source_path, output_dir;
+//std::ofstream Out_local_logstream;
+
+typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which declares a column-major sparse matrix type of doubles with the nickname 'SpMat'
+
+
 #include "PCC_Support_Functions.h" // It must be here - first in this list (!)
 /// # 1 # Checking if file exists in the directory 'fileName'
 
@@ -37,8 +46,9 @@ std::vector<double> res; double d = 0.0;  // function output
     return res;
 } // END of VectorDReader()
 
-/// Creation Eigen::Sparse_Matrix from file
-Eigen::SparseMatrix<double> SMatrixReader(char* SMpath, unsigned int Rows, unsigned int Cols) {
+/// Creation Eigen::Sparse_Matrix from filef
+//Eigen::SparseMatrix<double> SMatrixReader(char* SMpath, unsigned int Rows, unsigned int Cols) {
+Eigen::SparseMatrix<double> SMatrixReader(std::string SMpath, unsigned int Rows, unsigned int Cols) {
     /// function output
     Eigen::SparseMatrix<double> res(Rows, Cols);
 
@@ -147,9 +157,6 @@ int sign(TP x) {
     return sign(x, std::is_signed<TP>());
 }
 
-
-
-/**
 /// Function for reading tuples list from file
 vector<vector<double>> VectorVectors4Reader(char* SMpath) {
     vector<vector<double>> res;
@@ -202,8 +209,8 @@ vector<tuple<double, double, double>> dTuplesReader(char* SMpath, unsigned int &
 /// * The function count the number of Edges possessing with types J0, J1, J2, J3 and J4 for every junction * ///
 /// * Calculation Face-Edge index ::                                                                                                     * ///
 
-vector<double> GBIndex(unsigned int face_number, Eigen::SparseMatrix<double> const& FES, vector<double> const& TJsTypes) {
-    vector<double> res(100,0); /// Up to 100 types of possible TJs types
+std::vector<double> GBIndex(unsigned int face_number, Eigen::SparseMatrix<double> const& FES, vector<double> const& TJsTypes) {
+    std::vector<double> res(100,0); /// Up to 100 types of possible TJs types
 
     for (unsigned int l = 0; l < FES.rows(); l++) // Loop over all Edges
         if (FES.coeff(l,face_number) != 0)
@@ -215,9 +222,9 @@ vector<double> GBIndex(unsigned int face_number, Eigen::SparseMatrix<double> con
 
 /// * Function calculates the vector<int> "TJsTypes" of types TJs in the PCC using its FES incidence matrix and special faces sequence (s_faces_sequence) * ///
 /// *                                                                                                                                                    * ///
-vector<double> NodesTypesCalc(std::vector<unsigned int> const &CellNumbs, vector<unsigned int> &s_faces_sequence, Eigen::SparseMatrix<double> const &ENS)
+std::vector<double> NodesTypesCalc(std::vector<unsigned int> const &CellNumbs, std::vector<unsigned int> &s_faces_sequence, Eigen::SparseMatrix<double> const &ENS)
 {
-vector<double> TJsTypes(CellNumbs.at(0),0); // CellNumbs.at(1) is the number of Edges
+std::vector<double> TJsTypes(CellNumbs.at(0),0); // CellNumbs.at(1) is the number of Edges
 for (auto vit: s_faces_sequence) // loop over all Special Faces
 for(int k = 0; k < CellNumbs.at(0); k++) // loop over all Edges
 if (ENS.coeff(k, vit) != 0)
@@ -226,9 +233,9 @@ TJsTypes.at(k)++;
 return TJsTypes;
 }
 
-vector<double> EdgesTypesCalc(std::vector<unsigned int> const &CellNumbs, vector<unsigned int> &s_faces_sequence, Eigen::SparseMatrix<double> const &FES)
+std::vector<double> EdgesTypesCalc(std::vector<unsigned int> const &CellNumbs, std::vector<unsigned int> &s_faces_sequence, Eigen::SparseMatrix<double> const &FES)
 {
-vector<double> TJsTypes(CellNumbs.at(1),0); // CellNumbs.at(1) is the number of Edges
+std::vector<double> TJsTypes(CellNumbs.at(1),0); // CellNumbs.at(1) is the number of Edges
 for (auto vit: s_faces_sequence) // loop over all Special Faces
 for(int k = 0; k < CellNumbs.at(1); k++) // loop over all Edges
 if (FES.coeff(k, vit) != 0)
@@ -948,7 +955,7 @@ double Get_TJsEntropy(vector<unsigned int> special_faces_seq) {
     vector<double> TJsTypes;
 
     SpMat FES(CellNumbs.at(1), CellNumbs.at(2));
-    FES = SMatrixReader(PCCpaths.at(5 ), (CellNumbs.at(1)), (CellNumbs.at(2))); //all Edges-Faces
+    FES = SMatrixReader(PCCpaths.at(5), (CellNumbs.at(1)), (CellNumbs.at(2))); //all Edges-Faces
 
     TJsTypes = EdgesTypesCalc(CellNumbs, special_faces_seq, FES);
 
@@ -993,7 +1000,6 @@ void eraseSubStr(std::string & mainStr, const std::string & toErase)
         mainStr.erase(pos, toErase.length());
     }
 }
-*/
 
 /*
  *     double J0 = 0, J1 = 0, J2 = 0, J3 = 0, Jall = 0, j0 = 0, j1 = 0, j2 = 0, j3 = 0;

@@ -106,25 +106,25 @@ void PCC_CellSequences_Writer(CellsDesign &new_cells_design, int &output_counter
     Out_scells_file.open(des_odir, ios::trunc);
     if (Out_scells_file) {
         // design vectors
-        vector<int> new_n_design  = new_cells_design.Get_n_design();
+        vector<unsigned int> new_n_design  = new_cells_design.Get_n_design();
         if (std::count(new_n_design.begin(), new_n_design.end(), 1) > 1)
             for (auto rvit: new_n_design) Out_scells_file << rvit << " ";
         else Out_scells_file << 0;
         Out_scells_file << endl;
 
-        vector<int> new_e_design  = new_cells_design.Get_e_design();
+        vector<unsigned int> new_e_design  = new_cells_design.Get_e_design();
         if (std::count(new_e_design.begin(),new_e_design.end(), 1) > 1 )
             for (auto rvit: new_e_design) Out_scells_file << rvit << " ";
         else Out_scells_file << 0;
         Out_scells_file << endl;
 
-        vector<int> new_f_design  = new_cells_design.Get_f_design();
+        vector<unsigned int> new_f_design  = new_cells_design.Get_f_design();
         if (std::count(new_f_design.begin(),new_f_design.end(), 1) > 1 )
             for (auto rvit: new_f_design) Out_scells_file << rvit  << " ";
         else Out_scells_file << 0;
         Out_scells_file << endl;
 
-        vector<int> new_p_design  = new_cells_design.Get_p_design();
+        vector<unsigned int> new_p_design  = new_cells_design.Get_p_design();
         if (std::count(new_p_design.begin(),new_p_design.end(), 1) > 1 )
             for (auto rvit: new_p_design) Out_scells_file << rvit  << " ";
         else Out_scells_file << 0;

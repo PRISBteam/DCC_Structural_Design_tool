@@ -47,7 +47,7 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
         return pcc_standard;
     }; //!@return pcc_standard
 
-    std::vector<char*> Config::Get_paths() {
+    std::vector<string> Config::Get_paths() {
         return config_PCCpaths;
     }; //!@return PCCpaths
 
@@ -63,11 +63,11 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
         return config_sim_task;
     }; //!@return output_dir
 
-  std::vector<std::vector<int>> Config::Get_Configuration_State() {
+  std::vector<std::vector<unsigned int>> Config::Get_Configuration_State() {
       return Configuration_State;
     }; //!@return Configuration_State
 
-    std::vector<std::vector<int>> Config::Get_Configuration_cState() {
+    std::vector<std::vector<unsigned int>> Config::Get_Configuration_iState() {
         return Configuration_cState;
     }; //!@return Configuration_State
 
@@ -271,10 +271,10 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
     void CellsDesign::Set_induced_sequences(std::vector<unsigned int> p_ind_sequence, std::vector<unsigned int> f_ind_sequence, std::vector<unsigned int> e_ind_sequence, std::vector<unsigned int> n_ind_sequence){
         p_induced_sequence = p_ind_sequence; f_induced_sequence = f_ind_sequence; e_induced_sequence = e_ind_sequence; n_induced_sequence = n_ind_sequence;
     }
-    void CellsDesign::Set_designes(std::vector<int> pdesign, std::vector<int> fdesign, std::vector<int> edesign, std::vector<int> ndesign){
+    void CellsDesign::Set_designes(std::vector<unsigned int> pdesign, std::vector<unsigned int> fdesign, std::vector<unsigned int> edesign, std::vector<unsigned int> ndesign){
         p_design = pdesign; f_design = fdesign; e_design = edesign; n_design = ndesign;
     }
-    void CellsDesign::Set_induced_designs(std::vector<int> p_ind_design, std::vector<int> f_ind_design, std::vector<int> e_ind_design, std::vector<int> n_ind_design){
+    void CellsDesign::Set_induced_designs(std::vector<unsigned int> p_ind_design, std::vector<unsigned int> f_ind_design, std::vector<unsigned int> e_ind_design, std::vector<unsigned int> n_ind_design){
         p_induced_design = p_ind_design; f_induced_design = f_ind_design; e_induced_design = e_ind_design; n_induced_design = n_ind_design;
     }
     void CellsDesign::Set_sequence(std::vector<unsigned int> sequence, int ctype){
@@ -289,13 +289,13 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
         else if (ctype == 1 ) e_induced_sequence = ind_sequence;
         else if (ctype == 0 ) n_induced_sequence = ind_sequence;
     }
-    void CellsDesign::Set_design(std::vector<int> design, int ctype){
+    void CellsDesign::Set_design(std::vector<unsigned int> design, int ctype){
         if (ctype == 3) p_design = design;
         else if (ctype == 2 ) f_design = design;
         else if (ctype == 1 ) e_design = design;
         else if (ctype == 0 ) n_design = design;
     }
-    void CellsDesign::Set_induced_design(std::vector<int> ind_design, int ctype){
+    void CellsDesign::Set_induced_design(std::vector<unsigned int> ind_design, int ctype){
         if (ctype == 3) p_induced_design = ind_design;
         else if (ctype == 2 ) f_induced_design = ind_design;
         else if (ctype == 1 ) e_induced_design = ind_design;
@@ -358,26 +358,26 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
         }
         else return n_induced_sequence;
     }
-    std::vector<int> CellsDesign::Get_p_design(void){
+    std::vector<unsigned int> CellsDesign::Get_p_design(void){
         if (p_design.size() == 0) {
             cout << "WARNING: p_design did not set!" << endl;
             return {0};
         }
         else return p_design;
     }
-    std::vector<int> CellsDesign::Get_f_design(void){
+    std::vector<unsigned int> CellsDesign::Get_f_design(void){
         if (f_design.size() == 0) {
             cout << "WARNING: f_design did not set!" << endl;
             return {0};
         } else return f_design;
     }
-    std::vector<int> CellsDesign::Get_e_design(void){
+    std::vector<unsigned int> CellsDesign::Get_e_design(void){
         if (e_design.size() == 0) {
             cout << "WARNING: e_design did not set!" << endl;
             return {0};
         } else return e_design;
     }
-    std::vector<int> CellsDesign::Get_n_design(void){
+    std::vector<unsigned int> CellsDesign::Get_n_design(void){
         if (n_design.size() == 0) {
             cout << "WARNING: n_design did not set!" << endl;
             return {0};
