@@ -64,6 +64,7 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
             PCC_characteristics.face_process_seq.push_back(face_sequences_vector);
 
     } // end for(auto fseq...)
+    cout << "new_cells_design.Get_f_sequence() size" << new_cells_design.Get_f_sequence().size() << endl;
 /**
     for (int i = 0; i < 4; ++i) { /// for all types of cells
 
@@ -151,14 +152,19 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
                             (CellNumbs.at(3 + (dim - 3)))); //all Faces-Grains
 
         double number_of_steps = (double) charlabs_laplacians.at(0); // reading from Characterisation.ini file (!)
-        unsigned int d_seq = std::floor((double) PCC_characteristics.face_process_seq.size() / number_of_steps);
         std::vector<unsigned int> new_current_seq;
         std::vector<double> new_Betti_numbers;
 
         std::vector<unsigned int> Betti_calc_time;
 
+
+//        cout << endl;
+//        cout << "we are here!!" << endl;
+//        cout << endl;
+
 //#pragma omp parallel for // parallel execution by OpenMP
-        for (unsigned int i = 0; i <= 10; ++i) {
+        unsigned int d_seq = std::floor((double) PCC_characteristics.face_process_seq.size() / number_of_steps);
+        for (unsigned int i = 0; i <= number_of_steps; ++i) { // ? number_of_steps ? 10
             new_current_seq = PCC_characteristics.face_process_seq.at(i*d_seq);
             cout << "---------------------------------------------------------------------------" << endl;
             cout << "[CHAR] Current special faces fraction: " << new_current_seq.size()/ (double) CellNumbs.at(2 + (dim - 3)) << endl;

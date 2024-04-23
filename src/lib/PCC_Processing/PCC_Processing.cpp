@@ -106,13 +106,26 @@ CellsDesign PCC_Processing(Config &configuration) {
             for (auto  itr = strip_lenghts_distribution.begin(); itr != strip_lenghts_distribution.end(); ++itr) {
                 cell_strip_distribution.push_back(max_sfractions_vectors[cell_type][0] * CellNumbs.at(cell_type) * (*itr) / (std::distance(strip_lenghts_distribution.begin(), itr) + 1.0)); // only for the first 'Xmax_fraction1' in the 'config/processing.ini' file values of max k-cell fractions
             }
-//REPAIR
-for(auto  itr = cell_strip_distribution.begin(); itr != cell_strip_distribution.end(); ++itr) cout << *itr << " ";  cout << endl;  //exit(0);
+//REPAIR for(auto  itr = cell_strip_distribution.begin(); itr != cell_strip_distribution.end(); ++itr) cout << *itr << " ";  cout << endl;  //exit(0);
 
             /// Random_Strips_Distribution( ) function call
             std::vector<std::vector<unsigned int>> special_x_series = Processing_Random_Strips(cell_type, cell_strip_distribution, Configuration_State, max_sfractions_vectors); // series of k-cells for each strip/chain
-            // special_cells_design.push_back(special_faces_sequence);
 
+            //special_x_sequence.clear();
+            //for (auto it_chain : special_x_series) {
+             //   for (auto it_cell: it_chain) {
+             //       special_x_sequence.push_back(it_cell);
+              //  } }
+
+//REPAIR                 cout << "Configuration_State[cell_type] size " << Configuration_State[cell_type].size() << "  " << std::count(Configuration_State[cell_type].begin(),Configuration_State[cell_type].end(), 1) << endl;
+            special_x_sequence.clear();
+            for (auto it = Configuration_State[cell_type].begin(); it != Configuration_State[cell_type].end(); ++it)
+                if(*it > 0) {
+                    special_x_sequence.push_back(distance(Configuration_State[cell_type].begin(), it)); // add new element to the s_cells_sequence
+//REPAIR                cout << "special_cell_sequence new: " << special_x_sequence.back() << endl;
+                } // end if(it)
+
+//REPAIR            cout << " Processing special_x_sequence size:  " << special_x_sequence.size() << endl;
         } //End of 'L' type simulations (elseif)
 
         else if (stype_vector.at(cell_type) == "F" && max_sfractions_vectors[cell_type].size() > 0) { // Maximum <functional> production
@@ -193,6 +206,7 @@ for(auto  itr = cell_strip_distribution.begin(); itr != cell_strip_distribution.
             if (itype_vector.at(cell_type) == "Km" && max_ifractions_vectors[cell_type].size() > 0) { // Maximum <functional> production
                 cout << "Induced processing in operation: cell_type : "s << cell_type << endl;
                 Out_logfile_stream << "Induced processing in operation: cell_type : "s << cell_type << endl;
+
                 if (max_ifractions_vectors.at(cell_type).size() > 0)
                      induced_x_sequence = PCC_Kinematic_cracking(cell_type, special_x_sequence, Configuration_cState, max_ifractions_vectors);
             } // End of 'Km' type simulations (elseif)

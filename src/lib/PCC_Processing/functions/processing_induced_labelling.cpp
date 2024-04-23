@@ -51,14 +51,15 @@ std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<uns
     double agglomeration_fraction; // a-fraction in the PCC
     std::vector<int> agglomeration_SVector(CellNumbs.at(cell_type), 0); // numbers in this State vector are Agglomeration Powers
     std::vector<unsigned int> agglomerations_set; // (pre-initially empty) set of agglomeration numbers
-
     std::vector<unsigned int> o_faces_set(CellNumbs.at(cell_type), 0), NotFracturedCellNumbs(CellNumbs.at(cell_type), 0); // set of ordinary and not cells faces in a PCC [technical parameter]
-    for (unsigned int lit = 0; lit < CellNumbs.at(cell_type); ++lit)
+    for(unsigned int lit = 0; lit < CellNumbs.at(cell_type); ++lit)
         o_faces_set[lit] = lit; // Then the vector with the sequence of integers 1,2,3,... #Faces
 
+
     // deleting of all faces contain inclusions //OLD and WRONG    for (auto istr = S_cVector.begin(); istr != S_cVector.end(); ++istr) if (*istr != 0) //        o_faces_set.erase(o_faces_set.begin() + ks);
-    for (auto ks: s_faces_sequence) /// !!! Delete its element from the vector decreasing its size
+    for(auto ks: s_faces_sequence) { /// !!! Delete its element from the vector decreasing its size
         o_faces_set.erase(std::find(o_faces_set.begin(), o_faces_set.end(), ks));
+    }
 
     double crack_fraction = 0.0;
 /// PARTICULAR VALUES FOR FACE ENERGIES (SHOULD GO AFTER TO THE "kinematic_fracture_data" FILE)
@@ -240,8 +241,7 @@ std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<uns
         crack_cells_fraction = 1.0 - undamaged_cells_fraction; // special face vecror definition based on the ordinary face vector
 
         // if(10000*std::ceil(crack_cells_fraction) % 2 == 1)
-        cout << "fractured cells fraction:   " << crack_cells_fraction << " < total_max_cCells_fraction "
-             << total_max_cCells_fraction << endl;
+        cout << "fractured cells fraction:   " << crack_cells_fraction << " < total_max_cCells_fraction " << total_max_cCells_fraction << endl;
 
 //    } while (crack_cells_fraction < total_max_cCells_fraction); /// End of the PCC_Kinematic_cracking
     } while(crack_cells_fraction < total_max_cCells_fraction);
