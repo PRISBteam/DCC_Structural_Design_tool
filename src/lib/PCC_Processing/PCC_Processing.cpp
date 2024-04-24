@@ -46,14 +46,14 @@ extern int dim;
  * All the initial settings are written in 'processing.ini' file, including PCCpaths to the corresponding directories and execution types.
  * The key theoretical concepts are special (SCS), ordinary (OCS) k-cell sequences, state vectors (SVs), design vectors (DVs) and configurations.
  * @param configuration
- * @return CellsDesign object
+ * @return CellDesign object
  */
-CellsDesign PCC_Processing(Config &configuration) {
+CellDesign PCC_Processing(Config &configuration) {
+/// Main output of the module 'special_cells_design' (CD) - class. In particular, it contains (1) special_nodes_sequence, (2) special_edges_sequence, (3) special_faces_sequence (in the 2D and 3D cases), and (4) special_polyhedrons_sequence (in the 3D case)
+    CellDesign CD;
 
-    std::vector<std::vector<unsigned int>> Configuration_State = configuration.Get_Configuration_State(), Configuration_cState = configuration.Get_Configuration_iState(); // definition of the local state vectors with values from the object of Config class
-
-/// Main output of the module 'special_cells_design' (CD) - vector of vectors containing :: (1) special_nodes_sequence, (2) special_edges_sequence, (3) special_faces_sequence (in the 2D and 3D cases), and (4) special_polyhedrons_sequence (in the 3D case)
-    CellsDesign CD;
+    std::vector<std::vector<unsigned int>> Configuration_sState = configuration.Get_Configuration_sState(); // definition of the local State Vectors with values from the object of Config class
+    std::vector<std::vector<unsigned int>> Configuration_cState = configuration.Get_Configuration_iState(); // definition of the local State Vectors with values from the object of Config class
 
 /// Processing vector variables
     std::vector <unsigned int> special_x_sequence; // variable sequence of 'special' (SCS) (different from 'ordinary' (OCS)) k-cells in order of their generation.
@@ -61,35 +61,41 @@ CellsDesign PCC_Processing(Config &configuration) {
     std::vector<std::vector<unsigned int>> special_x_series; // vector of series of special k-cells (strips/chains)
     std::vector<std::vector<unsigned int>> induced_x_series; // vector of series of induced k-cells (like crack paths)
 
-/// Read configuration from processing.ini file :: the number of special cell types and calculation parameters.
-    std::vector<vector<double>> max_sfractions_vectors(4), max_ifractions_vectors(4); // double vectors containing maximal values for Processing execution of fractions for [0][..] - nodes, [1][..] - edges, [2][..] - faces, [3][..] - polyhedrons
-    std::vector<string> stype_vector(4), itype_vector(4); // special_types and induced_types vector of strings corresponding to the Processing execution type ON/OFF: {0,1} for all the possible 'k' values of k-cell read from the file 'config/processing.ini'; in both vectors: [0] - nodes, [1] - edges, [2] - faces, [3] - polyhedrons
-    std::vector<double> pindex_vector(4); // supplementary index read from the 'config/processing.ini' file
-
-    std::vector<string> sequence_source_paths(4); // k-sequence paths for the reading them from file(s) in the 'S' PCC_Processing execution mode (pp_mode) instead of the new Processing routes
-
     double mu_f = 1.0, sigma_f = 0.0; // Only in the case of the 'L' PCC_Processing execution mode ('pp_mode') :: mean and dispersion for a lengthy defect sequences distribution.
 
     cout << "=========================================================================" << endl; Out_logfile_stream << "==============================================================================================================================================================" << endl;
 
-/// Reading of the configuration from the 'processing.ini' file
+/// Read configuration from processing.ini file :: the number of special cell types and calculation parameters.
+    std::vector<vector<double>> max_sfractions_vectors(4), max_ifractions_vectors(4); // double vectors containing maximal values for Processing execution of fractions for [0][..] - nodes, [1][..] - edges, [2][..] - faces, [3][..] - polyhedrons
+    std::vector<string> stype_vector(4), itype_vector(4); // special_types and induced_types vector of strings corresponding to the Processing execution type ON/OFF: {0,1} for all the possible 'k' values of k-cell read from the file 'config/processing.ini'; in both vectors: [0] - nodes, [1] - edges, [2] - faces, [3] - polyhedrons
+    std::vector<double> pindex_vector(4); // supplementary index read from the 'config/processing.ini' file
+    std::vector<string> sequence_source_paths(4); // k-sequence paths for the reading them from file(s) in the 'S' PCC_Processing execution mode (pp_mode) instead of the new Processing routes
+    bool multiplexity = 0; // Bool variable indicating one {multiplexity = 0} or many {multiplexity = 1} labels can be assigned for each k-cell number
+
+    // Reading of the configuration from the 'config/processing.ini' file
     config_reader_processing(source_path, sequence_source_paths, max_sfractions_vectors, max_ifractions_vectors, mu_f, sigma_f, stype_vector, itype_vector, pindex_vector, Out_logfile_stream); // void function
 
 ///* Cases for Processing types // cell type k :: 0 - nodes, 1 - edges, 2 - faces, 3 -polyhedrons - must coincide with the indexing of the CellNumbs.at(cell_type) vector (!) *///
 ///* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- *///
 /// Here '(dim - 3)' term is important for 1D and 2D cases (!) as in these cases there are no polyhedrons or even faces (2D) in the PCC
     for (int cell_type = (3 + (dim - 3)); cell_type >= 0; --cell_type) { // Loop over all types of k-cells in the PCC
-
-        // for both 2D and 3D cases set initial zero sequences of the ordinary, special and induced k-cell types
-        special_x_sequence = {0}; induced_x_sequence = {0};
+        // clearence of vectors for each new cell type
+        special_x_sequence.clear(); special_x_series.clear();
 
     /// I. Beginning of the processing of 'special' k-cells
     ///=======================================================
-
         if (stype_vector.at(cell_type) == "R" && max_sfractions_vectors.at(cell_type).size() > 0) { //  Random separate cells generation processing
             cout << "Random (R) mode processing in operation: cell_type : "s << cell_type << endl; Out_logfile_stream << "Random (R) mode processing in operation: cell_type : "s << cell_type << endl;
 
-            special_x_sequence = Processing_Random(cell_type, Configuration_State, max_sfractions_vectors); // defined in the assigned labelling library
+            multiplexity = (bool) pindex_vector.at(cell_type); // convert 'pindex' read from the 'config/processing.ini' file for the specific 'cell_type' to a bool variable 'multiplexity'.
+
+            special_x_series = Processing_Random(cell_type, Configuration_sState, max_sfractions_vectors, multiplexity); // defined in the assigned labelling library
+
+            /// Writing 'special_x_sequence' - each k-cell number appeared only once in the sequence. Configuration_sState and State Vectors show possible 'agglomeration' - several similar label per k-cell
+            for (auto it = Configuration_sState[cell_type].begin(); it != Configuration_sState[cell_type].end(); ++it)
+                if(*it > 0) {
+                    special_x_sequence.push_back(distance(Configuration_sState[cell_type].begin(), it)); // add new element to the s_cells_sequence
+                } // end if(it)
 
         } // End of 'R' type simulations (if)
 
@@ -98,7 +104,7 @@ CellsDesign PCC_Processing(Config &configuration) {
             cout << "Average (mu) and dispersion (sigma): " << endl  << mu_f << "  " << sigma_f << endl;
 
             /// Obtaining the distribution of strip/chain lengths
-            unsigned int bins_number = 100;
+            unsigned int bins_number = 50;
             std::vector<double> strip_lenghts_distribution = Log_normal_distribution(mu_f, sigma_f, bins_number); // double valued "continuous" distribution, where Log_normal_distribution() function is for obtaining strip_lenghts_distribution
             std::vector<unsigned int> cell_strip_distribution; // vector of positive integers containing "discrete" length distribution of special chains/strips of k-cells
 
@@ -106,26 +112,16 @@ CellsDesign PCC_Processing(Config &configuration) {
             for (auto  itr = strip_lenghts_distribution.begin(); itr != strip_lenghts_distribution.end(); ++itr) {
                 cell_strip_distribution.push_back(max_sfractions_vectors[cell_type][0] * CellNumbs.at(cell_type) * (*itr) / (std::distance(strip_lenghts_distribution.begin(), itr) + 1.0)); // only for the first 'Xmax_fraction1' in the 'config/processing.ini' file values of max k-cell fractions
             }
-//REPAIR for(auto  itr = cell_strip_distribution.begin(); itr != cell_strip_distribution.end(); ++itr) cout << *itr << " ";  cout << endl;  //exit(0);
 
-            /// Random_Strips_Distribution( ) function call
-            std::vector<std::vector<unsigned int>> special_x_series = Processing_Random_Strips(cell_type, cell_strip_distribution, Configuration_State, max_sfractions_vectors); // series of k-cells for each strip/chain
+            /// Random_Strips_Distribution() function call
+            special_x_series = Processing_Random_Strips(cell_type, cell_strip_distribution, Configuration_sState, max_sfractions_vectors); // series of k-cells for each strip/chain
 
-            //special_x_sequence.clear();
-            //for (auto it_chain : special_x_series) {
-             //   for (auto it_cell: it_chain) {
-             //       special_x_sequence.push_back(it_cell);
-              //  } }
-
-//REPAIR                 cout << "Configuration_State[cell_type] size " << Configuration_State[cell_type].size() << "  " << std::count(Configuration_State[cell_type].begin(),Configuration_State[cell_type].end(), 1) << endl;
-            special_x_sequence.clear();
-            for (auto it = Configuration_State[cell_type].begin(); it != Configuration_State[cell_type].end(); ++it)
+            /// Writing 'special_x_sequence' - each k-cell number appeared only once in the sequence. Configuration_sState and State Vectors show possible 'agglomeration' - several similar label per k-cell
+            for (auto it = Configuration_sState[cell_type].begin(); it != Configuration_sState[cell_type].end(); ++it)
                 if(*it > 0) {
-                    special_x_sequence.push_back(distance(Configuration_State[cell_type].begin(), it)); // add new element to the s_cells_sequence
-//REPAIR                cout << "special_cell_sequence new: " << special_x_sequence.back() << endl;
+                    special_x_sequence.push_back(distance(Configuration_sState[cell_type].begin(), it)); // add new element to the s_cells_sequence
                 } // end if(it)
 
-//REPAIR            cout << " Processing special_x_sequence size:  " << special_x_sequence.size() << endl;
         } //End of 'L' type simulations (elseif)
 
         else if (stype_vector.at(cell_type) == "F" && max_sfractions_vectors[cell_type].size() > 0) { // Maximum <functional> production
@@ -133,14 +129,14 @@ CellsDesign PCC_Processing(Config &configuration) {
             cout << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
             Out_logfile_stream << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
 ///           if(cell_type == 2 + (dim - 3))             // cell type = 2 -> faces
-///                special_x_sequence = Processing_maxFunctional(cell_type, Configuration_State, max_fractions_vectors, pindex_vector.at(cell_type));
+///                special_x_sequence = Processing_maxFunctional(cell_type, Configuration_sState, max_fractions_vectors, pindex_vector.at(cell_type));
         } // End of 'F' type simulations (elseif)
 
         else if (stype_vector.at(cell_type) == "D" && max_sfractions_vectors[cell_type].size() > 0) { // Maximum <functional> production
             cout << "Min (MAX-deviator) Functional processing in operation: cell_type : "s << cell_type << endl;
             Out_logfile_stream << "Min (MAX-deviator) Functional processing in operation: cell_type : "s << cell_type << endl;
 ///            if (max_fractions_vectors.at(cell_type).size() > 0)
-///            special_x_sequence = Processing_minConfEntropy(2, Configuration_State, max_fractions_vectors, pindex_vector.at(2));
+///            special_x_sequence = Processing_minConfEntropy(2, Configuration_sState, max_fractions_vectors, pindex_vector.at(2));
 
         } // End of 'D' [S min] type simulations (elseif)
 
@@ -169,13 +165,13 @@ CellsDesign PCC_Processing(Config &configuration) {
             temp_x_sequence.clear();
 
         // Update of the corresponding Configuration State vector
-            Configuration_State[cell_type].clear();
+            Configuration_sState[cell_type].clear();
             std::vector<int> State_vector(CellNumbs.at(cell_type), 0);
             for (unsigned int k_cell : special_x_sequence) // fill state vector from cells_sequence
                 State_vector.at(k_cell) = 1;
 
             for (int var : State_vector)
-                Configuration_State[cell_type].push_back(var);
+                Configuration_sState[cell_type].push_back(var);
         } // End of 'S' [reading from file] type simulations (elseif)
 
         else if(max_sfractions_vectors[cell_type].size() > 0) cout << "ERROR [Processing] : unknown simulation type - please replace with 'R', 'L', 'F', 'D' or 'S'..!" << endl;
@@ -188,7 +184,7 @@ CellsDesign PCC_Processing(Config &configuration) {
                 cout << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
                 Out_logfile_stream << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
 ///                if (max_sfractions_vectors.at(cell_type).size() > 0)
-///                    special_x_sequence = Processing_maxF_crystallographic(2, Configuration_State, max_sfractions_vectors, pindex_vector.at(2));
+///                    special_x_sequence = Processing_maxF_crystallographic(2, Configuration_sState, max_sfractions_vectors, pindex_vector.at(2));
             } // end of 'Cm' type simulations (elseif)
 
             else if (stype_vector.at(cell_type) == "Cr" &&
@@ -196,8 +192,8 @@ CellsDesign PCC_Processing(Config &configuration) {
                 cout << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
                 Out_logfile_stream << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
 ///                if (max_sfractions_vectors.at(cell_type).size() > 0)
-///                    special_x_sequence = Processing_maxP_crystallographic(2, Configuration_State, max_fractions_vectors, pindex_vector.at(2));
-                    //special_x_sequence = Processing_Random_crystallographic(2, Configuration_State, max_fractions_vectors, pindex_vector.at(2));
+///                    special_x_sequence = Processing_maxP_crystallographic(2, Configuration_sState, max_fractions_vectors, pindex_vector.at(2));
+                    //special_x_sequence = Processing_Random_crystallographic(2, Configuration_sState, max_fractions_vectors, pindex_vector.at(2));
             } // end of 'Cr' type simulations (elseif)
 
     /// II. Beginning of the processing of 'induced' (of 'fractured') k-cells
@@ -215,7 +211,7 @@ CellsDesign PCC_Processing(Config &configuration) {
                 cout << "Induced processing in operation: cell_type : "s << cell_type << endl; Out_logfile_stream << "Induced processing in operation: cell_type : "s << cell_type << endl;
 
 ///                if (max_ifractions_vectors.at(cell_type).size() > 0)
-///                    induced_x_sequence = PCC_Kinetic_cracking(Configuration_State, face_elastic_energies, large_crack);
+///                    induced_x_sequence = PCC_Kinetic_cracking(Configuration_sState, face_elastic_energies, large_crack);
             } // End of 'Km' type simulations (elseif)
 
             else if(max_ifractions_vectors[cell_type].size() > 0) cout << "ERROR [Processing] : unknown induced simulation type - please replace with 'Km' or 'Kn'..!" << endl;
@@ -226,7 +222,7 @@ CellsDesign PCC_Processing(Config &configuration) {
 
     /// Assigned sequences:
         CD.Set_sequence(special_x_sequence, cell_type); // (sequence, id)
-        CD.Set_design(Configuration_State.at(cell_type), cell_type); // (design, id) - design vector with types
+        CD.Set_design(Configuration_sState.at(cell_type), cell_type); // (design, id) - design vector with types
 
     /// Induced sequences:
         CD.Set_induced_sequence(induced_x_sequence, cell_type); // (sequence, ctype)

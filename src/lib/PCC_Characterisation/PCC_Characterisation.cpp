@@ -43,7 +43,7 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 ///* ========================================================= PCC CHARACTERISATION FUNCTION ======================================================= *///
 ///* ========================================================================================================================================= *///
 
-ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
+ProcessedComplex PCC_StructureCharacterisation(CellDesign &new_cells_design) {
 
 /// Main output of the module
     ProcessedComplex PCC_characteristics; // module output
@@ -187,5 +187,5 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
     } // end of  for (int i = 0; i < number_of_steps, ++i)
 
    return PCC_characteristics;
- } /// END of the ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) function
+ } /// END of the ProcessedComplex PCC_StructureCharacterisation(CellDesign &new_cells_design) function
 

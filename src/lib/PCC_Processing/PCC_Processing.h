@@ -13,8 +13,8 @@
 /*!
  * @brief Processing module :: creates design vectors for all k-cells in a PCC and save them into CellDesign object.
  * @param configuration
- * @return CellsDesign object
+ * @return CellDesign object
  */
-CellsDesign PCC_Processing(Config &configuration);
+CellDesign PCC_Processing(Config &configuration);
 
 #endif //PCC_PROCESSING_DESIGN_PCC_PROCESSING_H

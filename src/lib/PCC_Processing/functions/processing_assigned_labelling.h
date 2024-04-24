@@ -37,7 +37,7 @@ std::vector<double> Log_normal_distribution (double mu_f, double sigm_f, int bin
  * @param max_fractions_vectors
  * @return random state_vector of k-cells
  */
-std::vector<unsigned int> Processing_Random(int cell_type, std::vector<std::vector<unsigned int>> &Configuration_State, std::vector<std::vector<double>> max_fractions_vectors);
+std::vector<std::vector<unsigned int>> Processing_Random(int cell_type, std::vector<std::vector<unsigned int>> &Configuration_State, std::vector<std::vector<double>> max_fractions_vectors, bool multiplexity);
 
 /*! ## 5 ##
  * @brief Generate series special k-cells (series of strips or chains of k-cells) with the distribution of lengths taken from the 'face_strip_distribution' vector.
@@ -78,7 +78,7 @@ std::vector<unsigned int> Processing_minConfEntropy(int cell_type, std::vector<s
  * @return
  */
 std::vector<unsigned int> Processing_maxF_crystallographic(int cell_type, std::vector<std::vector<int>> &Configuration_State, std::vector<std::vector<double>> const &max_fractions_vectors, double p_index);
-// std::vector<unsigned int> Processing_maxP_crystallographic(int cell_type, std::vector<vector<int>> &Configuration_State, std::vector<vector<double>> const &max_fractions_vectors, double p_index);
-// std::vector<unsigned int> Processing_Random_crystallographic(int cell_type, std::vector<vector<int>> &Configuration_State, std::vector<vector<double>> const &max_fractions_vectors, double p_index);
+// std::vector<unsigned int> Processing_maxP_crystallographic(int cell_type, std::vector<vector<int>> &Configuration_sState, std::vector<vector<double>> const &max_fractions_vectors, double p_index);
+// std::vector<unsigned int> Processing_Random_crystallographic(int cell_type, std::vector<vector<int>> &Configuration_sState, std::vector<vector<double>> const &max_fractions_vectors, double p_index);
 
 #endif //PCC_PROCESSING_DESIGN_PROCESSING_ASSIGNED_LABELLING_H

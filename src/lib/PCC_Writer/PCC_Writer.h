@@ -6,12 +6,12 @@
 /*! # 1 #
  * @param new_cells_design
  */
-void PCC_Writer(CellsDesign &new_cells_design);
+void PCC_Writer(CellDesign &new_cells_design);
 
-/*! # 2 # Overloaded PCC_Writer(CellsDesign &new_cells_design)
+/*! # 2 # Overloaded PCC_Writer(CellDesign &new_cells_design)
  * @param new_cells_design
  * @param pcc_processed
  */
-void PCC_Writer(CellsDesign &new_cells_design, ProcessedComplex &pcc_processed);
+void PCC_Writer(CellDesign &new_cells_design, ProcessedComplex &pcc_processed);
 
 #endif //PCC_PROCESSING_DESIGN_PCC_WRITER_H

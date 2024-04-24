@@ -28,7 +28,7 @@ extern std::string output_dir, source_path;
 /// ---------------------------------------------------------------------------
 
 /// # 1 # sequences only
-void PCC_Writer(CellsDesign &new_cells_design) {
+void PCC_Writer(CellDesign &new_cells_design) {
 // Read PCC Writer specifications from the writer.ini file and output of the current configuration to the screen and .log file
     std::vector<int> writer_specifications; // vector<int> containing writer specifications and formats
     config_reader_writer(source_path, writer_specifications, Out_logfile_stream); // Read and output the initial configuration from the writer.ini file
@@ -42,7 +42,7 @@ void PCC_Writer(CellsDesign &new_cells_design) {
 } /// END of PCC Writer module
 
 /// # 2 # overloaded
-void PCC_Writer(CellsDesign &new_cells_design, ProcessedComplex &pcc_processed) {
+void PCC_Writer(CellDesign &new_cells_design, ProcessedComplex &pcc_processed) {
 // Read PCC Writer specifications from the writer.ini file and output of the current configuration to the screen and .log file
     std::vector<int> writer_specifications; // vector<int> containing writer specifications and formats
     config_reader_writer(source_path, writer_specifications, Out_logfile_stream); // Read and output the initial configuration from the writer.ini file

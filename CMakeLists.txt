@@ -24,4 +24,5 @@ add_executable( PCC_Processing_Design
         src/lib/PCC_Writer/PCC_Writer.cpp
         src/lib/PCC_Writer/functions/Writer_functions.cpp
         src/lib/PCC_Processing/functions/processing_induced_labelling.cpp
+        gkj.cpp
 )

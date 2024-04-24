@@ -17,7 +17,7 @@ extern std::string output_dir;
 
 #include "Writer_functions.h"
 /// # 1 # Sequences and Designs output
-void PCC_CellSequences_Writer(CellsDesign &new_cells_design, int &output_counter) {
+void PCC_CellSequences_Writer(CellDesign &new_cells_design, int &output_counter) {
 // Offstreams
     ofstream Out_scells_file; // Special cell sequences output
     ofstream Out_ind_scells_file; // Special cell sequences output
