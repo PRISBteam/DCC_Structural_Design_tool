@@ -26,6 +26,7 @@
 ///---------------------------------------------------------
 #include "functions/processing_assigned_labelling.h"
 #include "functions/processing_induced_labelling.h"
+#include "functions/processing_indexing.h"
 ///---------------------------------------------------------
 
 using namespace std; // standard namespace
@@ -196,8 +197,24 @@ CellDesign PCC_Processing(Config &configuration) {
                     //special_x_sequence = Processing_Random_crystallographic(2, Configuration_sState, max_fractions_vectors, pindex_vector.at(2));
             } // end of 'Cr' type simulations (elseif)
 
-    /// II. Beginning of the processing of 'induced' (of 'fractured') k-cells
-///=======================================================
+            /// II. Beginning of the processing of 'indexing' k-cells (TopDown and BottomUp)
+            ///=======================================================
+
+            if (special_x_sequence.size() < 2) { // ONLY if there was no processing and 'special' labelling of cells (!)
+                cout << " Start TopDown_cell_indexing() based on the cell type k+1: " << cell_type << endl;
+
+                std::vector<unsigned int> StateVector_indexing;
+                StateVector_indexing = TopDown_cell_indexing(cell_type, Configuration_sState);
+
+                /// 'special_x_sequence' - each k-cell number appeared only once in the sequence obtained by Configuration_sState
+                for (auto it = StateVector_indexing.begin(); it != StateVector_indexing.end(); ++it)
+                    if(*it > 0) {
+                        special_x_sequence.push_back(distance(StateVector_indexing.begin(), it)); // add new element to the s_cells_sequence
+                    } // end if(it)
+                }
+
+            /// III. Beginning of the processing of 'induced' (of 'fractured') k-cells
+            ///=======================================================
 
             if (itype_vector.at(cell_type) == "Km" && max_ifractions_vectors[cell_type].size() > 0) { // Maximum <functional> production
                 cout << "Induced processing in operation: cell_type : "s << cell_type << endl;
@@ -217,7 +234,6 @@ CellDesign PCC_Processing(Config &configuration) {
             else if(max_ifractions_vectors[cell_type].size() > 0) cout << "ERROR [Processing] : unknown induced simulation type - please replace with 'Km' or 'Kn'..!" << endl;
 
         } // End of if (cell_type == 2)
-
 // REPAIR    cout << "ctype_vector " << ctype_vector.at(cell_type + (3 - 3)) << "  " << max_cfractions_vectors[cell_type + (3 - 3)].size() << endl;
 
     /// Assigned sequences:
