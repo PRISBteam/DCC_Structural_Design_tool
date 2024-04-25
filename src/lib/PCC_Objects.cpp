@@ -17,13 +17,15 @@ std::ofstream Out_local_logstream;
 
 typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which declares a column-major sparse matrix type of doubles with the nickname 'SpMat'
 
+// local libraries
 #include "PCC_Support_Functions.h" // It must be here - first in this list (!)
 
 /// Tailored Reader for the main.ini file in the ../config/ subdirectory of the project based on the mINI C++ library (2018 Danijel Durakovic http://pulzed.com/, MIT license is included)
 #include "ini/ini_readers.h"
 
-// Local library
 #include "PCC_Objects.h"
+///------------------------------------------------------------------
+
 
 /// # 0 # The class CONFIG ::
 /*!
@@ -265,72 +267,184 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 
 /// # 1 # The class CELLS_DESIGN :: list of the state_vectors corresponding to different dimensions 'k' of the k-cells in a PCC
 //class CellDesign
-    void CellDesign::Set_sequences(std::vector<unsigned int> psequence, std::vector<unsigned int> fsequence, std::vector<unsigned int> esequence, std::vector<unsigned int> nsequence){
+    void CellDesign::Set_special_sequences(std::vector<unsigned int> psequence, std::vector<unsigned int> fsequence, std::vector<unsigned int> esequence, std::vector<unsigned int> nsequence){
     p_special_sequence = psequence; f_special_sequence = fsequence; e_special_sequence = esequence; n_special_sequence = nsequence;
     }
+
     void CellDesign::Set_induced_sequences(std::vector<unsigned int> p_ind_sequence, std::vector<unsigned int> f_ind_sequence, std::vector<unsigned int> e_ind_sequence, std::vector<unsigned int> n_ind_sequence){
         p_induced_sequence = p_ind_sequence; f_induced_sequence = f_ind_sequence; e_induced_sequence = e_ind_sequence; n_induced_sequence = n_ind_sequence;
     }
+
     void CellDesign::Set_designes(std::vector<unsigned int> pdesign, std::vector<unsigned int> fdesign, std::vector<unsigned int> edesign, std::vector<unsigned int> ndesign){
         p_special_design = pdesign; f_special_design = fdesign; e_special_design = edesign; n_special_design = ndesign;
     }
+
     void CellDesign::Set_induced_designs(std::vector<unsigned int> p_ind_design, std::vector<unsigned int> f_ind_design, std::vector<unsigned int> e_ind_design, std::vector<unsigned int> n_ind_design){
         p_induced_design = p_ind_design; f_induced_design = f_ind_design; e_induced_design = e_ind_design; n_induced_design = n_ind_design;
     }
-    void CellDesign::Set_sequence(std::vector<unsigned int> sequence, int ctype){
-        if (ctype == 3) p_special_sequence = sequence;
-        else if (ctype == 2 ) f_special_sequence = sequence;
-        else if (ctype == 1 ) e_special_sequence = sequence;
-        else if (ctype == 0 ) n_special_sequence = sequence;
-    }
-    void CellDesign::Set_induced_sequence(std::vector<unsigned int> ind_sequence, int ctype){
-        if (ctype == 3) p_induced_sequence = ind_sequence;
-        else if (ctype == 2 ) f_induced_sequence = ind_sequence;
-        else if (ctype == 1 ) e_induced_sequence = ind_sequence;
-        else if (ctype == 0 ) n_induced_sequence = ind_sequence;
-    }
-    void CellDesign::Set_design(std::vector<unsigned int> design, int ctype){
-        if (ctype == 3) p_special_design = design;
-        else if (ctype == 2 ) f_special_design = design;
-        else if (ctype == 1 ) e_special_design = design;
-        else if (ctype == 0 ) n_special_design = design;
-    }
-    void CellDesign::Set_induced_design(std::vector<unsigned int> ind_design, int ctype){
-        if (ctype == 3) p_induced_design = ind_design;
-        else if (ctype == 2 ) f_induced_design = ind_design;
-        else if (ctype == 1 ) e_induced_design = ind_design;
-        else if (ctype == 0 ) n_induced_design = ind_design;
-    }
+
+    void CellDesign::Set_special_sequence(std::vector<unsigned int> special_x_sequence, int cell_type){
+        switch (cell_type) {
+            case 3:
+                p_special_sequence = special_x_sequence;
+                break;
+            case 2:
+                f_special_sequence = special_x_sequence;
+                break;
+            case 1:
+                e_special_sequence = special_x_sequence;
+                break;
+            case 0:
+                n_special_sequence = special_x_sequence;
+                break;
+        } // end switch(cell_type)
+    } // End of Set_special_sequence()
+
+    void CellDesign::Set_induced_sequence(std::vector<unsigned int> induced_x_sequence, int cell_type){
+        switch (cell_type) {
+            case 3:
+                p_induced_sequence = induced_x_sequence;
+                break;
+            case 2:
+                f_induced_sequence = induced_x_sequence;
+                break;
+            case 1:
+                e_induced_sequence = induced_x_sequence;
+                break;
+            case 0:
+                n_induced_sequence = induced_x_sequence;
+                break;
+        } // end switch(cell_type)
+    } // End of Set_induced_sequence()
+
+    void CellDesign::Set_special_configuration(std::vector<unsigned int> special_x_configuration, int cell_type){
+        switch (cell_type) {
+            case 3:
+                p_special_design = special_x_configuration;
+                break;
+            case 2:
+                f_special_design = special_x_configuration;
+                break;
+            case 1:
+                e_special_design = special_x_configuration;
+                break;
+            case 0:
+                n_special_design = special_x_configuration;
+                break;
+        } // end switch(cell_type)
+    } // End Set_special_configuration()
+
+    void CellDesign::Set_special_series(std::vector<std::vector<unsigned int>> special_x_series, int cell_type){
+        switch (cell_type) {
+            case 3:
+                p_special_series = special_x_series;
+                break;
+            case 2:
+                f_special_series = special_x_series;
+                break;
+            case 1:
+                e_special_series = special_x_series;
+                break;
+            case 0:
+                n_special_series = special_x_series;
+                break;
+        } // end switch(cell_type)
+    } // End Set_special_series()
+
+    void CellDesign::Set_induced_design(std::vector<unsigned int> induced_x_design, int cell_type){
+        switch (cell_type) {
+            case 3:
+                p_induced_design = induced_x_design;
+                break;
+            case 2:
+                f_induced_design = induced_x_design;
+                break;
+            case 1:
+                e_induced_design = induced_x_design;
+                break;
+            case 0:
+                n_induced_design = induced_x_design;
+                break;
+        } // end switch(cell_type)
+    } // End Set_induced_design()
+
+void CellDesign::Set_induced_series(std::vector<std::vector<unsigned int>> induced_x_series, int cell_type){
+    switch (cell_type) {
+        case 3:
+            p_induced_series = induced_x_series;
+            break;
+        case 2:
+            f_induced_series = induced_x_series;
+            break;
+        case 1:
+            e_induced_series = induced_x_series;
+            break;
+        case 0:
+            n_induced_series = induced_x_series;
+            break;
+    } // end switch(ctype)
+} // END Set_induced_series()
+
     // Get
-    std::vector<unsigned int> CellDesign::Get_p_sequence(void){
+    std::vector<unsigned int> CellDesign::Get_p_special_sequence(void){
         if (p_special_sequence.size() == 0) {
             cout << "WARNING: p_special_sequence did not set!" << endl;
             return {0};
         }
         else return p_special_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_f_sequence(void){
+    std::vector<unsigned int> CellDesign::Get_f_special_sequence(void){
         if (f_special_sequence.size() == 0) {
             cout << "WARNING: f_special_sequence did not set!" << endl;
             return {0};
         }
         else return f_special_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_e_sequence(void){
+    std::vector<unsigned int> CellDesign::Get_e_special_sequence(void){
         if (e_special_sequence.size() == 0) {
             cout << "WARNING: e_special_sequence did not set!" << endl;
             return {0};
         }
         else return e_special_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_n_sequence(void){
+    std::vector<unsigned int> CellDesign::Get_n_special_sequence(void){
         if (n_special_sequence.size() == 0) {
             cout << "WARNING: n_special_sequence did not set!" << endl;
             return {0};
         }
         else return n_special_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
+
+std::vector<std::vector<unsigned int>> CellDesign::Get_p_special_series(void){
+    if (p_special_series.size() == 0) {
+        cout << "WARNING: p_special_series did not set!" << endl;
+        return {{0}};
+    }
+    else return p_special_series;
+    }
+std::vector<std::vector<unsigned int>> CellDesign::Get_f_special_series(void){
+    if (f_special_series.size() == 0) {
+        cout << "WARNING: f_special_series did not set!" << endl;
+        return {{0}};
+    }
+    else return f_special_series;
+    }
+std::vector<std::vector<unsigned int>> CellDesign::Get_e_special_series(void){
+    if (e_special_series.size() == 0) {
+        cout << "WARNING: n_special_sequence did not set!" << endl;
+        return {{0}};
+    }
+    else return e_special_series;
+    }
+std::vector<std::vector<unsigned int>> CellDesign::Get_n_special_series(void){
+    if (n_special_series.size() == 0) {
+        cout << "WARNING: n_special_sequence did not set!" << endl;
+        return {{0}};
+    }
+    else return n_special_series;
+    }
+
+std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
         if (p_induced_sequence.size() == 0) {
             cout << "WARNING: polyhedron induced sequence did not set!" << endl;
             return {0};

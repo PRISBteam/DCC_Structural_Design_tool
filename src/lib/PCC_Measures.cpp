@@ -1,29 +1,41 @@
-/// Functions which calculate various measures
+///================================ A part of the PCC Processing module =============================================================///
+///=================================================================================================================================///
+/** The library contains functions which calculate various measures such as configuration entropy.                                 **/
+///==============================================================================================================================///
+
+/// Standard C++ libraries (STL):
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 
+// external libraries (must be added to the STL directory!)
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
+
+// local libraries
+#include "PCC_Support_Functions.h" // It must be here - first in this list (!)
+
 using namespace std; // standard namespace
+using namespace Eigen; // standard namespace
+
+// global variables
+extern std::vector<unsigned int> CellNumbs; // number of cells in a PCC defined globally
+extern std::vector<std::string> PCCpaths;
+extern int dim, dim0;
+
+typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which declares a column-major sparse matrix type of doubles with the nickname 'SpMat'
 
 #include "PCC_Measures.h"
+///------------------------------------------------------------------
 
-/*
- * ///================================ A part of the PCC Processing module =============================================================///
-///=================================================================================================================================///
-/** The library contains functions for generation of new identifiers for m-Cells, m={0,1,2} based on the already assigned types    **/
-/**  of the k-Cells with k > m, in the PCC Processing module. It created an "imposed" structure of m-Cells in a PCC.              **/
-///==============================================================================================================================///
-
-//#include "Processing_Imposed_functions.h"
-/*
 vector<int> Edge_types_byFaces(std::vector<unsigned int> const &CellNumbs, std::vector<unsigned int> &special_face_sequence, std::vector<double> &j_fractions, std::vector<double> &d_fractions)
 {
 // Output of the model
     vector<int> TJsTypes(CellNumbs.at(1 + (dim - 3)), 0); // CellNumbs.at(1) is the number of Edges
 
 // Obtaining Faces (coloumns) - Edges (rows) Incidence matrix B2 using the file paths.at(5 + (dim - 3))
-    SpMat FES = SMatrixReader(paths.at(5 + (dim - 3)), CellNumbs.at(1 + (dim - 3)), CellNumbs.at(2 + (dim - 3))); // Edges-Faces sparse incidence matrix
+    SpMat FES = SMatrixReader(PCCpaths.at(5 + (dim - 3)), CellNumbs.at(1 + (dim - 3)), CellNumbs.at(2 + (dim - 3))); // Edges-Faces sparse incidence matrix
 
     for (auto f: special_face_sequence) // loop over all Special Faces
         for(int e = 0; e < CellNumbs.at(1 + (dim - 3)); ++e) // loop over all Edges
@@ -60,9 +72,7 @@ vector<int> Edge_types_byFaces(std::vector<unsigned int> const &CellNumbs, std::
 
     return TJsTypes;
 }
- */
 
- /*
 /// * Function calculates the vector<int> "EdgeTypes" of types Edges in the PCC using its FES incidence matrix and special faces sequence (special_faces_sequence) * ///
 std::vector<double> j_fractions_vector(std::vector<int> const &TJsTypes){ // based on Edges vector
 std::vector<double> j_fractions_vector(4); // Function output: TJs fractions
@@ -289,7 +299,6 @@ return Configuration_Face_Entropy_increase;
 // REPAIR cout << "Configuration_Face_Entropy: " << Configuration_Face_Entropy << endl;
 } // end of Configuration_Entropy()
 
-
 double Configuration_DevEntropy_change(std::vector<double> const &j_fractions, vector<int> const &TJsTypesNew){ // based on Edges vector
 double Configuration_Edge_DevEntropy_increase = 0.0; // Function output: Configuration Entropy related with Faces
 
@@ -349,5 +358,3 @@ Configuration_Edge_DevEntropy_increase = Edge_Entropy_Skew - Edge_Entropy_Skew_n
 return Configuration_Edge_DevEntropy_increase;
 // REPAIR cout << "Configuration_Face_Entropy: " << Configuration_Face_Entropy << endl;
 } // end of Configuration_DeviatoricEntropy()
-
-*/

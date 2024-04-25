@@ -57,14 +57,14 @@ ProcessedComplex PCC_StructureCharacterisation(CellDesign &new_cells_design) {
     std::vector<unsigned int> face_sequences_vector; // number of different sequences based on the face design vector
     std::vector<int> face_states_vector;
 
-    for (auto fseq : new_cells_design.Get_f_sequence()) {
+    for (auto fseq : new_cells_design.Get_f_special_sequence()) {
         face_sequences_vector.push_back(fseq);
         /// forming a new vector for characterisation
-        if ( face_sequences_vector.size() % (int) (2.0*std::log(new_cells_design.Get_f_sequence().size())) == 0) // only some values - each 2.0*std::log(*.size()) - are written in the face_sequences_vector
+        if ( face_sequences_vector.size() % (int) (2.0*std::log(new_cells_design.Get_f_special_sequence().size())) == 0) // only some values - each 2.0*std::log(*.size()) - are written in the face_sequences_vector
             PCC_characteristics.face_process_seq.push_back(face_sequences_vector);
 
     } // end for(auto fseq...)
-    cout << "new_cells_design.Get_f_sequence() size" << new_cells_design.Get_f_sequence().size() << endl;
+    cout << "new_cells_design.Get_f_special_sequence() size" << new_cells_design.Get_f_special_sequence().size() << endl;
 /**
     for (int i = 0; i < 4; ++i) { /// for all types of cells
 

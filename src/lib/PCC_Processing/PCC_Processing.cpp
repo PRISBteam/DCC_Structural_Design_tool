@@ -221,8 +221,9 @@ CellDesign PCC_Processing(Config &configuration) {
 // REPAIR    cout << "ctype_vector " << ctype_vector.at(cell_type + (3 - 3)) << "  " << max_cfractions_vectors[cell_type + (3 - 3)].size() << endl;
 
     /// Assigned sequences:
-        CD.Set_sequence(special_x_sequence, cell_type); // (sequence, id)
-        CD.Set_design(Configuration_sState.at(cell_type), cell_type); // (design, id) - design vector with types
+        CD.Set_special_sequence(special_x_sequence, cell_type); // (sequence, id)
+        CD.Set_special_series(special_x_series, cell_type); // (series, id)
+        CD.Set_special_configuration(Configuration_sState.at(cell_type), cell_type); // (configuration/design, id) - design vector with types
 
     /// Induced sequences:
         CD.Set_induced_sequence(induced_x_sequence, cell_type); // (sequence, ctype)
@@ -232,10 +233,10 @@ CellDesign PCC_Processing(Config &configuration) {
     if (configuration.Get_main_type() == "LIST"s) {
         cout << endl;
         Out_logfile_stream << endl;
-        cout << "n-sequence size: " << CD.Get_n_sequence().size() << endl; Out_logfile_stream << "n-sequence size: " << CD.Get_n_sequence().size() << endl;
-        cout << "e-sequence size: " << CD.Get_e_sequence().size() << endl; Out_logfile_stream << "e-sequence size: " << CD.Get_e_sequence().size() << endl;
-        cout << "f-sequence size: " << CD.Get_f_sequence().size() << endl; Out_logfile_stream << "f-sequence size: " << CD.Get_f_sequence().size() << endl;
-        cout << "p-sequence size: " << CD.Get_p_sequence().size() << endl; Out_logfile_stream << "p-sequence size: " << CD.Get_p_sequence().size() << endl;
+        cout << "n-sequence size: " << CD.Get_n_special_sequence().size() << endl; Out_logfile_stream << "n-sequence size: " << CD.Get_n_special_sequence().size() << endl;
+        cout << "e-sequence size: " << CD.Get_e_special_sequence().size() << endl; Out_logfile_stream << "e-sequence size: " << CD.Get_e_special_sequence().size() << endl;
+        cout << "f-sequence size: " << CD.Get_f_special_sequence().size() << endl; Out_logfile_stream << "f-sequence size: " << CD.Get_f_special_sequence().size() << endl;
+        cout << "p-sequence size: " << CD.Get_p_special_sequence().size() << endl; Out_logfile_stream << "p-sequence size: " << CD.Get_p_special_sequence().size() << endl;
         cout << endl; Out_logfile_stream << endl;
 
         cout << "n-induced-sequence size: " << CD.Get_n_induced_sequence().size() << endl; Out_logfile_stream << "n-induced-sequence size: " << CD.Get_n_induced_sequence().size() << endl;

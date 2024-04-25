@@ -51,12 +51,13 @@ unsigned int NewCellNumb_R(unsigned int OCellsNumb){ // Random generation machin
 /// (1.2) Quasi-random choice of the element with # New2CellNumb from the list of numbers {0 to OCellsNumb}
 // This RW choose ANY faces, not necessary only ordinary ones (!)
 std::vector<unsigned int> NewCellsStrip_RW(int cell_type, unsigned int iniCellNumber, unsigned int strip_length, int Leap_friquency, double Leap_dist) { // Random generation machine for a strips of new 2-Cells
-    unsigned int New2CellNumb;  std::vector<unsigned int> NewStripVector_RW;
+    unsigned int New2CellNumb;
+    std::vector<unsigned int> NewStripVector_RW;
     std::vector<double> neigh_Faces; // vector for all neighbours of each face
     /// Sparse Face Adjacency matrix - reading from the file of the considered PCC
 
     SpMat AFS = SMatrixReader(PCCpaths.at(cell_type), CellNumbs.at(cell_type), CellNumbs.at(cell_type)); //all Faces
-    AFS = 0.5 * (AFS + Eigen::SparseMatrix<double>(AFS.transpose()));     //  Full symmetric AFS matrix instead of triagonal
+    AFS = 0.5 * (AFS + Eigen::SparseMatrix<double>(AFS.transpose())); //  Full symmetric AFS matrix instead of triagonal
     // Find ordinary-ONLY faces: Calculation OrdinaryCellNumbs vector based on a given S_Vector std::vector<unsigned int> OrdinaryCellNumbs(CellNumbs.at(2), 1); // Vector of the size equal to the total number of faces in PCC initialised with '1's for( unsigned int lit = 0; lit < OrdinaryCellNumbs.size(); lit++) OrdinaryCellNumbs[lit] = lit; // Then the vector with the sequence of integers 1,2,3,... #Faces // S_Vector with its non-zero elements set any pre-define structure of special element feeding to the function Processing_Random for( unsigned int itr : S_Vector) if(itr != 0) OrdinaryCellNumbs.erase(OrdinaryCellNumbs.begin() + itr); // !!! Delete its element from the vector decreasing its size BUT
 
     /// (1) One random face first as the first face of the strip
@@ -67,7 +68,7 @@ std::vector<unsigned int> NewCellsStrip_RW(int cell_type, unsigned int iniCellNu
     for (int strip_length_counter = 0; strip_length_counter < strip_length; strip_length_counter++) {
         // Looking for all the face neighbours
         //       #pragma omp parallel for // parallel execution by OpenMP
-        for (int k = 0; k < CellNumbs.at(2); ++k) // Loop over all the Faces in the PCC
+        for (int k = 0; k < CellNumbs.at(cell_type); ++k) // Loop over all the Faces in the PCC
             if (AFS.coeff(New2CellNumb, k) == 1) neigh_Faces.push_back(k); // set of all the face neighbours
         // new random choice between all the face neighbours
         New2CellNumb = (unsigned int) neigh_Faces.at(NewCellNumb_R(neigh_Faces.size()));
@@ -219,6 +220,7 @@ return special_cell_series;
  * @param baskets
  * @return
  */
+ // IDEA: make also version with different "bool multiplexity" parameter
 std::vector<double> Log_normal_distribution (double mu_f, double sigm_f, int bins_number) { // Log-normal distribution generator
     std::vector<double>  s_lenght_distribution;
     for (int x = 1; x < bins_number; ++x) {

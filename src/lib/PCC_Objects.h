@@ -53,43 +53,59 @@ public:
 /// ==== # 1 # =============== CellDesign class  ========================= ///
 class CellDesign {
 private:
+    /// Configurations/Designs: special cells and induced cells
     std::vector<unsigned int> p_special_design, f_special_design, e_special_design, n_special_design; // state vectors of special k-cells
     std::vector<unsigned int> p_induced_design, f_induced_design, e_induced_design, n_induced_design; // state vectors of induced k-cells
 
+    /// Sequences: special cells and induced cells
     std::vector<unsigned int> p_special_sequence, f_special_sequence, e_special_sequence, n_special_sequence; // sequences of UNIQUE special k-cell numbers
     std::vector<unsigned int> p_induced_sequence, f_induced_sequence, e_induced_sequence, n_induced_sequence; // sequences of UNIQUE induced k-cell numbers
 
+    /// Series: special cells and induced cells
     std::vector<std::vector<unsigned int>> p_special_series, f_special_series, e_special_series, n_special_series; // sequences of sequences of special k-cell numbers
     std::vector<std::vector<unsigned int>> p_induced_series, f_induced_series, e_induced_series, n_induced_series; // sequences of sequences of induced k-cell numbers
 
+    /// Agglomerations of indices
+    std::map<unsigned int, unsigned int> p_agglomerations_map, f_agglomerations_map, e_agglomerations_map, n_agglomerations_map;
 
 public:
     /// Set of variables
     CellDesign() {}; // constructor
-    void Set_sequences(std::vector<unsigned int> psequence, std::vector<unsigned int> fsequence, std::vector<unsigned int> esequence, std::vector<unsigned int> nsequence);
+    void Set_special_sequences(std::vector<unsigned int> psequence, std::vector<unsigned int> fsequence, std::vector<unsigned int> esequence, std::vector<unsigned int> nsequence);
     void Set_induced_sequences(std::vector<unsigned int> p_ind_sequence, std::vector<unsigned int> f_ind_sequence, std::vector<unsigned int> e_ind_sequence, std::vector<unsigned int> n_ind_sequence);
     void Set_designes(std::vector<unsigned int> pdesign, std::vector<unsigned int> fdesign, std::vector<unsigned int> edesign, std::vector<unsigned int> ndesign);
     void Set_induced_designs(std::vector<unsigned int> p_ind_design, std::vector<unsigned int> f_ind_design, std::vector<unsigned int> e_ind_design, std::vector<unsigned int> n_ind_design);
-    void Set_sequence(std::vector<unsigned int> sequence, int ctype);
+    void Set_special_sequence(std::vector<unsigned int> sequence, int ctype);
+    void Set_special_series(std::vector<std::vector<unsigned int>> special_x_series, int cell_type);
     void Set_induced_sequence(std::vector<unsigned int> ind_sequence, int ctype);
-    void Set_design(std::vector<unsigned int> design, int ctype);
+    void Set_induced_series(std::vector<std::vector<unsigned int>> induced_x_series, int cell_type);
+    void Set_special_configuration(std::vector<unsigned int> design, int ctype);
     void Set_induced_design(std::vector<unsigned int> ind_design, int ctype);
 
     // Get
-    std::vector<unsigned int> Get_p_sequence(void);
-    std::vector<unsigned int> Get_f_sequence(void);
-    std::vector<unsigned int> Get_e_sequence(void);
-    std::vector<unsigned int> Get_n_sequence(void);
-    std::vector<unsigned int> Get_p_induced_sequence(void);
-    std::vector<unsigned int> Get_f_induced_sequence(void);
-    std::vector<unsigned int> Get_e_induced_sequence(void);
-    std::vector<unsigned int> Get_n_induced_sequence(void);
-
+    std::vector<unsigned int> Get_p_special_sequence(void);
+    std::vector<unsigned int> Get_f_special_sequence(void);
+    std::vector<unsigned int> Get_e_special_sequence(void);
+    std::vector<unsigned int> Get_n_special_sequence(void);
+    std::vector<std::vector<unsigned int>> Get_p_special_series(void);
+    std::vector<std::vector<unsigned int>> Get_f_special_series(void);
+    std::vector<std::vector<unsigned int>> Get_e_special_series(void);
+    std::vector<std::vector<unsigned int>> Get_n_special_series(void);
     std::vector<unsigned int> Get_p_design(void);
     std::vector<unsigned int> Get_f_design(void);
     std::vector<unsigned int> Get_e_design(void);
     std::vector<unsigned int> Get_n_design(void);
-};
+
+    std::vector<unsigned int> Get_p_induced_sequence(void);
+    std::vector<unsigned int> Get_f_induced_sequence(void);
+    std::vector<unsigned int> Get_e_induced_sequence(void);
+    std::vector<unsigned int> Get_n_induced_sequence(void);
+    std::vector<std::vector<unsigned int>> Get_p_induced_series(void);
+    std::vector<std::vector<unsigned int>> Get_f_induced_series(void);
+    std::vector<std::vector<unsigned int>> Get_e_induced_series(void);
+    std::vector<std::vector<unsigned int>> Get_n_induced_series(void);
+
+}; // END of class CellDesign
 
 /// ==== # 2 # =============== Processed Complex class  ========================= ///
 

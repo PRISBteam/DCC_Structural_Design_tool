@@ -20,8 +20,10 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 
 
 #include "PCC_Support_Functions.h" // It must be here - first in this list (!)
-/// # 1 # Checking if file exists in the directory 'fileName'
+///------------------------------------------------------------------
 
+
+/// # 1 # Checking if file exists in the directory 'fileName'
 bool is_file_exists(const string fileName) {
     char* charfileName = const_cast<char*>(fileName.c_str());
     std::ifstream infile(charfileName);

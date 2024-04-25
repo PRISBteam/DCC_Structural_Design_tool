@@ -37,16 +37,16 @@ void PCC_CellSequences_Writer(CellDesign &new_cells_design, int &output_counter)
     if (Out_scells_file) {
     // special ASSIGNED cell sequences
         if (new_cells_design.Get_n_sequence().size() > 0)
-           for (auto rvit: new_cells_design.Get_n_sequence()) Out_scells_file << rvit + 1 << " "; /// vit + 1 !!! for compatibility with the Neper output
+           for (auto rvit: new_cells_design.Get_n_special_sequence()) Out_scells_file << rvit + 1 << " "; /// vit + 1 !!! for compatibility with the Neper output
             Out_scells_file << endl;
         if (new_cells_design.Get_e_sequence().size() > 0)
-            for (auto rvit: new_cells_design.Get_e_sequence()) Out_scells_file << rvit + 1 << " "; /// vit + 1 !!! for compatibility with the Neper output
+            for (auto rvit: new_cells_design.Get_e_special_sequence()) Out_scells_file << rvit + 1 << " "; /// vit + 1 !!! for compatibility with the Neper output
             Out_scells_file << endl;
         if (new_cells_design.Get_f_sequence().size() > 0)
-            for (auto rvit: new_cells_design.Get_f_sequence()) Out_scells_file << rvit + 1 << " "; /// vit + 1 !!! for compatibility with the Neper output
+            for (auto rvit: new_cells_design.Get_f_special_sequence()) Out_scells_file << rvit + 1 << " "; /// vit + 1 !!! for compatibility with the Neper output
             Out_scells_file << endl;
         if (new_cells_design.Get_p_sequence().size() > 0)
-            for (auto rvit: new_cells_design.Get_p_sequence()) Out_scells_file << rvit + 1 << " "; /// vit + 1 !!! for compatibility with the Neper output
+            for (auto rvit: new_cells_design.Get_p_special_sequence()) Out_scells_file << rvit + 1 << " "; /// vit + 1 !!! for compatibility with the Neper output
 
     // special INDUCED cell sequences
         if (new_cells_design.Get_n_induced_sequence().size() > 0)
@@ -71,17 +71,17 @@ void PCC_CellSequences_Writer(CellDesign &new_cells_design, int &output_counter)
 
     if (Out_scells_file) {
         // special ASSIGNED cell sequences
-        if (new_cells_design.Get_n_sequence().size() > 0)
-            for (auto rvit: new_cells_design.Get_n_sequence()) Out_scells_file << rvit + 1 << endl; /// vit + 1 !!! for compatibility with the Neper output
+        if (new_cells_design.Get_n_special_sequence().size() > 0)
+            for (auto rvit: new_cells_design.Get_n_special_sequence()) Out_scells_file << rvit + 1 << endl; /// vit + 1 !!! for compatibility with the Neper output
         Out_scells_file << endl;
-        if (new_cells_design.Get_e_sequence().size() > 0)
-            for (auto rvit: new_cells_design.Get_e_sequence()) Out_scells_file << rvit + 1 << endl; /// vit + 1 !!! for compatibility with the Neper output
+        if (new_cells_design.Get_e_special_sequence().size() > 0)
+            for (auto rvit: new_cells_design.Get_e_special_sequence()) Out_scells_file << rvit + 1 << endl; /// vit + 1 !!! for compatibility with the Neper output
         Out_scells_file << endl;
-        if (new_cells_design.Get_f_sequence().size() > 0)
-            for (auto rvit: new_cells_design.Get_f_sequence()) Out_scells_file << rvit + 1 << endl; /// vit + 1 !!! for compatibility with the Neper output
+        if (new_cells_design.Get_f_special_sequence().size() > 0)
+            for (auto rvit: new_cells_design.Get_f_special_sequence()) Out_scells_file << rvit + 1 << endl; /// vit + 1 !!! for compatibility with the Neper output
         Out_scells_file << endl;
-        if (new_cells_design.Get_p_sequence().size() > 0)
-            for (auto rvit: new_cells_design.Get_p_sequence()) Out_scells_file << rvit + 1 << endl; /// vit + 1 !!! for compatibility with the Neper output
+        if (new_cells_design.Get_p_special_sequence().size() > 0)
+            for (auto rvit: new_cells_design.Get_p_special_sequence()) Out_scells_file << rvit + 1 << endl; /// vit + 1 !!! for compatibility with the Neper output
 
         // special INDUCED cell sequences
         if (new_cells_design.Get_n_induced_sequence().size() > 0)
