@@ -129,8 +129,8 @@ CellDesign PCC_Processing(Config &configuration) {
             // processing index :: 0 - direct special faces assignment;  1 - crystallographic ; 2 - configurational TJs-based entropy (deviatoric); //        if (pindex_vector.at(cell_type) == 0) { //        } else if (pindex_vector.at(cell_type) == 1) {
             cout << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
             Out_logfile_stream << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
-///           if(cell_type == 2 + (dim - 3))             // cell type = 2 -> faces
-///                special_x_sequence = Processing_maxFunctional(cell_type, Configuration_sState, max_fractions_vectors, pindex_vector.at(cell_type));
+          // if(cell_type == 2 + (dim - 3))             // cell type = 2 -> faces
+          //      special_x_sequence = Processing_maxFunctional(cell_type, Configuration_sState, max_sfractions_vectors, multiplexity);
         } // End of 'F' type simulations (elseif)
 
         else if (stype_vector.at(cell_type) == "D" && max_sfractions_vectors[cell_type].size() > 0) { // Maximum <functional> production
@@ -149,7 +149,10 @@ CellDesign PCC_Processing(Config &configuration) {
             for (auto it = special_x_sequence.begin(); it != special_x_sequence.end(); ++it)
                 special_x_sequence.at(distance(special_x_sequence.begin(), it)) = *it - 1;
 
-        // Cut up to max_fraction (!!)
+            cout << endl;
+            cout << "S processing mode! Special_x_sequence size: " << special_x_sequence.size() << endl << endl;
+
+            // Cut up to max_fraction (!!)
             std::vector<unsigned int> temp_x_sequence = special_x_sequence; // temporarily new vector
             double total_max_sCell_fraction_processing = 0;
             for (int j = 0; j < max_sfractions_vectors[cell_type].size(); ++j)

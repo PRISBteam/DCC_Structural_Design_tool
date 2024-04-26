@@ -57,7 +57,7 @@ std::vector<std::vector<unsigned int>> Processing_Random_Strips(int cell_type, s
  * @param p_index
  * @return state_vectors of k-cells
  */
-std::vector<unsigned int> Processing_maxFunctional(int cell_type, std::vector<std::vector<int>> &Configuration_State, std::vector<std::vector<double>> const &max_fractions_vectors, double p_index);
+std::vector<unsigned int> Processing_maxFunctional(int cell_type, std::vector<std::vector<int>> &Configuration_State, std::vector<std::vector<double>> const &max_fractions_vectors, bool multiplexity);
 
 /*! ## 7 ##
  * @brief
