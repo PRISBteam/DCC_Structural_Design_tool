@@ -178,6 +178,22 @@ CellDesign PCC_Processing(Config &configuration) {
                 Configuration_sState[cell_type].push_back(var);
         } // End of 'S' [reading from file] type simulations (elseif)
 
+        else if (stype_vector.at(cell_type) == "Pi") { /// Reading structure from file
+            cout << " Start TopDown_cell_indexing() based on the cell type k+1: " << cell_type << endl;
+
+            /// II. Beginning of the processing of 'indexing' k-cells (TopDown and BottomUp)
+            ///=======================================================
+            std::vector<unsigned int> StateVector_indexing;
+            StateVector_indexing = TopDown_cell_indexing(cell_type, Configuration_sState);
+
+            /// 'special_x_sequence' - each k-cell number appeared only once in the sequence obtained by Configuration_sState
+            for (auto it = StateVector_indexing.begin(); it != StateVector_indexing.end(); ++it)
+                if(*it > 0) {
+                    special_x_sequence.push_back(distance(StateVector_indexing.begin(), it)); // add new element to the s_cells_sequence
+                } // end if(it)
+            cout << " TopDown_cell_indexing() special_x_sequence size: " << special_x_sequence.size() << endl << endl;
+        } // End of 'Pind' [TopDown indexing] type simulations (elseif)
+
         else if(max_sfractions_vectors[cell_type].size() > 0) cout << "ERROR [Processing] : unknown simulation type - please replace with 'R', 'L', 'F', 'D' or 'S'..!" << endl;
 
     ///* ONLY for 2-cells or 'grain boundaries' *///
@@ -199,22 +215,6 @@ CellDesign PCC_Processing(Config &configuration) {
 ///                    special_x_sequence = Processing_maxP_crystallographic(2, Configuration_sState, max_fractions_vectors, pindex_vector.at(2));
                     //special_x_sequence = Processing_Random_crystallographic(2, Configuration_sState, max_fractions_vectors, pindex_vector.at(2));
             } // end of 'Cr' type simulations (elseif)
-
-            /// II. Beginning of the processing of 'indexing' k-cells (TopDown and BottomUp)
-            ///=======================================================
-
-            if (special_x_sequence.size() < 2) { // ONLY if there was no processing and 'special' labelling of cells (!)
-                cout << " Start TopDown_cell_indexing() based on the cell type k+1: " << cell_type << endl;
-
-                std::vector<unsigned int> StateVector_indexing;
-                StateVector_indexing = TopDown_cell_indexing(cell_type, Configuration_sState);
-
-                /// 'special_x_sequence' - each k-cell number appeared only once in the sequence obtained by Configuration_sState
-                for (auto it = StateVector_indexing.begin(); it != StateVector_indexing.end(); ++it)
-                    if(*it > 0) {
-                        special_x_sequence.push_back(distance(StateVector_indexing.begin(), it)); // add new element to the s_cells_sequence
-                    } // end if(it)
-                }
 
             /// III. Beginning of the processing of 'induced' (of 'fractured') k-cells
             ///=======================================================
