@@ -27,49 +27,50 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 ///------------------------------------------------------------------
 
 
-/// # 0 # The class CONFIG ::
+/// --------------------------------------------------------------------------------------------------- ///
+/// ========== # 1 # ====================== CLASS 'Config' ============================================ ///
+/// --------------------------------------------------------------------------------------------------- ///
 /*!
  * @details Read the 'initial configuration' of the problem set in all the relevant '*.ini' files containing in the '\config' project directory using the functions from the 'ini_readers.cpp' project library (and only from there)
  *  Alternatively, Set_config() method allows to set all the values manually
  */
-//class Config
-    int Config::Get_dim() {
+    int Config::Get_dim() const {
         return config_dim;
     }; //!@return dim
 
-    std::string Config::Get_source_dir() {
+    std::string Config::Get_source_dir() const {
         return config_source_dir;
     }; //!@return source_dir
 
-    std::string Config::Get_output_dir() {
+    std::string Config::Get_output_dir() const {
          return config_output_dir;
     }; //!@return output_dir
 
-    std::string Config::Get_pcc_standard(){
+    std::string Config::Get_pcc_standard() const {
         return pcc_standard;
     }; //!@return pcc_standard
 
-    std::vector<string> Config::Get_paths() {
+    std::vector<string> Config::Get_paths() const {
         return config_PCCpaths;
     }; //!@return PCCpaths
 
-    std::vector<int> Config::Get_ConfVector() {
+    std::vector<int> Config::Get_ConfVector() const {
         return config_ConfVector;
     }; //!@return ConfVector
 
-    std::string Config::Get_main_type() {
+    std::string Config::Get_main_type() const {
          return config_main_type;
     }; //!@return output_dir
 
-    std::string Config::Get_sim_task() {
+    std::string Config::Get_sim_task() const {
         return config_sim_task;
     }; //!@return output_dir
 
-  std::vector<std::vector<unsigned int>> Config::Get_Configuration_sState() {
+  std::vector<std::vector<unsigned int>> Config::Get_Configuration_sState() const {
       return Configuration_sState;
     }; //!@return Configuration_sState
 
-    std::vector<std::vector<unsigned int>> Config::Get_Configuration_iState() {
+    std::vector<std::vector<unsigned int>> Config::Get_Configuration_iState() const {
         return Configuration_cState;
     }; //!@return Configuration_sState
 
@@ -265,22 +266,32 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
 
     }; // manual setting of the configuration
 
-/// # 1 # The class CELLS_DESIGN :: list of the state_vectors corresponding to different dimensions 'k' of the k-cells in a PCC
-//class CellDesign
-    void CellDesign::Set_special_sequences(std::vector<unsigned int> psequence, std::vector<unsigned int> fsequence, std::vector<unsigned int> esequence, std::vector<unsigned int> nsequence){
+// ========== END of class CONFIG functions description
+
+/// --------------------------------------------------------------------------------------------------- ///
+/// ========== # 2 # ====================== CLASS 'CellDesign' ============================================ ///
+/// --------------------------------------------------------------------------------------------------- ///
+/*!
+ * @details Set a list of state_vectors corresponding to different dimensions 'k' of the k-cells in a PCC
+ * @param pdesign
+ * @param fdesign
+ * @param edesign
+ * @param ndesign
+ */
+void CellDesign::Set_designes(std::vector<unsigned int> pdesign, std::vector<unsigned int> fdesign, std::vector<unsigned int> edesign, std::vector<unsigned int> ndesign){
+    p_special_design = pdesign; f_special_design = fdesign; e_special_design = edesign; n_special_design = ndesign;
+}
+
+void CellDesign::Set_induced_designs(std::vector<unsigned int> p_ind_design, std::vector<unsigned int> f_ind_design, std::vector<unsigned int> e_ind_design, std::vector<unsigned int> n_ind_design){
+    p_induced_design = p_ind_design; f_induced_design = f_ind_design; e_induced_design = e_ind_design; n_induced_design = n_ind_design;
+}
+
+void CellDesign::Set_special_sequences(std::vector<unsigned int> psequence, std::vector<unsigned int> fsequence, std::vector<unsigned int> esequence, std::vector<unsigned int> nsequence){
     p_special_sequence = psequence; f_special_sequence = fsequence; e_special_sequence = esequence; n_special_sequence = nsequence;
     }
 
     void CellDesign::Set_induced_sequences(std::vector<unsigned int> p_ind_sequence, std::vector<unsigned int> f_ind_sequence, std::vector<unsigned int> e_ind_sequence, std::vector<unsigned int> n_ind_sequence){
         p_induced_sequence = p_ind_sequence; f_induced_sequence = f_ind_sequence; e_induced_sequence = e_ind_sequence; n_induced_sequence = n_ind_sequence;
-    }
-
-    void CellDesign::Set_designes(std::vector<unsigned int> pdesign, std::vector<unsigned int> fdesign, std::vector<unsigned int> edesign, std::vector<unsigned int> ndesign){
-        p_special_design = pdesign; f_special_design = fdesign; e_special_design = edesign; n_special_design = ndesign;
-    }
-
-    void CellDesign::Set_induced_designs(std::vector<unsigned int> p_ind_design, std::vector<unsigned int> f_ind_design, std::vector<unsigned int> e_ind_design, std::vector<unsigned int> n_ind_design){
-        p_induced_design = p_ind_design; f_induced_design = f_ind_design; e_induced_design = e_ind_design; n_induced_design = n_ind_design;
     }
 
     void CellDesign::Set_special_sequence(std::vector<unsigned int> special_x_sequence, int cell_type){
@@ -300,7 +311,25 @@ typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which decla
         } // end switch(cell_type)
     } // End of Set_special_sequence()
 
-    void CellDesign::Set_induced_sequence(std::vector<unsigned int> induced_x_sequence, int cell_type){
+void CellDesign::Set_agglomeration_sequence(std::vector<Agglomeration> &agglomeration_x_sequence, int cell_type) {
+    switch (cell_type) {
+        case 3:
+            p_agglomerations_map = agglomeration_x_sequence;
+            break;
+        case 2:
+            f_agglomerations_map = agglomeration_x_sequence;
+            break;
+        case 1:
+            e_agglomerations_map = agglomeration_x_sequence;
+            break;
+        case 0:
+            n_agglomerations_map = agglomeration_x_sequence;
+            break;
+    } // end switch(cell_type)
+} // End of Set_agglomeration_sequence()
+
+
+void CellDesign::Set_induced_sequence(std::vector<unsigned int> induced_x_sequence, int cell_type){
         switch (cell_type) {
             case 3:
                 p_induced_sequence = induced_x_sequence;
@@ -385,29 +414,29 @@ void CellDesign::Set_induced_series(std::vector<std::vector<unsigned int>> induc
     } // end switch(ctype)
 } // END Set_induced_series()
 
-    // Get
-    std::vector<unsigned int> CellDesign::Get_p_special_sequence(void){
+/// Get
+    std::vector<unsigned int> CellDesign::Get_p_special_sequence(void) const {
         if (p_special_sequence.size() == 0) {
             cout << "WARNING: p_special_sequence did not set!" << endl;
             return {0};
         }
         else return p_special_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_f_special_sequence(void){
+    std::vector<unsigned int> CellDesign::Get_f_special_sequence(void) const {
         if (f_special_sequence.size() == 0) {
             cout << "WARNING: f_special_sequence did not set!" << endl;
             return {0};
         }
         else return f_special_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_e_special_sequence(void){
+    std::vector<unsigned int> CellDesign::Get_e_special_sequence(void) const {
         if (e_special_sequence.size() == 0) {
             cout << "WARNING: e_special_sequence did not set!" << endl;
             return {0};
         }
         else return e_special_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_n_special_sequence(void){
+    std::vector<unsigned int> CellDesign::Get_n_special_sequence(void) const {
         if (n_special_sequence.size() == 0) {
             cout << "WARNING: n_special_sequence did not set!" << endl;
             return {0};
@@ -415,28 +444,59 @@ void CellDesign::Set_induced_series(std::vector<std::vector<unsigned int>> induc
         else return n_special_sequence;
     }
 
-std::vector<std::vector<unsigned int>> CellDesign::Get_p_special_series(void){
+    // Agglomerations
+    std::vector<Agglomeration> CellDesign::Get_p_agglomeration_map(void) const {
+        if (p_agglomerations_map.size() == 0) {
+            cout << "WARNING: p_agglomerations_map did not set!" << endl;
+            return {0};
+        }
+        else return p_agglomerations_map;
+    }
+std::vector<Agglomeration> CellDesign::Get_f_agglomeration_map(void) const {
+    if (f_agglomerations_map.size() == 0) {
+        cout << "WARNING: f_agglomerations_map did not set!" << endl;
+        return {0};
+    }
+    else return f_agglomerations_map;
+}
+std::vector<Agglomeration> CellDesign::Get_e_agglomeration_map(void) const {
+    if (e_agglomerations_map.size() == 0) {
+        cout << "WARNING: e_agglomerations_map did not set!" << endl;
+        return {0};
+    }
+    else return e_agglomerations_map;
+}
+std::vector<Agglomeration> CellDesign::Get_n_agglomeration_map(void) const {
+    if (n_agglomerations_map.size() == 0) {
+        cout << "WARNING: n_agglomerations_map did not set!" << endl;
+        return {0};
+    }
+    else return n_agglomerations_map;
+}
+    // Special series
+
+std::vector<std::vector<unsigned int>> CellDesign::Get_p_special_series(void) const {
     if (p_special_series.size() == 0) {
         cout << "WARNING: p_special_series did not set!" << endl;
         return {{0}};
     }
     else return p_special_series;
     }
-std::vector<std::vector<unsigned int>> CellDesign::Get_f_special_series(void){
+std::vector<std::vector<unsigned int>> CellDesign::Get_f_special_series(void) const {
     if (f_special_series.size() == 0) {
         cout << "WARNING: f_special_series did not set!" << endl;
         return {{0}};
     }
     else return f_special_series;
     }
-std::vector<std::vector<unsigned int>> CellDesign::Get_e_special_series(void){
+std::vector<std::vector<unsigned int>> CellDesign::Get_e_special_series(void) const {
     if (e_special_series.size() == 0) {
         cout << "WARNING: n_special_sequence did not set!" << endl;
         return {{0}};
     }
     else return e_special_series;
     }
-std::vector<std::vector<unsigned int>> CellDesign::Get_n_special_series(void){
+std::vector<std::vector<unsigned int>> CellDesign::Get_n_special_series(void) const {
     if (n_special_series.size() == 0) {
         cout << "WARNING: n_special_sequence did not set!" << endl;
         return {{0}};
@@ -444,67 +504,69 @@ std::vector<std::vector<unsigned int>> CellDesign::Get_n_special_series(void){
     else return n_special_series;
     }
 
-std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
+std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) const {
         if (p_induced_sequence.size() == 0) {
             cout << "WARNING: polyhedron induced sequence did not set!" << endl;
             return {0};
         }
         else return p_induced_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_f_induced_sequence(void){
+    std::vector<unsigned int> CellDesign::Get_f_induced_sequence(void) const {
         if (f_induced_sequence.size() == 0) {
             cout << "WARNING: face induced sequence did not set!" << endl;
             return {0};
         }
         else return f_induced_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_e_induced_sequence(void) {
+    std::vector<unsigned int> CellDesign::Get_e_induced_sequence(void) const {
         if (e_induced_sequence.size() == 0) {
             cout << "WARNING: edge induced sequence did not set!" << endl;
             return {0};
         }
         else return e_induced_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_n_induced_sequence(void) {
+    std::vector<unsigned int> CellDesign::Get_n_induced_sequence(void) const {
         if (n_induced_sequence.size() == 0) {
             cout << "WARNING: node induced sequence did not set!" << endl;
             return {0};
         }
         else return n_induced_sequence;
     }
-    std::vector<unsigned int> CellDesign::Get_p_design(void){
+    std::vector<unsigned int> CellDesign::Get_p_design(void) const {
         if (p_special_design.size() == 0) {
             cout << "WARNING: p_special_design did not set!" << endl;
             return {0};
         }
         else return p_special_design;
     }
-    std::vector<unsigned int> CellDesign::Get_f_design(void){
+    std::vector<unsigned int> CellDesign::Get_f_design(void) const {
         if (f_special_design.size() == 0) {
             cout << "WARNING: f_special_design did not set!" << endl;
             return {0};
         } else return f_special_design;
     }
-    std::vector<unsigned int> CellDesign::Get_e_design(void){
+    std::vector<unsigned int> CellDesign::Get_e_design(void) const {
         if (e_special_design.size() == 0) {
             cout << "WARNING: e_special_design did not set!" << endl;
             return {0};
         } else return e_special_design;
     }
-    std::vector<unsigned int> CellDesign::Get_n_design(void){
+    std::vector<unsigned int> CellDesign::Get_n_design(void) const {
         if (n_special_design.size() == 0) {
             cout << "WARNING: n_special_design did not set!" << endl;
             return {0};
         }
         else return n_special_design;
     }
-/// ========== END of class CELLS_DESIGN functions description
+// ========== END of the class CELLS_DESIGN functions description
 
-/// # 3 # The class of SUBCOMPLEX
+/// --------------------------------------------------------------------------------------------------- ///
+/// ========== # 3 # ====================== CLASS 'Subcomplex' ============================================ ///
+/// --------------------------------------------------------------------------------------------------- ///
 
-    Subcomplex::Subcomplex(unsigned int subcomplex_id_new) { // constructor 1, simple
-        subcomplex_id = subcomplex_id_new;
-    }
+Subcomplex::Subcomplex(unsigned int subcomplex_id_new) { // constructor 1, simple
+    subcomplex_id = subcomplex_id_new;
+}
     //2
     Subcomplex::Subcomplex(unsigned int subcomplex_id_new, std::vector <unsigned int> new_sub_grains_sequence) { // constructor 2, based on a sub_grains_sequence
         subcomplex_id = subcomplex_id_new;
@@ -516,7 +578,7 @@ std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
         sub_grains_sequence = new_sub_grains_sequence;
     }
 
-    std::vector <unsigned int> Subcomplex::Get_grains_sequence(unsigned int subcomplex_id){
+    std::vector <unsigned int> Subcomplex::Get_grains_sequence(unsigned int subcomplex_id) const {
         if(sub_grains_sequence.size() != 0)
             return sub_grains_sequence;
         else return {0};
@@ -526,7 +588,7 @@ std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
     void Subcomplex::Set_sub_grain_coordinates(std::vector<tuple<double, double, double>> new_sub_grain_coordinates){
         sub_grain_coordinates = new_sub_grain_coordinates;
     }
-    std::vector<std::tuple<double, double, double>> Subcomplex::Get_sub_grain_coordinates(unsigned int subcomplex_id){
+    std::vector<std::tuple<double, double, double>> Subcomplex::Get_sub_grain_coordinates(unsigned int subcomplex_id) const {
         return sub_grain_coordinates;
     }
 
@@ -540,7 +602,7 @@ std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
         sub_faces_sequence = new_sub_faces_sequence;
     }
     //1
-    std::vector <unsigned int>  Subcomplex::Get_faces_sequence(unsigned int  subcomplex_id){
+    std::vector <unsigned int>  Subcomplex::Get_faces_sequence(unsigned int  subcomplex_id) const{
         if(sub_faces_sequence.size() != 0)
             return sub_faces_sequence;
         else return {0};
@@ -548,13 +610,13 @@ std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
 
     void Subcomplex::Set_common_faces_sequence(std::vector <unsigned int> new_common_faces_sequence){
         common_faces_sequence = new_common_faces_sequence; }
-    std::vector <unsigned int> Subcomplex::Get_common_faces_sequence(unsigned int subcomplex_id){
+    std::vector <unsigned int> Subcomplex::Get_common_faces_sequence(unsigned int subcomplex_id) const {
         return common_faces_sequence; }
 
     void Subcomplex::Set_sfaces_sequence(std::vector <unsigned int> const &ssub_faces_sequence){
         s_sub_faces_sequence = ssub_faces_sequence;
     }
-    std::vector <unsigned int> Subcomplex::Get_sfaces_sequence(unsigned int  subcomplex_id){
+    std::vector <unsigned int> Subcomplex::Get_sfaces_sequence(unsigned int  subcomplex_id) const {
         if(s_sub_faces_sequence.size() > 0) return s_sub_faces_sequence;
         else {
             cout << "Caution! s_sub_faces_sequence = 0! Please add it to the corresponding subcomplex/crack"s << endl;
@@ -565,7 +627,7 @@ std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
     void Subcomplex::Set_cfaces_sequence(std::vector <unsigned int> csub_faces_sequence){
         c_sub_faces_sequence = csub_faces_sequence;
     }
-    std::vector <unsigned int> Subcomplex::Get_cfaces_sequence(unsigned int  subcomplex_id){
+    std::vector <unsigned int> Subcomplex::Get_cfaces_sequence(unsigned int  subcomplex_id) const {
         return c_sub_faces_sequence;
     }
 
@@ -573,20 +635,123 @@ std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
     void Subcomplex::Set_common_faces_coordinates(std::vector<tuple<double, double, double>> new_common_faces_coordinates){
         common_faces_coordinates = new_common_faces_coordinates; }
 
-    std::vector<tuple<double, double, double>> Subcomplex::Get_common_faces_coordinates(unsigned int subcomplex_id){
+    std::vector<tuple<double, double, double>> Subcomplex::Get_common_faces_coordinates(unsigned int subcomplex_id) const {
         return common_faces_coordinates; }
 
-/// ========== END of class SUBCOMPLEX
+// ========== END of class SUBCOMPLEX functions description
 
-/// # 4 # The class of a PROCESSED COMPLEX
-    void ProcessedComplex::Set_design(CellDesign processed_pcc_design) {
+/// --------------------------------------------------------------------------------------------------- ///
+/// ========== # 4 # ====================== CLASS 'ProcessedComplex' ============================================ ///
+/// --------------------------------------------------------------------------------------------------- ///
+
+void ProcessedComplex::Set_design(CellDesign processed_pcc_design) {
         pcc_design = processed_pcc_design;
     }
 
-/// ========== END of class PROCESSED COMPLEX functions description
+// ========== END of the class PROCESSED_COMPLEX functions description
+
+/// --------------------------------------------------------------------------------------------------- ///
+/// ========== # 4 # ====================== CLASS 'Agglomeration' ============================================ ///
+/// --------------------------------------------------------------------------------------------------- ///
+
+//void Set_new_agglomeration(unsigned int AFace);
+//void Set_agglomeration_type(std::string type);
+//void Set_agglomeration_power(vector<vector<int>> const &RW_series_vector);
+//void SetAvLength(vector<vector<int>> const &RW_series_vector); // Average length of strips related to this agglomeration
+
+//unsigned int Get_face_agglomeration() const;
+//int Get_agglomeration_power() const;
+//int GetAPower(vector<vector<int>> const &RW_series_vector); /// overloaded /// BAD
+//int GetAvLength() const; /// BAD
+//int GetAvLength(vector<vector<int>> const &RW_series_vector)  /// overloaded /// BAD
+
+Agglomeration::Agglomeration(unsigned int AFace) { // constructor 1 simple
+        aface_number = AFace;
+    }
+
+Agglomeration::Agglomeration(unsigned int AFace, unsigned int AglPower) { // constructor 2 complex
+        aface_number = AFace;
+        apower = AglPower;
+    }
+
+    void Agglomeration::Set_new_agglomeration(unsigned int AFace) {
+        aface_number = AFace;
+    }
+
+    void Agglomeration::Set_agglomeration_type(std::string type) {
+        atype = type;
+        if (atype == "rgo") {
+            surface_energy = 0.2; // units [J/m^2]
+            adhesion_energy = 0.4; // units [J/m^2]
+        }
+    }
+
+    void Agglomeration::Set_agglomeration_power(vector<vector<unsigned int>> const &RW_series_vector) { /// Agglomerations power
+        int AglPower = 0;
+        //vector<int> aggl_vector(CellNumbs.at(2), 0); // state vector for agglomerations (with the size # cells initially filled with all 0s) : contains # of faces with agglomerations
+        for (auto RWsfv : RW_series_vector)
+            for (auto RWsf: RWsfv)
+                if(RWsf == aface_number) AglPower += 1;
+
+        apower = AglPower;
+    }
+
+    void Agglomeration::SetAvLength(vector<vector<unsigned int>> const &RW_series_vector) { // Average length of strips related to this agglomeration
+
+        int ATotalLength = 0;
+        for (auto RWsfv : RW_series_vector)
+            for (auto RWsf: RWsfv)
+                if(RWsf == aface_number) ATotalLength += RWsfv.size();
+
+        a_average_strip_length = ATotalLength/ (double) Get_agglomeration_power(RW_series_vector);
+    }
+
+    unsigned int Agglomeration::Get_agglomeration_kcell_number() const {
+        return aface_number;
+    }
+
+    int Agglomeration::Get_agglomeration_power() const {
+        return apower;
+    }
+
+    int Agglomeration::Get_agglomeration_power(vector<vector<unsigned int>> const &RW_series_vector) {
+        if (apower != 0) {
+            return apower;
+        } else
+        {
+            unsigned int AglPower = 0;
+            for (auto RWsfv : RW_series_vector)
+                for (auto RWsf: RWsfv)
+                    if(RWsf == aface_number) AglPower += 1;
+
+            apower = AglPower;
+            return apower;
+        }
+    }
+
+    int Agglomeration::GetAvLength() const {
+        return a_average_strip_length;
+    }
+
+    int Agglomeration::GetAvLength(vector<vector<unsigned int>> const &RW_series_vector) {
+        if (a_average_strip_length != 0) {
+            return a_average_strip_length;
+        } else
+        {
+            int ATotalLength = 0;
+            for (auto RWsfv: RW_series_vector)
+                for (auto RWsf: RWsfv)
+                    if (RWsf == aface_number) ATotalLength += RWsfv.size();
+
+            a_average_strip_length = ATotalLength / (double) Get_agglomeration_power(RW_series_vector);
+            return a_average_strip_length;
+        }
+    }
+
+// ========== END of the class AGGLOMERATION functions description
 
 
-/// # 5 # The class of Polytopes in a PCC
+/// # 6 # The class of Polytopes in a PCC
 
     Polytope::Polytope(unsigned int grain_new_id) { // constructor 1 simple
         grain_id = grain_new_id;
@@ -615,7 +780,7 @@ std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
                 Faces_list.push_back(l);
     } // end of Set_GBs_list()
 
-    vector<unsigned int> Polytope::Get_Faces_list() {
+    vector<unsigned int> Polytope::Get_Faces_list() const {
         if (Faces_list.size() > 0) return Faces_list;
         else { cout << "coution GBs_list.size() = 0! Please Set_GBs_list(unsigned int grain_id, SpMat const &GFS)  first!"s << endl;
             return {0};
@@ -642,25 +807,21 @@ std::vector<unsigned int> CellDesign::Get_p_induced_sequence(void) {
         }
     } // the end of Set_node_coordinates
 
-    std::vector<unsigned int> Polytope::Get_node_ids(unsigned int grain_id) { // set the node ids
+    std::vector<unsigned int> Polytope::Get_node_ids(unsigned int grain_id) const { // set the node ids
         return node_ids;
     }
 
-std::vector<std::tuple<double, double, double>> Polytope::Get_node_coordinates(unsigned int grain_id) { // set the node ids
+std::vector<std::tuple<double, double, double>> Polytope::Get_node_coordinates(unsigned int grain_id) const { // set the node ids
         if (node_coordinates.size() != 0) {
             return node_coordinates;
-        } else if (node_coordinates.size() > 0) {
-            Set_node_coordinates(grain_id);
-            return node_coordinates;
         } else {
-            throw std::invalid_argument(
-                    "Please call Set_node_coordinates(unsigned int grain_id, vector<tuple<double, double, double>> const &vertex_coordinates) method first!");
+            throw std::invalid_argument( "Please call Set_node_coordinates(unsigned int grain_id, vector<tuple<double, double, double>> const &vertex_coordinates) method first!");
             return node_coordinates;
         }
     } // end of  Get_node_coordinates() method
 
     /// return - vector with two tuples : { x_min, y_min, z_min; x_max, y_max, z_max} of a grain witn number grain_id
-    vector<tuple<double, double, double>> Polytope::Get_minmax_node_coordinates(unsigned int grain_id) { // min and max {x,y,z} values of vertices for a grain
+    vector<tuple<double, double, double>> Polytope::Get_minmax_node_coordinates(unsigned int grain_id) const { // min and max {x,y,z} values of vertices for a grain
         vector<tuple<double, double, double>> minmax_tuple;
         ///Get_node_coordinates(grain_id)
         vector<tuple<double, double, double>> tup_node_coordinates = Get_node_coordinates(grain_id); // class Grain3D function Get_node_coordinates(grain_id)
@@ -705,14 +866,14 @@ Macrocrack::Macrocrack(int crack_id_new, Subcomplex &half_plane_sub) : half_plan
         half_plane_subcomplex = half_plane_sub; //set subcomplex
     }
 
-    double Macrocrack::Get_crack_length(int crack_id_new) {
+    double Macrocrack::Get_crack_length(int crack_id_new) const {
         return crack_length;
     }
 
     void Macrocrack::Set_real_crack_length(double sample_size) {
         real_crack_length = half_plane_subcomplex.sub_length * sample_size;
     }
-    double Macrocrack::Get_real_crack_length() {
+    double Macrocrack::Get_real_crack_length() const {
         if (real_crack_length > 0.0) return real_crack_length;
         else {
             cout << "Caution! real_crack_length = 0! Please use Set_real_crack_length(double sample_size) before!"s << endl;
@@ -723,7 +884,7 @@ Macrocrack::Macrocrack(int crack_id_new, Subcomplex &half_plane_sub) : half_plan
     void Macrocrack::Set_crack_plane() {
         crack_plane = {half_plane_subcomplex.a_n, half_plane_subcomplex.b_n, half_plane_subcomplex.c_n, half_plane_subcomplex.D_plane};
     }
-    vector<double> Macrocrack::Get_crack_plane() {
+    vector<double> Macrocrack::Get_crack_plane() const {
         if (crack_plane.size() > 0.0) return crack_plane;
         else {
             cout << "Caution! crack_plane.size() = 0! Please update first {half_plane_subcomplex.a_n, half_plane_subcomplex.b_n, half_plane_subcomplex.c_n, half_plane_subcomplex.D_plane} in the corresponding subcomplex!"s << endl;
@@ -734,17 +895,17 @@ Macrocrack::Macrocrack(int crack_id_new, Subcomplex &half_plane_sub) : half_plan
     void Macrocrack::Set_multiple_cracking_energy(double total_energy) {
         multiple_cracking_energy = total_energy;
     }
-    double Macrocrack::Get_multiple_cracking_energy() {
+    double Macrocrack::Get_multiple_cracking_energy() const {
         return multiple_cracking_energy;
     }
 
-    std::vector <unsigned int> Macrocrack::Get_faces_sequence(){
+    std::vector <unsigned int> Macrocrack::Get_faces_sequence() const {
         return half_plane_subcomplex.Get_faces_sequence(crack_id); }
 
-    std::vector <unsigned int> Macrocrack::Get_sfaces_sequence(){
+    std::vector <unsigned int> Macrocrack::Get_sfaces_sequence() const {
         return half_plane_subcomplex.Get_sfaces_sequence(0); }
 
-    std::vector <tuple<double,double,double>> Macrocrack::Get_common_faces_coordinates(unsigned int  crack_id){
+    std::vector <tuple<double,double,double>> Macrocrack::Get_common_faces_coordinates(unsigned int  crack_id) const {
         return half_plane_subcomplex.Get_common_faces_coordinates(crack_id); }
 
 /// ========== END of class MACROCRACK functions description
@@ -796,35 +957,35 @@ public:
     }
 
 /// Get values methods
-/*    double Get_surface_energy(unsigned int GB_id){
+/*    double Get_surface_energy(unsigned int GB_id) const {
 //        if(surface_energy != 0)
 //            return surface_energy;
 //        else {
 //            Set_surface_energy(GB_SE_vector);
 //            return surface_energy; } }
-//    double Get_external_elastic_energy(unsigned int GB_id) { /// EEE: external elastic energy vector
+//    double Get_external_elastic_energy(unsigned int GB_id) const { /// EEE: external elastic energy vector
 //        if(external_elastic_energy != 0)
 //            return external_elastic_energy;
 //        else {
 //            Set_external_elastic_energy(GB_EEE_vector);
 //            return external_elastic_energy; } }
-//    double Get_crack_interaction_energy(unsigned int GB_id) {
+//    double Get_crack_interaction_energy(unsigned int GB_id) const {
 //        if(crack_interaction_energy != 0)
 //            return crack_interaction_energy;
 //        else {
 //            Set_crack_interaction_energy(GB_CIE_vector);
 //            return crack_interaction_energy; } }
-//    double Get_Bl_energy(int GB_id){
+//    double Get_Bl_energy(int GB_id) const {
 //        if(Bl_energy != 0)
 //            return Bl_energy;
 //        else { Set_Bl_energy(GB_BLE_vector);
 //            return Bl_energy; } }
-//    double Get_Cl_energy(unsigned int GB_id){
+//    double Get_Cl_energy(unsigned int GB_id) const {
 //        if(Cl_energy != 0)
 //            return Cl_energy;
 //        else { Set_Cl_energy(GB_CLE_vector);
 //            return Cl_energy; } }
-//    double Get_total_energy(){
+//    double Get_total_energy() const {
         /// total_energy; //= surface_energy + external_elastic_energy + Bl_energy + Cl_energy;
 //    }
 
@@ -848,109 +1009,6 @@ private:
     double Cl_energy;
     double total_energy; //= surface_energy + external_elastic_energy + Bl_energy + Cl_energy;
 };
-
-/// # 3 # The class of Agglomeration of defects in one special face element of a PCC
-class agglomeration {
-    double adhesion_energy = 0;
-    double surface_energy = 0;
-
-private:
-    string atype; // like "rgo"
-    unsigned int aface_number = 0;
-    int          apower = 0;
-    int          a_average_strip_length = 0;
-
-public:
-    agglomeration(unsigned int AFace) { // constructor 1 simple
-        aface_number = AFace;
-    }
-
-    agglomeration(unsigned int AFace, int AglPower) { // constructor 2 complex
-        aface_number = AFace;
-        apower = AglPower;
-    }
-
-    void SetAFace(unsigned int AFace)
-    {
-        aface_number = AFace;
-    }
-
-    void SetAType(std::string type)
-    {
-        atype = type;
-        if (atype == "rgo") {
-            surface_energy = 0.2; // units [J/m^2]
-            adhesion_energy = 0.4; // units [J/m^2]
-        }
-
-    }
-
-    void SetAPower(vector<vector<int>> const &RW_series_vector) /// Agglomerations power
-    {
-        int AglPower = 0;
-        //vector<int> aggl_vector(CellNumbs.at(2), 0); // state vector for agglomerations (with the size # cells initially filled with all 0s) : contains # of faces with agglomerations
-        for (auto RWsfv : RW_series_vector)
-            for (auto RWsf: RWsfv)
-                if(RWsf == aface_number) AglPower += 1;
-
-        apower = AglPower;
-    }
-
-    void SetAvLength(vector<vector<int>> const &RW_series_vector) /// Average length of strips related to this agglomeration
-    {
-        int ATotalLength = 0;
-        for (auto RWsfv : RW_series_vector)
-            for (auto RWsf: RWsfv)
-                if(RWsf == aface_number) ATotalLength += RWsfv.size();
-
-        a_average_strip_length = ATotalLength/ (double) GetAPower(RW_series_vector);
-    }
-
-    unsigned int GetAFace()
-    {
-        return aface_number;
-    }
-
-    int GetAPower()
-    {
-        return apower;
-    }
-
-    int GetAPower(vector<vector<int>> const &RW_series_vector)
-    {
-        if (apower != 0) {
-            return apower;
-        } else {
-            int AglPower = 0;
-            for (auto RWsfv : RW_series_vector)
-                for (auto RWsf: RWsfv)
-                    if(RWsf == aface_number) AglPower += 1;
-
-            apower = AglPower;
-            return apower;
-        }
-    }
-
-    int GetAvLength()
-    {
-        return a_average_strip_length;
-    }
-
-    int GetAvLength(vector<vector<int>> const &RW_series_vector) {
-        if (a_average_strip_length != 0) {
-            return a_average_strip_length;
-        } else {
-            int ATotalLength = 0;
-            for (auto RWsfv: RW_series_vector)
-                for (auto RWsf: RWsfv)
-                    if (RWsf == aface_number) ATotalLength += RWsfv.size();
-
-            a_average_strip_length = ATotalLength / (double) GetAPower(RW_series_vector);
-            return a_average_strip_length;
-        }
-    }
-
-}; // end of class agglomeration
 
 /// # 4 # The class of stress concentrators related to defects in one special face element of a PCC
 

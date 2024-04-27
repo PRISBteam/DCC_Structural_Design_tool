@@ -3,6 +3,39 @@
 
 #include <Eigen/SparseCore>
 
+/// ==== # 4 # =============== Agglomeration class  ========================= ///
+
+/*!
+* @brief This class combine PCCpaths to directories and initial variables set in the config/_.ini files with the methods of their reading like
+ */
+class Agglomeration {
+
+    double adhesion_energy = 0;
+    double surface_energy = 0;
+
+private:
+    std::string atype; // like "rgo"
+    unsigned int aface_number = 0;
+    unsigned int apower = 0;
+    unsigned int a_average_strip_length = 0;
+
+public:
+    Agglomeration(unsigned int AFace); // constructor 1
+    Agglomeration(unsigned int AFace, unsigned int AglPower); // constructor 2 complex
+
+    void Set_new_agglomeration(unsigned int AFace);
+    void Set_agglomeration_type(std::string type);
+    void Set_agglomeration_power(std::vector<std::vector<unsigned int>> const &RW_series_vector);
+    void SetAvLength(std::vector<std::vector<unsigned int>> const &RW_series_vector); // Average length of strips related to this agglomeration
+
+    unsigned int Get_agglomeration_kcell_number() const;
+    int Get_agglomeration_power() const;
+    int Get_agglomeration_power(std::vector<std::vector<unsigned int>> const &RW_series_vector); /// overloaded /// BAD
+    int GetAvLength() const; /// BAD
+    int GetAvLength(std::vector<std::vector<unsigned int>> const &RW_series_vector); /// overloaded /// BAD
+
+}; // end of class agglomeration
+
 /// ==== # 0 # =============== Structure for the initial configuration  ========================= ///
 
 /*!
@@ -36,17 +69,17 @@ public:
     void Read_config(); // Read the 'initial configuration' of the problem set in all the relevant '*.ini' files containing in the '\config' project directory using the functions from the 'ini_readers.cpp' project library (and only from there)
     void Set_config(const std::vector<int> &ConfigVector, const std::string &source_dir, int &dim, std::vector<char*> paths, std::vector<std::vector<int>> Configuration_State, std::vector<std::vector<int>> Configuration_cState); // manual setting of the configuration
 
-    int Get_dim(); //@return dim
-    std::vector<int> Get_ConfVector(); //!@return ConfVector
-    std::string Get_source_dir(); //!@return source_dir
-    std::string Get_output_dir(); //!@return output_dir
-    std::string Get_pcc_standard(); //!@return pcc_standard
-    std::vector<std::string> Get_paths(); //!@return PCC PCCpaths
-    std::string Get_main_type(); //!@return main_type
-    std::string Get_sim_task(); //!@return sim_task path to the corresponding *.cpp file containing the task code
+    int Get_dim() const; //@return dim
+    std::vector<int> Get_ConfVector() const; //!@return ConfVector
+    std::string Get_source_dir() const; //!@return source_dir
+    std::string Get_output_dir() const; //!@return output_dir
+    std::string Get_pcc_standard() const; //!@return pcc_standard
+    std::vector<std::string> Get_paths() const; //!@return PCC PCCpaths
+    std::string Get_main_type() const; //!@return main_type
+    std::string Get_sim_task() const; //!@return sim_task path to the corresponding *.cpp file containing the task code
 
-    std::vector<std::vector<unsigned int>> Get_Configuration_sState(); //!@return Configuration_sState
-    std::vector<std::vector<unsigned int>> Get_Configuration_iState(); //!@return Configuration_iState
+    std::vector<std::vector<unsigned int>> Get_Configuration_sState() const; //!@return Configuration_sState
+    std::vector<std::vector<unsigned int>> Get_Configuration_iState() const; //!@return Configuration_iState
 };
 // ConfigVector (../config/main.ini) contains ALL the control variables needed for the program execution
 
@@ -61,12 +94,11 @@ private:
     std::vector<unsigned int> p_special_sequence, f_special_sequence, e_special_sequence, n_special_sequence; // sequences of UNIQUE special k-cell numbers
     std::vector<unsigned int> p_induced_sequence, f_induced_sequence, e_induced_sequence, n_induced_sequence; // sequences of UNIQUE induced k-cell numbers
 
+    std::vector<Agglomeration> p_agglomerations_map, f_agglomerations_map, e_agglomerations_map, n_agglomerations_map; // sequences of agglomerations
+
     /// Series: special cells and induced cells
     std::vector<std::vector<unsigned int>> p_special_series, f_special_series, e_special_series, n_special_series; // sequences of sequences of special k-cell numbers
     std::vector<std::vector<unsigned int>> p_induced_series, f_induced_series, e_induced_series, n_induced_series; // sequences of sequences of induced k-cell numbers
-
-    /// Agglomerations of indices
-    std::map<unsigned int, unsigned int> p_agglomerations_map, f_agglomerations_map, e_agglomerations_map, n_agglomerations_map;
 
 public:
     /// Set of variables
@@ -77,33 +109,39 @@ public:
     void Set_induced_designs(std::vector<unsigned int> p_ind_design, std::vector<unsigned int> f_ind_design, std::vector<unsigned int> e_ind_design, std::vector<unsigned int> n_ind_design);
     void Set_special_sequence(std::vector<unsigned int> sequence, int ctype);
     void Set_special_series(std::vector<std::vector<unsigned int>> special_x_series, int cell_type);
+    void Set_agglomeration_sequence(std::vector<Agglomeration> &agglomeration_x_sequence, int cell_type);
     void Set_induced_sequence(std::vector<unsigned int> ind_sequence, int ctype);
     void Set_induced_series(std::vector<std::vector<unsigned int>> induced_x_series, int cell_type);
     void Set_special_configuration(std::vector<unsigned int> design, int ctype);
     void Set_induced_design(std::vector<unsigned int> ind_design, int ctype);
+/// void Set_agglomerations_special_sequence
 
     // Get
-    std::vector<unsigned int> Get_p_special_sequence(void);
-    std::vector<unsigned int> Get_f_special_sequence(void);
-    std::vector<unsigned int> Get_e_special_sequence(void);
-    std::vector<unsigned int> Get_n_special_sequence(void);
-    std::vector<std::vector<unsigned int>> Get_p_special_series(void);
-    std::vector<std::vector<unsigned int>> Get_f_special_series(void);
-    std::vector<std::vector<unsigned int>> Get_e_special_series(void);
-    std::vector<std::vector<unsigned int>> Get_n_special_series(void);
-    std::vector<unsigned int> Get_p_design(void);
-    std::vector<unsigned int> Get_f_design(void);
-    std::vector<unsigned int> Get_e_design(void);
-    std::vector<unsigned int> Get_n_design(void);
+    std::vector<unsigned int> Get_p_special_sequence(void) const;
+    std::vector<unsigned int> Get_f_special_sequence(void) const;
+    std::vector<unsigned int> Get_e_special_sequence(void) const;
+    std::vector<unsigned int> Get_n_special_sequence(void) const;
+    std::vector<Agglomeration> Get_p_agglomeration_map(void) const;
+    std::vector<Agglomeration> Get_f_agglomeration_map(void) const;
+    std::vector<Agglomeration> Get_e_agglomeration_map(void) const;
+    std::vector<Agglomeration> Get_n_agglomeration_map(void) const;
+    std::vector<std::vector<unsigned int>> Get_p_special_series(void) const;
+    std::vector<std::vector<unsigned int>> Get_f_special_series(void) const;
+    std::vector<std::vector<unsigned int>> Get_e_special_series(void) const;
+    std::vector<std::vector<unsigned int>> Get_n_special_series(void) const;
+    std::vector<unsigned int> Get_p_design(void) const;
+    std::vector<unsigned int> Get_f_design(void) const;
+    std::vector<unsigned int> Get_e_design(void) const;
+    std::vector<unsigned int> Get_n_design(void) const;
 
-    std::vector<unsigned int> Get_p_induced_sequence(void);
-    std::vector<unsigned int> Get_f_induced_sequence(void);
-    std::vector<unsigned int> Get_e_induced_sequence(void);
-    std::vector<unsigned int> Get_n_induced_sequence(void);
-    std::vector<std::vector<unsigned int>> Get_p_induced_series(void);
-    std::vector<std::vector<unsigned int>> Get_f_induced_series(void);
-    std::vector<std::vector<unsigned int>> Get_e_induced_series(void);
-    std::vector<std::vector<unsigned int>> Get_n_induced_series(void);
+    std::vector<unsigned int> Get_p_induced_sequence(void) const;
+    std::vector<unsigned int> Get_f_induced_sequence(void) const;
+    std::vector<unsigned int> Get_e_induced_sequence(void) const;
+    std::vector<unsigned int> Get_n_induced_sequence(void) const;
+    std::vector<std::vector<unsigned int>> Get_p_induced_series(void) const;
+    std::vector<std::vector<unsigned int>> Get_f_induced_series(void) const;
+    std::vector<std::vector<unsigned int>> Get_e_induced_series(void) const;
+    std::vector<std::vector<unsigned int>> Get_n_induced_series(void) const;
 
 }; // END of class CellDesign
 
@@ -135,7 +173,7 @@ public:
 
     // Laplacian lab
     std::vector<std::vector<double>> Betti_vector;
-}; /// end of class ProcessedComplex
+}; // end of class ProcessedComplex
 
 /// ==== # 3 # =============== Subcomplex class  ========================= ///
 
@@ -166,28 +204,28 @@ public:
 
     /// Grains
     void Set_grains_sequence(std::vector <unsigned int> new_sub_grains_sequence);
-    std::vector <unsigned int> Get_grains_sequence(unsigned int subcomplex_id);
+    std::vector <unsigned int> Get_grains_sequence(unsigned int subcomplex_id) const;
     /// geometry
     void Set_sub_grain_coordinates(std::vector<std::tuple<double, double, double>> new_sub_grain_coordinates);
-    std::vector<std::tuple<double, double, double>> Get_sub_grain_coordinates(unsigned int subcomplex_id);
+    std::vector<std::tuple<double, double, double>> Get_sub_grain_coordinates(unsigned int subcomplex_id) const;
     /// Faces
     void Set_faces_sequence(std::vector <unsigned int> new_sub_faces_sequence);
-    std::vector <unsigned int>  Get_faces_sequence(unsigned int  subcomplex_id);
+    std::vector <unsigned int>  Get_faces_sequence(unsigned int  subcomplex_id) const;
     void Set_common_faces_sequence(std::vector <unsigned int> new_common_faces_sequence);
 
-    std::vector <unsigned int> Get_common_faces_sequence(unsigned int subcomplex_id);
+    std::vector <unsigned int> Get_common_faces_sequence(unsigned int subcomplex_id) const;
 
     void Set_sfaces_sequence(std::vector <unsigned int> const &ssub_faces_sequence);
-    std::vector <unsigned int> Get_sfaces_sequence(unsigned int  subcomplex_id);
+    std::vector <unsigned int> Get_sfaces_sequence(unsigned int  subcomplex_id) const;
     void Set_cfaces_sequence(std::vector <unsigned int> csub_faces_sequence);
-    std::vector <unsigned int> Get_cfaces_sequence(unsigned int  subcomplex_id);
+    std::vector <unsigned int> Get_cfaces_sequence(unsigned int  subcomplex_id) const;
 
     /// geometry
     void Set_common_faces_coordinates(std::vector<std::tuple<double, double, double>> new_common_faces_coordinates);
-    std::vector<std::tuple<double, double, double>> Get_common_faces_coordinates(unsigned int subcomplex_id);
-};
+    std::vector<std::tuple<double, double, double>> Get_common_faces_coordinates(unsigned int subcomplex_id) const;
+}; // end of class Subcomplex
 
-/// ==== # 4 # =============== grain3D class  ========================= ///
+/// ==== # 5 # =============== grain3D class  ========================= ///
 
 class Polytope {
 
@@ -212,17 +250,17 @@ public:
 
     void Set_Faces_list(unsigned int grain_id, Eigen::SparseMatrix<double> const &GFS);
 
-    std::vector<unsigned int> Get_Faces_list();
+    std::vector<unsigned int> Get_Faces_list() const;
 
     /// return - vector of all node (vertices) coordinates of a grain
     void Set_node_coordinates(unsigned int grain_id);
 
-    std::vector<unsigned int> Get_node_ids(unsigned int grain_id);
+    std::vector<unsigned int> Get_node_ids(unsigned int grain_id) const;
 
-    std::vector<std::tuple<double, double, double>> Get_node_coordinates(unsigned int grain_id);
+    std::vector<std::tuple<double, double, double>> Get_node_coordinates(unsigned int grain_id) const;
 
     /// return - vector with two tuples : { x_min, y_min, z_min; x_max, y_max, z_max} of a grain witn number grain_id
-    std::vector<std::tuple<double, double, double>> Get_minmax_node_coordinates(unsigned int grain_id);
+    std::vector<std::tuple<double, double, double>> Get_minmax_node_coordinates(unsigned int grain_id) const;
 
 }; // end of class Polytope
 
@@ -251,25 +289,25 @@ public:
 
     Macrocrack(int crack_id_new, Subcomplex &half_plane_sub);
 
-    double Get_crack_length(int crack_id_new);
+    double Get_crack_length(int crack_id_new) const;
 
     void Set_real_crack_length(double sample_size);
 
-    double Get_real_crack_length();
+    double Get_real_crack_length() const;
 
     void Set_crack_plane();
 
     void Set_multiple_cracking_energy(double total_energy);
 
-    double Get_multiple_cracking_energy();
+    double Get_multiple_cracking_energy() const;
 
-    std::vector <unsigned int> Get_faces_sequence();
+    std::vector <unsigned int> Get_faces_sequence() const;
 
-    std::vector <unsigned int> Get_sfaces_sequence();
+    std::vector <unsigned int> Get_sfaces_sequence() const;
 
-    std::vector<double> Get_crack_plane();
+    std::vector<double> Get_crack_plane() const;
 
-    std::vector <std::tuple<double,double,double>> Get_common_faces_coordinates(unsigned int  crack_id);
+    std::vector <std::tuple<double,double,double>> Get_common_faces_coordinates(unsigned int  crack_id) const;
 
 }; // end of class MACROCRACK
 

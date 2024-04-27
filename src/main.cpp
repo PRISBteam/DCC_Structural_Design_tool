@@ -29,8 +29,6 @@
 #include <string>
 #include <ctime>
 #include <vector>
-#include <tuple>
-#include <cmath>
 
 ///* ------------------------------------------------------------------------------- *
 ///* Attached user-defined C++ libraries (must be copied in the directory for STL):

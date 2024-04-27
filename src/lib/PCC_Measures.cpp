@@ -22,7 +22,7 @@ using namespace Eigen; // standard namespace
 // global variables
 extern std::vector<unsigned int> CellNumbs; // number of cells in a PCC defined globally
 extern std::vector<std::string> PCCpaths;
-extern int dim, dim0;
+extern int dim;
 
 typedef Eigen::SparseMatrix<double> SpMat; // <Eigen> library class, which declares a column-major sparse matrix type of doubles with the nickname 'SpMat'
 
@@ -47,7 +47,7 @@ vector<int> Edge_types_byFaces(std::vector<unsigned int> const &CellNumbs, std::
     J1 = std::count(TJsTypes.begin(), TJsTypes.end(), 1); // containing 1 incident special face
     J2 = std::count(TJsTypes.begin(), TJsTypes.end(), 2); // containing 2 incident special face
     J3 = std::count(TJsTypes.begin(), TJsTypes.end(), 3); // containing 3 incident special face
-    J0 = CellNumbs.at(1 + (dim0 - 3)) - J1 - J2 - J3; // containing no incident special face (the total amount of TJs = total amount of Edges in DCC = CellNumbs.at(1))
+    J0 = CellNumbs.at(1) - J1 - J2 - J3; // containing no incident special face (the total amount of TJs = total amount of Edges in DCC = CellNumbs.at(1))
 //    Jall = (double) CellNumbs.at(1 + (dim - 3)); // amount of Edges in DCC
     Jall = (double) TJsTypes.size();
 
@@ -207,7 +207,7 @@ J1 = std::count(TJsTypes.begin(), TJsTypes.end(), 1); // containing 1 incident s
 J2 = std::count(TJsTypes.begin(), TJsTypes.end(), 2); // containing 2 incident special face
 J3 = std::count(TJsTypes.begin(), TJsTypes.end(), 3); // containing 3 incident special face
 J0 = CellNumbs.at(1) - J1 - J2 - J3; // containing no incident special face (the total amount of TJs = total amount of Edges in DCC = CellNumbs.at(1))
-double Jall = (double) CellNumbs.at(1 + (dim0 - 3)); // amount of Edges in DCC
+double Jall = (double) CellNumbs.at(1); // amount of Edges in DCC
 
 // Conversion from numbers to fractions
 double l2j0 = 0.0, l2j1 = 0.0, l2j2 = 0.0, l2j3 = 0.0;
@@ -278,7 +278,7 @@ J0n = CellNumbs.at(1) - J1n - J2n - J3n; // containing no incident special face 
 
 // Conversion from numbers to fractions
 double l2j0n = 0.0, l2j1n = 0.0, l2j2n = 0.0, l2j3n = 0.0;
-double Jall = (double) CellNumbs.at(1 + (dim0 - 3)); // amount of Edges in DCC
+double Jall = (double) CellNumbs.at(1); // amount of Edges in DCC
 
 // (!) log2 means binary (or base-2) logarithm and we use "-" for fractions to make the value positive
 j0n = (double) J0n / Jall;
@@ -334,7 +334,7 @@ J0n = CellNumbs.at(1) - J1n - J2n - J3n; // containing no incident special face 
 
 // Conversion from numbers to fractions
 double l2j0n = 0.0, l2j1n = 0.0, l2j2n = 0.0, l2j3n = 0.0;
-double Jall = (double) CellNumbs.at(1 + (dim0 - 3)); // amount of Edges in DCC
+double Jall = (double) CellNumbs.at(1); // amount of Edges in DCC
 
 // (!) log2 means binary (or base-2) logarithm and we use "-" for fractions to make the value positive
 j0n = (double) J0n / Jall;

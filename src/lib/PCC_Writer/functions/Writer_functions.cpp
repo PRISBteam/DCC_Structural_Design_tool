@@ -21,18 +21,21 @@ void PCC_CellSequences_Writer(CellDesign &new_cells_design, int &output_counter)
 // Offstreams
     ofstream Out_scells_file; // Special cell sequences output
     ofstream Out_ind_scells_file; // Special cell sequences output
-    ofstream Out_ind_ccells_file; // "Cracked" cell sequences output
+    ofstream Out_ind_ccells_file; // Induced cell sequences output
+    ofstream Out_agglomerations_file; // Agglomeration sequences output
 
 // File names and output directories
     string seq_odir = output_dir + "s_cells_sequence.txt"s; // output directory
     string seq_ind_odir = output_dir + "s_induced_cells_sequence.txt"s; // output directory
     string des_odir = output_dir + "s_cells_design.txt"s; // output directory
+    string aggl_odir = output_dir + "agglomerations_map.txt"s; // output directory
 
 
 /// Output to file Special and Ordinary faces order :: tess - means "numeration of Faces start with 1 instead of 0 like in the NEPER output"
     // (1) Random
     Out_scells_file.open(seq_odir, ios::trunc);
     Out_ind_scells_file.open(seq_ind_odir, ios::trunc);
+    Out_agglomerations_file.open(aggl_odir, ios::trunc);
 /*
     if (Out_scells_file) {
     // special ASSIGNED cell sequences
@@ -132,7 +135,38 @@ void PCC_CellSequences_Writer(CellDesign &new_cells_design, int &output_counter)
         cout << "(" << output_counter++ << ")  " << "Random special k-cells for all k = {0,1,2,3} sequences has been successfully written in " << des_odir << endl << endl;
         Out_logfile_stream << "(" << output_counter << ")  " << "Random special k-cells for all k = {0,1,2,3} sequences has been successfully written in " << des_odir << endl << endl;
         Out_scells_file.close();
-    } else cout << "Error: No such a directory for\t" << des_odir << endl;
+    } else cout << "Error: No such a directory for\t" << aggl_odir << endl;
+
+    if (Out_agglomerations_file) {
+
+        std::vector<Agglomeration> new_p_agglomerations  = new_cells_design.Get_p_agglomeration_map();
+            for (auto rvit: new_p_agglomerations)
+                Out_agglomerations_file << rvit.Get_agglomeration_kcell_number() << " " << rvit.Get_agglomeration_power() << endl;
+
+        Out_agglomerations_file << endl;
+
+        std::vector<Agglomeration> new_f_agglomerations  = new_cells_design.Get_f_agglomeration_map();
+        for (auto rvit: new_f_agglomerations)
+            Out_agglomerations_file << rvit.Get_agglomeration_kcell_number() << " " << rvit.Get_agglomeration_power() << endl;
+
+        Out_agglomerations_file << endl;
+
+        std::vector<Agglomeration> new_e_agglomerations  = new_cells_design.Get_e_agglomeration_map();
+        for (auto rvit : new_e_agglomerations)
+            Out_agglomerations_file << rvit.Get_agglomeration_kcell_number() << " " << rvit.Get_agglomeration_power() << endl;
+
+        Out_agglomerations_file << endl;
+
+        std::vector<Agglomeration> new_n_agglomerations  = new_cells_design.Get_n_agglomeration_map();
+        for (auto rvit : new_n_agglomerations)
+            Out_agglomerations_file << rvit.Get_agglomeration_kcell_number() << " " << rvit.Get_agglomeration_power() << endl;
+
+        cout << "(" << output_counter++ << ")  " << "Agglomeration cells for all k = {0,1,2,3} sequences has been successfully written in " << des_odir << endl << endl;
+        Out_logfile_stream << "(" << output_counter << ")  " << "Agglomeration cells for all k = {0,1,2,3} sequences has been successfully written in " << des_odir << endl << endl;
+
+        Out_ind_scells_file.close();
+    } else cout << "Error: No such a directory for\t" << aggl_odir << endl;
+
 
     return;
 }
