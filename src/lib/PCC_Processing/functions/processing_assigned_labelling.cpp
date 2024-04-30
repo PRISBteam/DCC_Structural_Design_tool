@@ -48,7 +48,7 @@ unsigned int NewCellNumb_R(unsigned int OCellsNumb){ // Random generation machin
 /// (1.2) Quasi-random choice of the element with # New2CellNumb from the list of numbers {0 to OCellsNumb}
 // This RW choose ANY faces, not necessary only ordinary ones (!)
 std::vector<unsigned int> NewCellsStrip_RW(int cell_type, unsigned int iniCellNumber, unsigned int strip_length, int Leap_friquency, double Leap_dist) { // Random generation machine for a strips of new 2-Cells
-    unsigned int New2CellNumb;
+    unsigned int New2CellNumb = iniCellNumber;
     std::vector<unsigned int> NewStripVector_RW;
     std::vector<double> neigh_Faces; // vector for all neighbours of each face
     /// Sparse Face Adjacency matrix - reading from the file of the considered PCC
