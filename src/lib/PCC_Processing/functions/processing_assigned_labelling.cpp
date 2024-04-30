@@ -241,7 +241,6 @@ std::vector<double> Log_normal_distribution (double mu_f, double sigm_f, int bin
  * @return vector of vectors of numbers k-cells in the each strip/chain
  */
 std::vector<std::vector<unsigned int>> Processing_Random_Strips(int cell_type, std::vector<unsigned int> &cell_strip_distribution, std::vector<std::vector<unsigned int>> &Configuration_State, std::vector<std::vector<double>> max_fractions_vectors) {
-
 ///================================================================= 'L' =======================================================================////
 /// ==============================================>  Random lengthy strips generation process  <===============================================////
 ///===========================================================================================================================================////
@@ -287,7 +286,6 @@ std::vector<std::vector<unsigned int>> Processing_Random_Strips(int cell_type, s
   /// (1) Loop over the vector of the strips distribution (several "baskets")
    int strip_counter = 0;
    for (auto  itr = cell_strip_distribution.begin(); itr != cell_strip_distribution.end(); ++itr) {
-
       /// (2) Inside each basket
       int strip_length = (int) (distance(cell_strip_distribution.begin(), itr) + 1.0); // strip lengths, starting with 1
       // Example: vector<int> strip_scell_distribution = {2 4 5 27 8 6 3 1} means 2 strips of length 1 faces each, 4 strips of length 2 faces each,... , 1 strip of length 8 faces each
@@ -317,7 +315,9 @@ std::vector<std::vector<unsigned int>> Processing_Random_Strips(int cell_type, s
 //               special_cell_sequence.push_back(val); // add new element to the s_cells_sequence
 //               OrdinaryCellNumbs.erase(OrdinaryCellNumbs.begin() + val); // !!! Delete its element from the vector decreasing its size BUT
           }
-//REPAIR           std::cout << "iniCellNumber: " << iniCellNumber << std::endl;
+//REPAIR
+// std::cout << "iniCellNumber: " << iniCellNumber << std::endl;
+///          cout << "special_cells_fraction: " << special_cells_fraction << " # of strip/chain: " << strip_counter++ << " size of strip/chain: " << *itr << endl;
 
       } // end of for (int number_of_lstrips = 0; number_of_lstrips < *itr; number_of_lstrips++) { // Number of strips of size *itr > 0
 
@@ -331,6 +331,7 @@ std::vector<std::vector<unsigned int>> Processing_Random_Strips(int cell_type, s
           }
 */
        // Special and Ordinary cells fraction calculation
+cout << " CellNumbs.at(cell_type): " << CellNumbs.at(cell_type) << endl;
         special_cells_fraction = (double) std::count(S_Vector.begin(),S_Vector.end(),1) / (double) CellNumbs.at(cell_type);
   //     ordinary_cells_fraction = (double) OrdinaryCellNumbs.size() / (double) CellNumbs.at(cell_type);
  //      special_cells_fraction = 1.0 - ordinary_cells_fraction;

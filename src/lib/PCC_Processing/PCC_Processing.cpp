@@ -124,14 +124,21 @@ CellDesign PCC_Processing(Config &configuration) {
             cout << "Average (mu) and dispersion (sigma): " << endl  << mu_f << "  " << sigma_f << endl;
 
             /// Obtaining the distribution of strip/chain lengths
-            unsigned int bins_number = 50;
+            unsigned int bins_number = 10;
             std::vector<double> strip_lenghts_distribution = Log_normal_distribution(mu_f, sigma_f, bins_number); // double valued "continuous" distribution, where Log_normal_distribution() function is for obtaining strip_lenghts_distribution
             std::vector<unsigned int> cell_strip_distribution; // vector of positive integers containing "discrete" length distribution of special chains/strips of k-cells
 
             cell_strip_distribution.clear(); // clearing strip/chain length distribution vector for new 'cell_type' iterations
             for (auto  itr = strip_lenghts_distribution.begin(); itr != strip_lenghts_distribution.end(); ++itr) {
+//REPAIR                cout << " strip_lenghts_distribution " << max_sfractions_vectors[cell_type][0] * CellNumbs.at(cell_type) * (*itr) << endl;
                 cell_strip_distribution.push_back(max_sfractions_vectors[cell_type][0] * CellNumbs.at(cell_type) * (*itr) / (std::distance(strip_lenghts_distribution.begin(), itr) + 1.0)); // only for the first 'Xmax_fraction1' in the 'config/processing.ini' file values of max k-cell fractions
             }
+
+            cout << " cell_strip_distribution for the number of bins  " << bins_number;
+            for (auto  itr = cell_strip_distribution.begin(); itr != cell_strip_distribution.end(); ++itr) {
+                cout << "  " << *itr;
+            }
+            cout << endl;
 
             /// Random_Strips_Distribution() function call
             special_x_series = Processing_Random_Strips(cell_type, cell_strip_distribution, Configuration_sState, max_sfractions_vectors); // series of k-cells for each strip/chain
