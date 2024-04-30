@@ -1,0 +1,127 @@
+
+The problem dimension that is the maximum value k_max of k-cells in the PCC:		|		dim = 3
+PCC standard ID:		pcc1s
+
+Simulation mode:		LIST
+Output directory:		../results/
+PCC source directory:		../PCC_sources/Voronoi_1k/
+
+OFF    | PCC_Section
+ON    | PCC_Processing
+ON    | PCC_Characterisation
+ON    | PCC_Writer
+
+==========================================================================================================================================================================
+0-cells #	6234
+1-cells #	12464
+2-cells #	7231
+3-cells #	1000
+_____________________________________________________________________________________
+[0] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/A0.txt
+[1] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/A1.txt
+[2] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/A2.txt
+[3] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/A3.txt
+[4] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/B1.txt
+[5] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/B2.txt
+[6] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/B3.txt
+[7] PCCpaths:	../PCC_sources/Voronoi_1k/measures/face_areas.txt
+[8] PCCpaths:	../PCC_sources/Voronoi_1k/measures/polyhedron_volumes.txt
+[9] PCCpaths:	../PCC_sources/Voronoi_1k/coordinates/polyhedron_seeds.txt
+[10] PCCpaths:	../PCC_sources/Voronoi_1k/coordinates/vertex_seeds.txt
+[11] PCCpaths:	../PCC_sources/Voronoi_1k/other/face_normals.txt
+[12] PCCpaths:	PCC reading ERROR: there is no 'edge_seeds' file in the PCC directory
+[13] PCCpaths:	../PCC_sources/Voronoi_1k/coordinates/face_seeds.txt
+
+------------------------------------------------------------------------------------------------
+=======================================================================================================================================================================================================================================
+					[	Start of the PCC Processing Design code	]					
+--------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------
+START of the PCC Processing module 
+==============================================================================================================================================================
+The Processing module simulation type and initial parameters:		
+
+Processing p_type:	L	 with p_index:	0
+mu = 	3 and sigma = 	1.5
+Number of polyhedron types:	1
+Their maximum fractions:	0.1		0		0		
+
+Processing f_type:	Pi	 with f_index:	0
+Number of face types:	1
+Their maximum fractions:	0		0		0		
+
+Processing c_face_type:	Km
+Number of face crack types:	1
+Their maximum fractions:	0.05
+Their maximum fractions:	0		0		0		
+
+Processing n_type:	R	with n_index:	0
+Number of node types:	0
+Their maximum fractions:	0		0		0		
+_________________________________________________
+
+Random strips/chains (L) mode processing in operation: cell_type : 3
+
+special_cells_fraction: 0.147 # of strip/chain: 1 size of strip/chain: 79
+special_cells_fraction: 0.147 # of strip/chain: 3 size of strip/chain: 0
+special_cells_fraction: 0.147 # of strip/chain: 5 size of strip/chain: 0
+special_cells_fraction: 0.147 # of strip/chain: 7 size of strip/chain: 0
+special_cells_fraction: 0.147 # of strip/chain: 9 size of strip/chain: 0
+special_cells_fraction: 0.147 # of strip/chain: 11 size of strip/chain: 0
+special_cells_fraction: 0.147 # of strip/chain: 13 size of strip/chain: 0
+special_cells_fraction: 0.147 # of strip/chain: 15 size of strip/chain: 0
+special_cells_fraction: 0.147 # of strip/chain: 17 size of strip/chain: 0
+Induced processing in operation: cell_type : 2
+
+n-sequence size: 1
+e-sequence size: 1
+f-sequence size: 1967
+p-sequence size: 147
+
+n-induced-sequence size: 362
+e-induced-sequence size: 362
+f-induced-sequence size: 362
+p-induced-sequence size: 1
+
+n-design vector size: 6234
+e-design vector size: 12464
+f-design vector size: 7231
+p-design vector size: 1000
+
+Processing time is equal to  18.1974  seconds
+
+-------------------------------------------------------------------------
+START of the PCC Characterisation module
+==============================================================================================================================================================
+The Characterisation module simulation type and initial parameters:		
+
+Polyhedrons lab ON/OFF:	1		
+Faces lab       ON/OFF:	0		
+Edges lab       ON/OFF:	0		
+Nodes lab       ON/OFF:	0		
+
+Polyhedrons configuration entropy:	1		
+Conf entropy mean part:	1		
+Conf entropy skew part:	1		
+
+Laplacians: number of calculation steps 	7		
+
+Special cell Laplacians:	1		
+
+---------------------------------------------------------------------------
+[CHAR] Current special faces fraction: 0.0020744
+[OperatorsBetti] face sequence vector size: 15
+[OperatorsBetti] Reduced Laplacians row sizes: 63  63  71  71  15  15
+[OperatorsBetti] Start of the Laplacians' spectra calculation: 
+[OperatorsBetti] Reduced Laplacians' spectra size: 61  [OperatorsBetti] Reduced Laplacians' spectra size: 69  [OperatorsBetti] Reduced Laplacians' spectra size: 13  
+[OperatorsBetti] Start of the Betti numbers calculation: 
+[OperatorsBetti] Betti 1 is equal to 5
+[OperatorsBetti] Betti 2 is equal to 0
+[OperatorsBetti] Betti 3 is equal to 0
+[CHAR] p & Betti numbers:  0.0020744  5  0  0
+[CHAR] Calculation time [s] of the Betti numbers is equal to   0.058324
+---------------------------------------------------------------------------
+[CHAR] Current special faces fraction: 0.0394136
+[OperatorsBetti] face sequence vector size: 285
+[OperatorsBetti] Reduced Laplacians row sizes: 785  785  990  990  285  285
+[OperatorsBetti] Start of the Laplacians' spectra calculation: 
