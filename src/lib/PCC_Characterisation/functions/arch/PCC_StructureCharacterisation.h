@@ -21,28 +21,95 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
     std::vector<double> ConfigVector = config_reader_characterisation(source_path, charlabs_polyhedrons, charlabs_faces, charlabs_edges, charlabs_nodes, charlabs_laplacians, Out_logfile_stream); // vector<double> (!) from ini_readers.h library
 
 /// # 1 # Creation of the State Vectors
+//Polyhedrons
+    std::vector<unsigned int> grain_sequences_vector, new_grain_sequences_vector; // number of different sequences based on the polyhedron design vector
+    std::vector<int> grain_states_vector;
+
+    if(new_cells_design.Get_p_sequence().size() > 1)
+        for (auto pseq : new_cells_design.Get_p_sequence()) {
+            grain_sequences_vector.push_back(pseq);
+            /// forming a new vector for characterisation
+            if (grain_sequences_vector.size() % (int) (2.0*std::log(new_cells_design.Get_p_sequence().size())) == 0) // only some values - each 2.0*std::log(*.size()) - are written in the grain_sequences_vector
+                PCC_characteristics.grain_process_seq.push_back(grain_sequences_vector);
+        } // end for(auto pseq...)
+
 // Faces
     std::vector<unsigned int> face_sequences_vector; // number of different sequences based on the face design vector
     std::vector<int> face_states_vector;
 
+    if(new_cells_design.Get_f_sequence().size() > 1)
     for (auto fseq : new_cells_design.Get_f_sequence()) {
         face_sequences_vector.push_back(fseq);
         /// forming a new vector for characterisation
         if ( face_sequences_vector.size() % (int) (2.0*std::log(new_cells_design.Get_f_sequence().size())) == 0) // only some values - each 2.0*std::log(*.size()) - are written in the face_sequences_vector
             PCC_characteristics.face_process_seq.push_back(face_sequences_vector);
-
     } // end for(auto fseq...)
 
-    for (int i = 0; i < 4; ++i) { /// for all types of cells
+// Edges
+    std::vector<unsigned int> edge_sequences_vector; // number of different sequences based on the face design vector
+    std::vector<int> edge_states_vector;
 
+    if(new_cells_design.Get_e_sequence().size() > 1)
+        for (auto eseq : new_cells_design.Get_e_sequence()) {
+            edge_sequences_vector.push_back(eseq);
+            /// forming a new vector for characterisation
+            if ( edge_sequences_vector.size() % (int) (2.0*std::log(new_cells_design.Get_e_sequence().size())) == 0) // only some values - each 2.0*std::log(*.size()) - are written in the face_sequences_vector
+                PCC_characteristics.edge_process_seq.push_back(edge_sequences_vector);
+        } // end for(auto eseq...)
+
+// Nodes
+    std::vector<unsigned int> node_sequences_vector; // number of different sequences based on the face design vector
+    std::vector<int> node_states_vector;
+
+    if(new_cells_design.Get_n_sequence().size() > 1)
+        for (auto nseq : new_cells_design.Get_n_sequence()) {
+            node_sequences_vector.push_back(nseq);
+            /// forming a new vector for characterisation
+            if (node_sequences_vector.size() % (int) (2.0*std::log(new_cells_design.Get_n_sequence().size())) == 0) // only some values - each 2.0*std::log(*.size()) - are written in the face_sequences_vector
+                PCC_characteristics.node_process_seq.push_back(node_sequences_vector);
+        } // end for(auto nseq...)
+
+
+    for (int i = 0; i < 4; ++i) { /// for all types of cells
         /// # 2 # Measures: fractions and entropies
+
+        /// Polyhedrons
+        if(i == 3 && charlabs_polyhedrons.size() > 0) { // Polyhedrons lab
+            if (charlabs_polyhedrons.at(0) == 1) {
+
+                vector<int> GrainTypes_char(CellNumbs.at(3),0); // vector<int> in the form [ 0 2 3 3 2 1 ...] with the TJs type ID as its values
+                std::vector<double> j_grain_fractions(dim + 1, 0), d_grain_fractions(dim,0); // fractions of (1) edges of different types and (2) edges of different degrees
+                tuple<double, double> conf_entropy_t;
+
+                for (auto current_seq: PCC_characteristics.grain_process_seq) {
+                    GrainTypes_char.clear();
+                    std::fill(j_grain_fractions.begin(), j_grain_fractions.end(), 0);
+                    std::fill(d_grain_fractions.begin(), d_grain_fractions.end(), 0);
+
+              ///      GrainTypes_char = cellm1_types_by_cell_type(CellNumbs, Configuration_State, 3, j_grain_fractions, d_grain_fractions);
+              ///      conf_entropy_t = Configuration_cellEntropy_tuple(j_grain_fractions); // conf entropy
+
+                    PCC_characteristics.e_entropy_mean_vector.push_back(std::get<0>(
+                            conf_entropy_t)); // std::tuple<double, double> Configuration_Entropy_tuple(std::vector<double> const &j_fractions) based on Edges fraction vector
+                    PCC_characteristics.e_entropy_skrew_vector.push_back(std::get<1>(conf_entropy_t)); // tuple
+                    //// MUST BE IMPROVED (!) :
+                    PCC_characteristics.e_entropy_full_vector.push_back(
+                            std::get<0>(conf_entropy_t) + std::get<1>(conf_entropy_t));
+
+                    PCC_characteristics.jp_fractions_vector.push_back(j_grain_fractions);
+                    PCC_characteristics.dp_fractions_vector.push_back(d_grain_fractions);
+                } // for (auto current_seq : PCC_characteristics.face_process_seq)
+
+
+
+            } // end of if (charlabs_edges.at(0) == 1)
+        } // end of if(i == 3 && charlabs_polyhedrons.size() > 0)
+
+        /// Edges
         if(i == 1 && charlabs_edges.size() > 0) { // Edges lab
         if (charlabs_edges.at(0) == 1) {
-                vector<int> EdgeTypes_char(CellNumbs.at(1 + (dim - 3)),
-                                           0); // vector<int> in the form [ 0 2 3 3 2 1 ...] with the TJs type ID as its values
-                std::vector<double> j_edge_fractions(dim + 1, 0), d_edge_fractions(dim,
-                                                                                   0); // fractions of (1) edges of different types and (2) edges of different degrees
-
+                vector<int> EdgeTypes_char(CellNumbs.at(1 + (dim - 3)),0); // vector<int> in the form [ 0 2 3 3 2 1 ...] with the TJs type ID as its values
+                std::vector<double> j_edge_fractions(dim + 1, 0), d_edge_fractions(dim,0); // fractions of (1) edges of different types and (2) edges of different degrees
                 /// for each state:
                 tuple<double, double> conf_entropy_t;
                 for (auto current_seq: PCC_characteristics.face_process_seq) {
@@ -85,7 +152,7 @@ ProcessedComplex PCC_StructureCharacterisation(CellsDesign &new_cells_design) {
             } //  end of if(charlabs_edges.at(0) == 1)
             } //  end of if(i == 1 && charlabs_edges.at(0) == 1) { // Edges lab
 
-    } // end for (int i = 0; i < 4; ++i)
+    } // end for (int i = 0; i < 4; ++i) - cell_types
 
     /// # 3 # Laplacians of specail cells
     if(charlabs_laplacians.at(1) == 1) {

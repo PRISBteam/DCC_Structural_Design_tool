@@ -285,7 +285,6 @@ vector<double> Get_EntropyIncreaseList(std::vector<unsigned int> &S_Vector, vect
                        /// Configuration Entropy related with Faces
 //                       Configurational_Face_Entropy = - (j0s + j1s + j2s + j3s);
 
-
 //REPAIR// cout << " J00= " << J00<< " J10= " << J10 << " J20= " << J20 << endl;
             // Values after conversion
             J1N = J00;

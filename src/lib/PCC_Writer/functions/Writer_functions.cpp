@@ -175,48 +175,93 @@ void PCC_CellSequences_Writer(CellDesign &new_cells_design, int &output_counter)
 
 void PCC_Entropic_Writer(ProcessedComplex &pcc_processed, int &output_counter) {
 // Offstreams
-    ofstream Out_entropies_file, Out_jf_file, Out_df_file; // Configuration entropies output
+    ofstream Out_p_entropies_file, Out_f_entropies_file, Out_e_entropies_file, Out_n_entropies_file;
+    ofstream Out_jpf_file, Out_dpf_file, Out_jff_file, Out_dff_file, Out_jef_file, Out_def_file, Out_jnf_file, Out_dnf_file; // Configuration entropies output
 
 // File names and output directories
-    string entropies_odir = output_dir + "processing_face_entropies.txt"s; // / full / mean / skrew / parts
-    string ffrac_odir = output_dir + "processing_j_fractions.txt"s; // output directory
-    string dfrac_odir = output_dir + "processing_d_fractions.txt"s; // output directory
+    string g_entropies_odir = output_dir + "processing_grain_entropies.txt"s; // / full / mean / skrew / parts
+    string f_entropies_odir = output_dir + "processing_face_entropies.txt"s; // / full / mean / skrew / parts
+    string e_entropies_odir = output_dir + "processing_edge_entropies.txt"s; // / full / mean / skrew / parts
+    string n_entropies_odir = output_dir + "processing_node_entropies.txt"s; // / full / mean / skrew / parts
+
+    string jpfrac_odir = output_dir + "processing_jp_fractions.txt"s; // output directory
+    string dpfrac_odir = output_dir + "processing_dp_fractions.txt"s; // output directory
+    string jffrac_odir = output_dir + "processing_jf_fractions.txt"s; // output directory
+    string dffrac_odir = output_dir + "processing_df_fractions.txt"s; // output directory
+    string jefrac_odir = output_dir + "processing_je_fractions.txt"s; // output directory
+    string defrac_odir = output_dir + "processing_de_fractions.txt"s; // output directory
+    string jnfrac_odir = output_dir + "processing_jn_fractions.txt"s; // output directory
+    string dnfrac_odir = output_dir + "processing_dn_fractions.txt"s; // output directory
 
 /// (1) Configuration etropies:  / full / mean / skrew /
-    Out_entropies_file.open(entropies_odir, ios::trunc);
+    Out_p_entropies_file.open(g_entropies_odir, ios::trunc);
+    Out_f_entropies_file.open(f_entropies_odir, ios::trunc);
+    Out_e_entropies_file.open(e_entropies_odir, ios::trunc);
+    Out_n_entropies_file.open(n_entropies_odir, ios::trunc);
 
-    if (Out_entropies_file) {
+    if (Out_p_entropies_file) {
+        // special cell sequences
+        for (unsigned int i = 0; i < pcc_processed.p_entropy_full_vector.size(); ++i)
+        Out_p_entropies_file << pcc_processed.grain_process_seq.at(i).size()/ (double) CellNumbs.at(3) << " " << pcc_processed.p_entropy_full_vector.at(i) << " " << pcc_processed.p_entropy_mean_vector.at(i) << " " << pcc_processed.p_entropy_skrew_vector.at(i) << endl;
+        cout << "(" << output_counter++ << ")  " << "Configuration edge entropies has been successfully written in " << g_entropies_odir << endl;
+        Out_logfile_stream << "(" << output_counter << ")  " << "Configuration edge entropies has been successfully written in " << g_entropies_odir << endl;
+        Out_p_entropies_file.close();
+    } else cout << "Error: No such a directory for\t" << e_entropies_odir << endl;
+
+    if (Out_f_entropies_file) {
+        // special cell sequences
+        for (unsigned int i = 0; i < pcc_processed.f_entropy_full_vector.size(); ++i)
+            Out_e_entropies_file << pcc_processed.face_process_seq.at(i).size()/ (double) CellNumbs.at(3) << " " << pcc_processed.f_entropy_full_vector.at(i) << " " << pcc_processed.f_entropy_mean_vector.at(i) << " " << pcc_processed.f_entropy_skrew_vector.at(i) << endl;
+        cout << "(" << output_counter++ << ")  " << "Configuration edge entropies has been successfully written in " << f_entropies_odir << endl;
+        Out_logfile_stream << "(" << output_counter << ")  " << "Configuration edge entropies has been successfully written in " << f_entropies_odir << endl;
+        Out_f_entropies_file.close();
+    } else cout << "Error: No such a directory for\t" << f_entropies_odir << endl;
+
+    if (Out_e_entropies_file) {
         // special cell sequences
             for (unsigned int i = 0; i < pcc_processed.e_entropy_full_vector.size(); ++i)
-                Out_entropies_file << pcc_processed.face_process_seq.at(i).size()/ (double) CellNumbs.at(2 + (dim0 - 3)) << " " << pcc_processed.e_entropy_full_vector.at(i) << " " << pcc_processed.e_entropy_mean_vector.at(i) << " " << pcc_processed.e_entropy_skrew_vector.at(i) << endl;
-        cout << "(" << output_counter++ << ")  " << "Configuration edge entropies has been successfully written in " << entropies_odir << endl;
-        Out_logfile_stream << "(" << output_counter << ")  " << "Configuration edge entropies has been successfully written in " << entropies_odir << endl;
-        Out_entropies_file.close();
-    } else cout << "Error: No such a directory for\t" << entropies_odir << endl;
+                Out_e_entropies_file << pcc_processed.face_process_seq.at(i).size()/ (double) CellNumbs.at(2) << " " << pcc_processed.e_entropy_full_vector.at(i) << " " << pcc_processed.e_entropy_mean_vector.at(i) << " " << pcc_processed.e_entropy_skrew_vector.at(i) << endl;
+        cout << "(" << output_counter++ << ")  " << "Configuration edge entropies has been successfully written in " << e_entropies_odir << endl;
+        Out_logfile_stream << "(" << output_counter << ")  " << "Configuration edge entropies has been successfully written in " << e_entropies_odir << endl;
+        Out_e_entropies_file.close();
+    } else cout << "Error: No such a directory for\t" << e_entropies_odir << endl;
+
+    if (Out_n_entropies_file) {
+        // special cell sequences
+        for (unsigned int i = 0; i < pcc_processed.n_entropy_full_vector.size(); ++i)
+            Out_e_entropies_file << pcc_processed.node_process_seq.at(i).size()/ (double) CellNumbs.at(1) << " " << pcc_processed.n_entropy_full_vector.at(i) << " " << pcc_processed.n_entropy_mean_vector.at(i) << " " << pcc_processed.n_entropy_skrew_vector.at(i) << endl;
+        cout << "(" << output_counter++ << ")  " << "Configuration edge entropies has been successfully written in " << n_entropies_odir << endl;
+        Out_logfile_stream << "(" << output_counter << ")  " << "Configuration edge entropies has been successfully written in " << n_entropies_odir << endl;
+        Out_n_entropies_file.close();
+    } else cout << "Error: No such a directory for\t" << e_entropies_odir << endl;
+
 
 /// (2) Edge fractions:  / j0 / j1 / j2 / j3 /
-    Out_jf_file.open(ffrac_odir, ios::trunc);
+    Out_jpf_file.open(jpfrac_odir, ios::trunc);
+    Out_jff_file.open(jffrac_odir, ios::trunc);
+    Out_jef_file.open(jefrac_odir, ios::trunc);
+    Out_jnf_file.open(jnfrac_odir, ios::trunc);
 
-    if (Out_jf_file) {
+    if (Out_jef_file) {
         // special cell sequences
             for (unsigned int i = 0; i < pcc_processed.je_fractions_vector.size(); ++i)
-                Out_jf_file << pcc_processed.face_process_seq.at(i).size()/ (double) CellNumbs.at(2 + (dim0 - 3)) << " " << pcc_processed.je_fractions_vector[i][0] << " " << pcc_processed.je_fractions_vector[i][1] << " " << pcc_processed.je_fractions_vector[i][2] << " " << pcc_processed.je_fractions_vector[i][3] << endl;
-        cout << "(" << output_counter++ << ")  " << "Special edge fractions has been successfully written in    " << ffrac_odir << endl;
-        Out_logfile_stream << "(" << output_counter << ")  " << "Special edge fractions has been successfully written in   " << ffrac_odir << endl;
-        Out_jf_file.close();
-    } else cout << "Error: No such a directory for\t" << ffrac_odir << endl;
+                Out_jef_file << pcc_processed.face_process_seq.at(i).size()/ (double) CellNumbs.at(2 + (dim0 - 3)) << " " << pcc_processed.je_fractions_vector[i][0] << " " << pcc_processed.je_fractions_vector[i][1] << " " << pcc_processed.je_fractions_vector[i][2] << " " << pcc_processed.je_fractions_vector[i][3] << endl;
+        cout << "(" << output_counter++ << ")  " << "Special edge fractions has been successfully written in    " << jefrac_odir << endl;
+        Out_logfile_stream << "(" << output_counter << ")  " << "Special edge fractions has been successfully written in   " << jefrac_odir << endl;
+        Out_jef_file.close();
+    } else cout << "Error: No such a directory for\t" << jefrac_odir << endl;
 
     /// (3) d-fractions for edges:  / d1 / d2 / d3 /
-    Out_df_file.open(dfrac_odir, ios::trunc);
+    Out_def_file.open(defrac_odir, ios::trunc);
 
-    if (Out_df_file) {
+    if (Out_def_file) {
         // special cell sequences
             for (unsigned int i = 0; i < pcc_processed.de_fractions_vector.size(); ++i)
-                Out_df_file << pcc_processed.face_process_seq.at(i).size()/ (double) CellNumbs.at(2 + (dim0 - 3)) << " " << pcc_processed.de_fractions_vector[i][0] << " " << pcc_processed.de_fractions_vector[i][1] << " " << pcc_processed.de_fractions_vector[i][2] << endl;
-        cout << "(" << output_counter++ << ")  " << "Special edge degree fractions has been successfully written in    " << dfrac_odir << endl;
-        Out_logfile_stream << "(" << output_counter << ")  " << "Special edge degree fractions has been successfully written in   " << dfrac_odir << endl;
-        Out_df_file.close();
-    } else cout << "Error: No such a directory for\t" << dfrac_odir << endl;
+                Out_def_file << pcc_processed.face_process_seq.at(i).size()/ (double) CellNumbs.at(2 + (dim0 - 3)) << " " << pcc_processed.de_fractions_vector[i][0] << " " << pcc_processed.de_fractions_vector[i][1] << " " << pcc_processed.de_fractions_vector[i][2] << endl;
+        cout << "(" << output_counter++ << ")  " << "Special edge degree fractions has been successfully written in    " << defrac_odir << endl;
+        Out_logfile_stream << "(" << output_counter << ")  " << "Special edge degree fractions has been successfully written in   " << defrac_odir << endl;
+        Out_def_file.close();
+    } else cout << "Error: No such a directory for\t" << defrac_odir << endl;
 
     return;
 }
@@ -287,6 +332,19 @@ void PCC_Laplacians_Writer(ProcessedComplex &pcc_processed, int &output_counter)
     cout << "(" << output_counter++ << ")  " << "Betti numbers of the special cell structure evolution has been successfully written in " << betti_odir << endl;
     Out_logfile_stream << "(" << output_counter << ")  " << "Betti numbers of the special cell structure evolution has been successfully written in " << betti_odir << endl;
 } // END of PCC_Laplacians_Writer()
+
+void PCC_Polyhedrons_Writer (ProcessedComplex &pcc_processed, int &output_counter) {
+//    ofstream OutPolyFile; // Betti numbers output
+//    string betti_odir = output_dir + "Omega_polyhedrons.txt"s; // output directory
+
+//    cout << "(" << output_counter++ << ")  " << "Polyhedron-related parameters (omega,...) of the special cell structure evolution has been successfully written in " << betti_odir << endl;
+//    Out_logfile_stream << "(" << output_counter << ")  " << "Polyhedron-related parameters (omega,...) of the special cell structure evolution has been successfully written in " << betti_odir << endl;
+} // END of PCC_Polyhedrons_Writer()
+
+void PCC_Faces_Writer (ProcessedComplex &pcc_processed, int &output_counter) {
+//    cout << "(" << output_counter++ << ")  " << "Face-related parameters (Sigma, Chi,...) of the special cell structure evolution has been successfully written in " << betti_odir << endl;
+//    Out_logfile_stream << "(" << output_counter << ")  " << "Face-related parameters (Sigma, Chi,...) of the special cell structure evolution has been successfully written in " << betti_odir << endl;
+} // END of PCC_Polyhedrons_Writer()
 
 /// * NEW HEAP * ///
 
