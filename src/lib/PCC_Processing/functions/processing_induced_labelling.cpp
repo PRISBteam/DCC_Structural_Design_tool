@@ -64,8 +64,9 @@ std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<uns
     double crack_fraction = 0.0;
 /// PARTICULAR VALUES FOR FACE ENERGIES (SHOULD GO AFTER TO THE "kinematic_fracture_data" FILE)
 // all surface energies in [J/m^2] (!)
-    double sface_energy_matrix = 2.0, sface_energy_inclusion = 1.0, sface_energy_aggl = 0.4;
-    double nrm = 1.0 * sface_energy_matrix, nrr = 0, ncm = 2.0 * sface_energy_matrix, ncr = 2.0 * sface_energy_inclusion; // nrm and nrr - coefficients for energies caused by INCLUSIONS in a matrix (m) or inclusion (r) boundary; ncm and ncr - coefficients for energies caused by CRACKS in a matrix (m) or inclusion (r) boundary
+    double sface_energy_matrix = 2.0, sface_energy_inclusion = 1.0, sface_energy_aggl = 1.0; /// ! Grain composite !
+    /// ! Grain composite !
+    double nrm = 0.0 * sface_energy_matrix, nrr = 0, ncm = 1.0 * sface_energy_matrix, ncr = 1.0 * sface_energy_inclusion; // nrm and nrr - coefficients for energies caused by INCLUSIONS in a matrix (m) or inclusion (r) boundary; ncm and ncr - coefficients for energies caused by CRACKS in a matrix (m) or inclusion (r) boundary
     // double  lsc_inclusion = 4.0 * sface_energy_inclusion, lsc_crack = 2.0 * sface_energy_inclusion; // energy values related with the stress concentrators
     double kB = 1.3807 * pow(10, -23); // Boltzmann constant
 
