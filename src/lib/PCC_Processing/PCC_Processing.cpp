@@ -186,16 +186,25 @@ CellDesign PCC_Processing(Config &configuration) {
         } // End of 'D' [S min] type simulations (elseif)
 
         else if (stype_vector.at(cell_type) == "S") { /// Reading structure from file
+            vector<unsigned int> special_x_design;
             char* kseq_sourcepath = const_cast<char*>(sequence_source_paths.at(cell_type).c_str());
-            special_x_sequence = VectorIReader(kseq_sourcepath);
+            special_x_design = VectorIReader(kseq_sourcepath);
 
+            special_x_sequence.clear();
+            for (auto it = special_x_design.begin(); it != special_x_design.end(); ++it) {
+                if(*it > 0) {
+                    special_x_sequence.push_back(distance(special_x_design.begin(), it));
+                    // cout << special_x_sequence.back() << " ";
+                }
+            }
         // (!) Output +1 like in Neper, so he numbers should be modified back as -1
-            for (auto it = special_x_sequence.begin(); it != special_x_sequence.end(); ++it)
-                special_x_sequence.at(distance(special_x_sequence.begin(), it)) = *it - 1;
+//            for (auto it = special_x_sequence.begin(); it != special_x_sequence.end(); ++it)
+  //              special_x_sequence.at(distance(special_x_sequence.begin(), it)) = *it - 1;
 
             cout << endl;
             cout << "S processing mode! Special_x_sequence size: " << special_x_sequence.size() << endl << endl;
-
+            cout << " Fraction " << cell_type << "-cells: " << (double) special_x_sequence.size()/ CellNumbs.at(cell_type) << endl;
+/**
             // Cut up to max_fraction (!!)
             std::vector<unsigned int> temp_x_sequence = special_x_sequence; // temporarily new vector
             double total_max_sCell_fraction_processing = 0;
@@ -211,7 +220,7 @@ CellDesign PCC_Processing(Config &configuration) {
             for(unsigned int p : temp_x_sequence)
                 special_x_sequence.push_back(p);
             temp_x_sequence.clear();
-
+**/
         // Update of the corresponding Configuration State vector
             Configuration_sState[cell_type].clear();
             std::vector<int> State_vector(CellNumbs.at(cell_type), 0);
