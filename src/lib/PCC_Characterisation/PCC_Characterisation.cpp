@@ -69,6 +69,7 @@ ProcessedComplex PCC_StructureCharacterisation(CellDesign &new_cells_design) {
     } // end for(auto fseq...)
 ///    cout << "new_cells_design.Get_f_special_sequence() size" << new_cells_design.Get_f_special_sequence().size() << endl;
     cout << "new_cells_design.Get_f_induced_sequence() size" << new_cells_design.Get_f_induced_sequence().size() << endl;
+    Out_logfile_stream << "new_cells_design.Get_f_induced_sequence() size" << new_cells_design.Get_f_induced_sequence().size() << endl;
 /**
     for (int i = 0; i < 4; ++i) { /// for all types of cells
 
