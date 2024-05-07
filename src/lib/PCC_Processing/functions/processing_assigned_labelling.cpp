@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <random> // Require C++ 11 and above
+#include <iomanip>
 // #include <execution> // Require C++ 17 and above
 
 // external libraries
@@ -331,14 +332,11 @@ std::vector<std::vector<unsigned int>> Processing_Random_Strips(int cell_type, s
           }
 */
        // Special and Ordinary cells fraction calculation
-cout << " CellNumbs.at(cell_type): " << CellNumbs.at(cell_type) << endl;
         special_cells_fraction = (double) std::count(S_Vector.begin(),S_Vector.end(),1) / (double) CellNumbs.at(cell_type);
   //     ordinary_cells_fraction = (double) OrdinaryCellNumbs.size() / (double) CellNumbs.at(cell_type);
  //      special_cells_fraction = 1.0 - ordinary_cells_fraction;
 
-        cout << "special_cells_fraction: " << special_cells_fraction << " # of strip/chain: " << strip_counter++ << " size of strip/chain: " << *itr << endl;
-        Out_logfile_stream << "special_cells_fraction: " << special_cells_fraction << " # of strip/chain: " << strip_counter++ << " size of strip/chain: " << *itr << endl;
-
+        cout << "special_cells_fraction: " << setprecision(3) << special_cells_fraction << ";  # of strips/chains: " << strip_counter++ << ";  strip/chain size: " << *itr << endl; Out_logfile_stream << "special_cells_fraction: " << setprecision(3) << special_cells_fraction << ";  # of strips/chains: " << strip_counter++ << ";  strip/chain size: " << *itr << endl;
     } // end of    for (auto  itr = cell_strip_distribution.begin(); itr != cell_strip_distribution.end(); ++itr) {
 //REPAIR    for (auto a_vector: S_Vector) cout << a_vector << endl;
 /// Update of the corresponding Configuration State vector

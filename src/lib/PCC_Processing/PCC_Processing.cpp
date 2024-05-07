@@ -63,7 +63,8 @@ CellDesign PCC_Processing(Config &configuration) {
     std::vector<std::vector<unsigned int>> induced_x_series; // vector of series of induced k-cells (like crack paths)
     std::vector<Agglomeration> agglomeration_x_sequence; // vector of agglomerations
 
-    double mu_f = 1.0, sigma_f = 0.0; // mean and dispersion for a lengthy defect sequences distribution - used only in the case of the log-normal distribution for 'L' PCC_Processing execution mode ('pp_mode' in the config/processing.ini file).
+    double mu_L = 1.0, sigma_L = 0.0; // mean and dispersion for a lengthy defect sequences distribution - used only in the case of the log-normal distribution for 'L' PCC_Processing execution mode ('pp_mode' in the config/processing.ini file).
+    unsigned int bins_number_L = 10;
 
     cout << "=========================================================================" << endl; Out_logfile_stream << "==============================================================================================================================================================" << endl;
 
@@ -75,7 +76,7 @@ CellDesign PCC_Processing(Config &configuration) {
     std::vector<double> pindex_vector(4); // supplementary index used for multiplexity bool parameter - read from the 'config/processing.ini' file
 
 // Reading of the configuration from the 'config/processing.ini' file
-    config_reader_processing(source_path, sequence_source_paths, max_sfractions_vectors, max_ifractions_vectors, mu_f, sigma_f, stype_vector, itype_vector, pindex_vector, Out_logfile_stream); // void function
+    config_reader_processing(source_path, sequence_source_paths, max_sfractions_vectors, max_ifractions_vectors, mu_L, sigma_L, bins_number_L, stype_vector, itype_vector, pindex_vector, Out_logfile_stream); // void function
 
 ///* Cases for Processing types // cell type k :: 0 - nodes, 1 - edges, 2 - faces, 3 -polyhedrons - must coincide with the indexing of the CellNumbs.at(cell_type) vector (!) *///
 ///* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- *///
@@ -121,11 +122,9 @@ CellDesign PCC_Processing(Config &configuration) {
 
         else if (stype_vector.at(cell_type) == "L" && max_sfractions_vectors.at(cell_type).size() > 0) { //  Random lengthy strips (chains) of cells generation processing
             cout << "Random strips/chains (L) mode processing in operation: cell_type : "s << cell_type << endl << endl; Out_logfile_stream << "Random strips/chains (L) mode processing in operation: cell_type : "s << cell_type << endl << endl;
-            cout << "Average (mu) and dispersion (sigma): " << endl  << mu_f << "  " << sigma_f << endl;
-
+            cout << "Average (mu) and dispersion (sigma): " << endl << mu_L << "  " << sigma_L << endl << "Number of bins: " << bins_number_L << endl; Out_logfile_stream << "Average (mu) and dispersion (sigma): " << endl << mu_L << "  " << sigma_L << endl << "Number of bins: " << bins_number_L << endl;
             /// Obtaining the distribution of strip/chain lengths
-            unsigned int bins_number = 10;
-            std::vector<double> strip_lenghts_distribution = Log_normal_distribution(mu_f, sigma_f, bins_number); // double valued "continuous" distribution, where Log_normal_distribution() function is for obtaining strip_lenghts_distribution
+            std::vector<double> strip_lenghts_distribution = Log_normal_distribution(mu_L, sigma_L, bins_number_L); // double valued "continuous" distribution, where Log_normal_distribution() function is for obtaining strip_lenghts_distribution
             std::vector<unsigned int> cell_strip_distribution; // vector of positive integers containing "discrete" length distribution of special chains/strips of k-cells
 
             cell_strip_distribution.clear(); // clearing strip/chain length distribution vector for new 'cell_type' iterations
@@ -134,11 +133,11 @@ CellDesign PCC_Processing(Config &configuration) {
                 cell_strip_distribution.push_back(max_sfractions_vectors[cell_type][0] * CellNumbs.at(cell_type) * (*itr) / (std::distance(strip_lenghts_distribution.begin(), itr) + 1.0)); // only for the first 'Xmax_fraction1' in the 'config/processing.ini' file values of max k-cell fractions
             }
 
-            cout << " cell_strip_distribution for the number of bins  " << bins_number;
+            /// Output of the strip/chain lengths distribution
             for (auto  itr = cell_strip_distribution.begin(); itr != cell_strip_distribution.end(); ++itr) {
-                cout << "  " << *itr;
+                cout << *itr << "  "; Out_logfile_stream << *itr << "  ";
             }
-            cout << endl;
+            cout << endl << endl; Out_logfile_stream << endl << endl;
 
             /// Random_Strips_Distribution() function call
             special_x_series = Processing_Random_Strips(cell_type, cell_strip_distribution, Configuration_sState, max_sfractions_vectors); // series of k-cells for each strip/chain
@@ -171,15 +170,13 @@ CellDesign PCC_Processing(Config &configuration) {
 
         else if (stype_vector.at(cell_type) == "F" && max_sfractions_vectors[cell_type].size() > 0) { // Maximum <functional> production
             // processing index :: 0 - direct special faces assignment;  1 - crystallographic ; 2 - configurational TJs-based entropy (deviatoric); //        if (pindex_vector.at(cell_type) == 0) { //        } else if (pindex_vector.at(cell_type) == 1) {
-            cout << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
-            Out_logfile_stream << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
+            cout << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl; Out_logfile_stream << "MaxFunctional processing in operation: cell_type : "s << cell_type << endl;
           // if(cell_type == 2 + (dim - 3))             // cell type = 2 -> faces
           //      special_x_sequence = Processing_maxFunctional(cell_type, Configuration_sState, max_sfractions_vectors, multiplexity);
         } // End of 'F' type simulations (elseif)
 
         else if (stype_vector.at(cell_type) == "D" && max_sfractions_vectors[cell_type].size() > 0) { // Maximum <functional> production
-            cout << "Min (MAX-deviator) Functional processing in operation: cell_type : "s << cell_type << endl;
-            Out_logfile_stream << "Min (MAX-deviator) Functional processing in operation: cell_type : "s << cell_type << endl;
+            cout << "Min (MAX-deviator) Functional processing in operation: cell_type : "s << cell_type << endl; Out_logfile_stream << "Min (MAX-deviator) Functional processing in operation: cell_type : "s << cell_type << endl;
 ///            if (max_fractions_vectors.at(cell_type).size() > 0)
 ///            special_x_sequence = Processing_minConfEntropy(2, Configuration_sState, max_fractions_vectors, pindex_vector.at(2));
 
@@ -204,6 +201,7 @@ CellDesign PCC_Processing(Config &configuration) {
             cout << endl;
             cout << "S processing mode! Special_x_sequence size: " << special_x_sequence.size() << endl << endl;
             cout << " Fraction " << cell_type << "-cells: " << (double) special_x_sequence.size()/ CellNumbs.at(cell_type) << endl;
+
 /**
             // Cut up to max_fraction (!!)
             std::vector<unsigned int> temp_x_sequence = special_x_sequence; // temporarily new vector

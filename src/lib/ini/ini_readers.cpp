@@ -145,7 +145,7 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
 } /// END of config_reader_main function
 
 /// ================== # 2 # Initial PROCESSING module configuration - reading and output ==================
-void config_reader_processing(std::string &source_path, std::vector<string> &sequence_source_paths, std::vector<vector<double>> &max_fractions_vectors, std::vector<vector<double>> &max_cfractions_vectors, double &mu, double &sigma, std::vector<string> &ptype_vector, std::vector<string> &ctype_vector, std::vector<double> &pindex_vector, std::ofstream &Out_logfile_stream) {
+void config_reader_processing(std::string &source_path, std::vector<string> &sequence_source_paths, std::vector<vector<double>> &max_fractions_vectors, std::vector<vector<double>> &max_cfractions_vectors, double &mu, double &sigma, unsigned int &bins_numb, std::vector<string> &ptype_vector, std::vector<string> &ctype_vector, std::vector<double> &pindex_vector, std::ofstream &Out_logfile_stream) {
     // ini files reader - external (MIT license) library
     mINI::INIFile file(source_path + "processing.ini"s);
 //    mINI::INIFile file(source_path + "processing_2D.ini"s);
@@ -419,6 +419,11 @@ void config_reader_processing(std::string &source_path, std::vector<string> &seq
         auto& collection = processing_ini["distribution"];
         if (collection.has("sigma"))
             sigma = stod(processing_ini.get("distribution").get("sigma"));
+    }
+    if (processing_ini.has("distribution")) {
+        auto& collection = processing_ini["distribution"];
+        if (collection.has("bins_number"))
+            bins_numb = stod(processing_ini.get("distribution").get("bins_number"));
     }
 
     /// sequences
