@@ -21,13 +21,15 @@
 
 // Local
 ///---------------------------------------------------------
-#include "functions/Subcomplex_Planecut_functions.h"
+#include "functions/subcomplex_cross_section.h"
 ///---------------------------------------------------------
 
 using namespace std; // standard namespace
 
 /// External variables
 extern std::vector<unsigned int> CellNumbs; //number of cells in a PCC defined globally
+extern ofstream Out_logfile_stream;
+extern string source_path;
 extern std::vector<char*> PCCpaths; //PCCpaths to PCC files
 extern int dim; // PCC dimension: dim = 1 for graphs, dim = 2 for 2D plane polytopial complexes and dim = 3 for 3D bulk polyhedron complexes, as it is specified in the main.ini file.
 extern std::vector<std::tuple<double, double, double>> node_coordinates_vector, edge_coordinates_vector, face_coordinates_vector, grain_coordinates_vector; // coordinate vectors defined globally
@@ -36,27 +38,31 @@ extern std::vector<std::tuple<double, double, double>> node_coordinates_vector, 
 ///* ========================================================= PCC SUBCOMPLEX FUNCTION ======================================================= *///
 ///* ========================================================================================================================================= *///
 /*!
- *
- * @param new_cut
- * @param s_faces_sequence
- * @param sub_faces_sequence
- * @param c_faces_sequence
- * @param a_coeff
- * @param b_coeff
- * @param c_coeff
- * @param D_coeff
+ * @details Create a vector of PCC complexes with their special and induced labels taken from the initial PCC
+ * @param configuration
  * @return
  */
-Subcomplex PCC_Subcomplex(Subcomplex &new_cut, std::vector<unsigned int> const &s_faces_sequence, std::vector<unsigned int> &sub_faces_sequence, std::vector<unsigned int> const &c_faces_sequence, double a_coeff = 0.0, double b_coeff = 0.0, double c_coeff = 1.0, double D_coeff = 0.6) {
+std::vector<Subcomplex> PCC_Subcomplex(Config &configuration) {
+//Subcomplex PCC_Subcomplex(Subcomplex &new_cut, std::vector<unsigned int> const &s_faces_sequence, std::vector<unsigned int> &sub_faces_sequence, std::vector<unsigned int> const &c_faces_sequence, double a_coeff = 0.0, double b_coeff = 0.0, double c_coeff = 1.0, double D_coeff = 0.6) {
 // sub_grains_sequence - all grains in the subcomplex, sub_faces_sequence - all faces in the subcomplex, common_faces_sequence - all faces common for two grains in the subcomplex, s_sub_faces_sequence - special faces, c_sub_faces_sequence - induced (fractured, for instance) faces
+std::vector<Subcomplex> new_cut; // function output
+
 
 /// Read simulation configuration from file :: the number of special face types and calculating parameters. Then Output of the current configuration to the screen
 // The source directory and simulation type from file config.txt
-    string S_type; // 'P' or 'H' :: This char define the subsection type: 'P' for the whole Plane cut, 'H' for the half-plane cut like a crack
-    std::vector<double> config_reader_main(char* config, string &Subcomplex_type, string &Processing_type, string &Kinetic_type, string &source_dir, string &output_dir); // Read and output the initial configuration from the config.txt file
+    std::string S_type; // 'P', 'H' or 'N' :: This char define the subsection type: 'P' for the whole Plane cut, 'H' for the half-plane cut like a crack, 'N' for a k-order neighbouring grain set
+    double cut_length = 0;
+    unsigned int grain_neighbour_orders = 0;
+
+///    std::vector<double> config_reader_main(char* config, string &Subcomplex_type, string &Processing_type, string &Kinetic_type, string &source_dir, string &output_dir); // Read and output the initial configuration from the config.txt file
 /// ??????    vector<double> ConfigVector = config_reader_main(confpath, S_type, P_type, K_type, source_dir, output_dir);
 //// ????????    std::vector<int> ConfigVector = config_reader_main(source_path, source_dir, output_dir, main_type, e_mode);
+// ini files reader - external (MIT license) library
 
+    // Reading of the configuration from the 'config/subcomplex.ini' file
+    config_reader_subcomplex(source_path, S_type, cut_length, grain_neighbour_orders, Out_logfile_stream); // void function
+
+/**
 
     bool SubcomplexON(char* config, bool time_step_one); // Check the Subcomplex (Section) module status (On/Off) in the config.txt file
 
@@ -112,8 +118,8 @@ Subcomplex PCC_Subcomplex(Subcomplex &new_cut, std::vector<unsigned int> const &
             ///  for (auto grain_id2 : sub_grains_sequence)
             /// if (AGS.coeff(grain_id1, grain_id2) == 1 && grain_id1 != grain_id2) {
             ///   cout << " grain_id1 " << grain_id1 << " grain_id2 " << grain_id2 << endl;
-
-            /*
+**/
+/*
            grain3D grain1(grain_id1); grain3D grain2(grain_id2);
             grain1.Set_GBs_list(grain_id1, GFS);
             grain2.Set_GBs_list(grain_id2, GFS);
@@ -126,6 +132,7 @@ Subcomplex PCC_Subcomplex(Subcomplex &new_cut, std::vector<unsigned int> const &
             for (auto gr2 : grain2.Get_GBs_list())
                 cout << gr2 << endl;
 */
+/**
             for (unsigned int l = 0; l < CellNumbs.at(2); l++) {
                 if (GFS.coeff(l, grain_id) == 1) {
                     sub_faces_sequence.push_back(l);
@@ -139,7 +146,7 @@ Subcomplex PCC_Subcomplex(Subcomplex &new_cut, std::vector<unsigned int> const &
 
     cout << "subcomplex faces sequence size: " << sub_faces_sequence.size() << endl;
     cout << "s_sub_faces_sequence size: " << s_sub_faces_sequence.size() << endl;
-
+**/
 /*
     for (auto face_id: sub_faces_sequence)
         if (count(sub_faces_sequence.begin(), sub_faces_sequence.begin() + sub_faces_sequence.size(), face_id) > 1)
@@ -171,7 +178,7 @@ if (sub_faces_sequence.size() > 0) {
     }
 }
  */
-
+/**
     /// Common face coordinates
     for(unsigned int fnumber = 0; fnumber < CellNumbs.at(2); ++fnumber)
         if(std::find(common_faces_sequence.begin(), common_faces_sequence.end(), fnumber) != common_faces_sequence.end())
@@ -201,7 +208,7 @@ if (sub_faces_sequence.size() > 0) {
     new_cut.Set_sub_grain_coordinates(subcomplex_grain_coordinates);
     new_cut.Set_sfaces_sequence(s_sub_faces_sequence); //special faces
     new_cut.Set_cfaces_sequence(c_sub_faces_sequence); //cracked (induced) faces
-
+**/
     return new_cut;
 
 } /// END of the Subcomplex PCC_Subcomplex(Subcomplex &new_cut, std::vector<unsigned int> const &s_faces_sequence, std::vector<unsigned int> &sub_faces_sequence, std::vector<unsigned int> const &c_faces_sequence, double a_coeff = 0.0, double b_coeff = 0.0, double c_coeff = 1.0, double D_coeff = 0.6) {

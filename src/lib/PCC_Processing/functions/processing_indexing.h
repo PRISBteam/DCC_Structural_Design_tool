@@ -10,4 +10,4 @@
  */
 std::vector<unsigned int> TopDown_cell_indexing(int k_cell_type, std::vector<std::vector<unsigned int>> &Configuration_State);
 
-#endif //PCC_PROCESSING_DESIGN_PROCESSING_INDEXING_H
+#endif // PCC_PROCESSING_DESIGN_PROCESSING_INDEXING_H

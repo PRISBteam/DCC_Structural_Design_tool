@@ -1,5 +1,5 @@
-#ifndef PCC_PROCESSING_DESIGN_SUBCOMPLEX_PLANECUT_FUNCTIONS_H
-#define PCC_PROCESSING_DESIGN_SUBCOMPLEX_PLANECUT_FUNCTIONS_H
+#ifndef PCC_PROCESSING_DESIGN_SUBCOMPLEX_CROSS_SECTION_H
+#define PCC_PROCESSING_DESIGN_SUBCOMPLEX_CROSS_SECTION_H
 
 /// Creation plane cut as a PCC Subcomplex class
 std::vector<unsigned int> PCC_Plane_cut (double a_coeff, double b_coeff, double c_coeff, double D_coeff);
@@ -7,4 +7,4 @@ std::vector<unsigned int> PCC_Plane_cut (double a_coeff, double b_coeff, double 
 /// Cutting PART defined in the config/subcomplex.ini file of the initial plane cut
 Subcomplex Get_half_plane(Subcomplex new_sub, double crack_length, std::vector<unsigned int> const &half_sub_sfaces_sequence);
 
-#endif //PCC_PROCESSING_DESIGN_SUBCOMPLEX_PLANECUT_FUNCTIONS_H
+#endif //PCC_PROCESSING_DESIGN_SUBCOMPLEX_CROSS_SECTION_H

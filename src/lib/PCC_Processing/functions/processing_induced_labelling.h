@@ -4,6 +4,9 @@
 /**  in the PCC Processing module. It makes them "fractured" and can go alongside their special or ordinary primal types.         **/
 ///==============================================================================================================================///
 
+#ifndef PCC_PROCESSING_DESIGN_PROCESSING_INDUCED_LABELLING_H
+#define PCC_PROCESSING_DESIGN_PROCESSING_INDUCED_LABELLING_H
+
 /*!
  * @brief Kinematic (with adhesion energies, but without forces) generation algorithm of the induced ('fractured') k-cell indexing
  * @param cell_type
@@ -23,3 +26,5 @@ std::vector <unsigned int> PCC_Kinematic_cracking(int cell_type, std::vector<uns
  * @return
  */
 // std::vector <unsigned int> PCC_Kineic_cracking(int cell_type, std::vector<unsigned int> &s_faces_sequence, std::vector<std::vector<int>> &Configuration_cState, std::vector<std::vector<double>> const &max_cfractions_vectors);
+
+#endif // PCC_PROCESSING_DESIGN_PROCESSING_INDUCED_LABELLING_H

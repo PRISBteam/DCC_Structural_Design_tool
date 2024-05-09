@@ -27,7 +27,7 @@ extern std::vector<char*> PCCpaths; //PCCpaths to PCC files
 extern int dim; // PCC dimension: dim = 1 for graphs, dim = 2 for 2D plane polytopial complexes and dim = 3 for 3D bulk polyhedron complexes, as it is specified in the main.ini file.
 extern std::vector<std::tuple<double, double, double>> node_coordinates_vector, edge_coordinates_vector, face_coordinates_vector, grain_coordinates_vector; // coordinate vectors defined globally
 
-#include "Subcomplex_Planecut_functions.h"
+#include "subcomplex_cross_section.h"
 ///* ========================================================= PCC Plane Cut functions ======================================================= *///
 ///* ========================================================================================================================================= *///
 

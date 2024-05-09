@@ -225,6 +225,23 @@ public:
     std::vector<std::tuple<double, double, double>> Get_common_faces_coordinates(unsigned int subcomplex_id) const;
 }; // end of class Subcomplex
 
+
+/// ==== # x # =============== PCC Section class  ========================= ///
+
+
+class PCCSection {
+
+private:
+    double id;
+
+public:
+    double a_coef;
+    double b_coeff;
+    double c_coeff;
+    double D_coeff;
+
+};
+
 /// ==== # 5 # =============== grain3D class  ========================= ///
 
 class Polytope {

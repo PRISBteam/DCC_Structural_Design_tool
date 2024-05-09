@@ -101,7 +101,7 @@ double Main_time = 0.0, S_time = 0.0, P_time = 0.0, C_time = 0.0, W_time = 0.0;
 #include "lib/PCC_Objects.h"
 
 /*! Section module calculates reduced PCC subcomplexes (parts of the initial PCC including plain cuts) inheriting reduced sequences of special cells and 'state vectors' of the original PCC */
-/// #include "lib/PCC_Section/PCC_Subcomplex.h"
+#include "lib/PCC_Subcomplex/PCC_Subcomplex.h"
 
 /*! Processing module assigned special IDs for the various elements (Nodes, Edges, Faces, Polytopes/Polyhedrons) of the space tessellation */
 /* Output: module generates a design_sequences as the lists containing the sequences of k-cells possessing "special" IDs including
@@ -204,7 +204,8 @@ int main() {
             cout << "-------------------------------------------------------------------------" << endl;             Out_logfile_stream << "-------------------------------------------------------------------------" << endl;
             cout << " START of the PCC Subcomplex module " << endl; Out_logfile_stream << " START of the PCC Subcomplex module " << endl;
 
-            ///* past module here */// Subcomplex(configuration); // Subcomplex(configuration) function
+            std::vector<Subcomplex> pcc_subcomplexes; // vector containing all the PCC subcomplexes (cuts, k-order grain neighbours, etc)
+            PCC_Subcomplex(configuration);
 
             // ================ Elapsing time for the Subcomplex module ================
             unsigned int Subcomplex_time = clock();

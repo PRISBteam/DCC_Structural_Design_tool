@@ -15,9 +15,9 @@ using namespace std; // standard namespace
 std::vector<int> config_reader_main(std::string &source_path, std::string &source_dir, std::string &output_dir, std::string &cell_complex_standard, std::string &main_type) {
 
     std::vector<int> res(7,0);
-/// [0] - > dim, [1] -> isSection, [2] -> isProcessing, [3] -> isCharacterisation, [4] -> isMultiphysics, [5] -> isKinetic, [6] -> isWriter
-    bool isSectionON = 0, isProcessingON = 0, isCharacterisationON = 0, isKineticON = 0, isMultiphysicsON = 0, isWriterON = 0;
-    std::string isSection, isProcessing, isCharacterisation, isKinetic, isMultiphysics, isWriter;
+/// [0] - > dim, [1] -> isSubcomplex, [2] -> isProcessing, [3] -> isCharacterisation, [4] -> isMultiphysics, [5] -> isKinetic, [6] -> isWriter
+    bool isSubcomplexON = 0, isProcessingON = 0, isCharacterisationON = 0, isKineticON = 0, isMultiphysicsON = 0, isWriterON = 0;
+    std::string isSubcomplex, isProcessing, isCharacterisation, isKinetic, isMultiphysics, isWriter;
 
     // ini files reader - external (MIT license) library
     mINI::INIFile file(source_path + "main.ini"s);
@@ -54,8 +54,8 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
     // III
     if (main_ini.has("modules")) {
         auto& collection = main_ini["modules"];
-        if (collection.has("PCC_Section"))
-            isSection = main_ini.get("modules").get("PCC_Section");
+        if (collection.has("PCC_Subcomplex"))
+            isSubcomplex = main_ini.get("modules").get("PCC_Subcomplex");
     }
     if (main_ini.has("modules")) {
         auto& collection = main_ini["modules"];
@@ -77,7 +77,7 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
 
     /// forming the output RES vector
 // ON/OFF IDs
-    if (isSection == "ON") { isSectionON = 1; res.at(1) = 1; } else res.at(1) = 0; // res[1] - Section
+    if (isSubcomplex == "ON") { isSubcomplexON = 1; res.at(1) = 1; } else res.at(1) = 0; // res[1] - Section
     if (isProcessing == "ON") { isProcessingON = 1; res.at(2) = 1; } else res.at(2) = 0; // res[2] - Processing
     if (isCharacterisation == "ON") { isCharacterisationON = 1; res.at(3) = 1; } else res.at(3) = 0; // res[3] - Characterisation
     if (isWriter == "ON") { isWriterON = 1; res.at(6) = 1; } else res.at(6) = 0; // res[6] - Writer
@@ -107,8 +107,8 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
     cout << "PCC source directory:\t"s << source_dir << endl;
     cout << "PCC standard ID:\t\t"s << cell_complex_standard << endl;
     cout << endl;
-    if (isSectionON == 1) cout << "ON    | PCC_Section"s << endl;
-    else cout << "OFF    | PCC_Section"s << endl;
+    if (isSubcomplexON == 1) cout << "ON    | PCC_Subcomplex"s << endl;
+    else cout << "OFF    | PCC_Subcomplex"s << endl;
     if (isProcessingON == 1) cout << "ON    | PCC_Processing"s << endl;
     else cout << "OFF    | PCC_Processing"s << endl;
     if (isCharacterisationON == 1) cout << "ON    | PCC_Characterisation"s << endl;
@@ -129,8 +129,8 @@ std::vector<int> config_reader_main(std::string &source_path, std::string &sourc
     Out_logfile_stream << "PCC source directory:\t"s << "\t" << source_dir << endl;
 
     Out_logfile_stream << endl;
-    if (isSectionON == 1) Out_logfile_stream << "ON    | PCC_Section"s << endl;
-    else Out_logfile_stream << "OFF    | PCC_Section"s << endl;
+    if (isSubcomplexON == 1) Out_logfile_stream << "ON    | PCC_Subcomplex"s << endl;
+    else Out_logfile_stream << "OFF    | PCC_Subcomplex"s << endl;
     if (isProcessingON == 1) Out_logfile_stream << "ON    | PCC_Processing"s << endl;
     else Out_logfile_stream << "OFF    | PCC_Processing"s << endl;
     if (isCharacterisationON == 1) Out_logfile_stream << "ON    | PCC_Characterisation"s << endl;
@@ -970,28 +970,62 @@ int isBetti = 0; // Laplacians lab
     return;
 } /// END of config_reader_writer function
 
-/*
 /// ================== # 5 # Initial SUBCOMPLEX module configuration - reading and output ==================
-void config_reader_subcomplex(std::string &source_path, std::string &sctype, double &cut_length, std::ofstream &Out_logfile_stream) {
-     std::string line;
-    ifstream inConf(config);
-    bool isSectionON = 0;
+void config_reader_subcomplex(std::string &source_path, std::string &sctype, double &cut_length, unsigned int &grain_neighbour_orders, std::ofstream &Out_logfile_stream) {
 
-    if (inConf) { // If the file was successfully open, then
-        while(getline(inConf, line, '\n'))
-// REPAIR            cout << line << endl;
-            if (line.compare("DCC_Section SWITCHED ON"s)) {
-                isSectionON = 1;
-                if (time_step_one == 1) cout << "ON    | DCC_Section"s << endl;
-                return isSectionON;
-            }
-    } else cout << "SubcomplexON() error: The file " << config << " cannot be read" << endl; // If something goes wrong
+    // ini files reader - external (MIT license) library
+    mINI::INIFile file(source_path + "subcomplex.ini"s);
+    mINI::INIStructure subcomplex_ini;
+    file.read(subcomplex_ini);
 
-    if (time_step_one == 1) cout << "OFF   | DCC_Section"s << endl;
+    cut_length;
+//subcomplex type
+    if (subcomplex_ini.has("subcomplex_type")) {
+        auto& collection = subcomplex_ini["subcomplex_type"];
+        if (collection.has("subPCC_type"))
+        {
+            sctype = subcomplex_ini.get("subcomplex_type").get("subPCC_type");
+        } }
 
-    return isSectionON;
+    //half-plane cut length
+    if (subcomplex_ini.has("plane_section")) {
+        auto& collection = subcomplex_ini["plane_section"];
+        if (collection.has("half_plane_length"))
+        {
+            cut_length = stod(subcomplex_ini.get("plane_section").get("half_plane_length"));
+        } }
+
+    //k_order_neighbours
+    if (subcomplex_ini.has("k_order_neighbours")) {
+        auto& collection = subcomplex_ini["k_order_neighbours"];
+        if (collection.has("neighbours_order"))
+        {
+            grain_neighbour_orders = stoi(subcomplex_ini.get("k_order_neighbours").get("neighbours_order"));
+        } }
+
+    /// Output to the screen/console
+    cout << "The Subcomplex module type and initial parameters:\t\t" << endl << endl;
+    cout << "Subcomplex type:\t"s << sctype << endl;
+    if (sctype == "H"s) {
+        cout << "Half-plane length:\t"s << cut_length << endl << endl;
+    }
+    else if(sctype == "N"s){
+        cout << "Grain k-neighbours order:\t"s << grain_neighbour_orders << endl << endl;
+    }
+
+    Out_logfile_stream << "The Subcomplex module type and initial parameters:\t\t" << endl << endl;
+    Out_logfile_stream << "Subcomplex type:\t"s << sctype << endl;
+    if (sctype == "H"s) {
+        Out_logfile_stream << "Half-plane length:\t"s << cut_length << endl << endl;
+    }
+    else if(sctype == "N"s){
+        Out_logfile_stream << "Grain k-neighbours order:\t"s << grain_neighbour_orders << endl << endl;
+    }
+
+    return;
 } /// end of the bool SubcomplexON() function
 
+/*
 /// ================== # 6 # Initial MULTIPFYSICS module configuration - physical dimesions and all ==================
 void config_reader_multiphysics(std::string &source_path, std::tuple<double, double, double> &sample_dimensions, std::ofstream &Out_logfile_stream) {
 

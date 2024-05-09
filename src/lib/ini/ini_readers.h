@@ -11,7 +11,7 @@ std::vector<double> config_reader_characterisation(std::string const &source_pat
 // === # 4 # === //
 void config_reader_writer(std::string &source_path, std::vector<int> &writer_specifications, std::ofstream &Out_logfile_stream);
 // === # 5 # === //
-void config_reader_subcomplex(std::string &source_path, std::string &sctype, double &cut_length, std::ofstream &Out_logfile_stream);
+void config_reader_subcomplex(std::string &source_path, std::string &sctype, double &cut_length, unsigned int &grain_neighbour_orders, std::ofstream &Out_logfile_stream);
 // === # 6 # === //
 void config_reader_multiphysics(std::string &source_path, std::tuple<double, double, double> &sample_dimensions, std::ofstream &Out_logfile_stream);
 
