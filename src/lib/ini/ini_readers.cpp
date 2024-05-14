@@ -971,7 +971,7 @@ int isBetti = 0; // Laplacians lab
 } /// END of config_reader_writer function
 
 /// ================== # 5 # Initial SUBCOMPLEX module configuration - reading and output ==================
-void config_reader_subcomplex(std::string &source_path, std::string &sctype, double &cut_length, unsigned int &grain_neighbour_orders, std::ofstream &Out_logfile_stream) {
+void config_reader_subcomplex(std::string &source_path, std::string &sctype, std::vector<double> &plane_orientation, double &cut_length, unsigned int &grain_neighbour_orders, std::ofstream &Out_logfile_stream) {
 
     // ini files reader - external (MIT license) library
     mINI::INIFile file(source_path + "subcomplex.ini"s);
@@ -987,15 +987,32 @@ void config_reader_subcomplex(std::string &source_path, std::string &sctype, dou
             sctype = subcomplex_ini.get("subcomplex_type").get("subPCC_type");
         } }
 
-    //half-plane cut length
+    //plane orientation
     if (subcomplex_ini.has("plane_section")) {
         auto& collection = subcomplex_ini["plane_section"];
+        if (collection.has("a_coeff")) {
+            plane_orientation.at(0) = stod(subcomplex_ini.get("plane_section").get("a_coeff"));
+        }
+        if (collection.has("b_coeff")) {
+            plane_orientation.at(1) = stod(subcomplex_ini.get("plane_section").get("b_coeff"));
+        }
+        if (collection.has("c_coeff")) {
+            plane_orientation.at(2) = stod(subcomplex_ini.get("plane_section").get("c_coeff"));
+        }
+        if (collection.has("D_coeff")) {
+            plane_orientation.at(3) = stod(subcomplex_ini.get("plane_section").get("D_coeff"));
+        }
+    } // end of if (subcomplex_ini.has("plane_section"))
+
+    //half-plane cut length
+    if (subcomplex_ini.has("half_plane_section")) {
+        auto& collection = subcomplex_ini["half_plane_section"];
         if (collection.has("half_plane_length"))
         {
-            cut_length = stod(subcomplex_ini.get("plane_section").get("half_plane_length"));
+            cut_length = stod(subcomplex_ini.get("half_plane_section").get("half_plane_length"));
         } }
 
-    //k_order_neighbours
+    // k_order_neighbours
     if (subcomplex_ini.has("k_order_neighbours")) {
         auto& collection = subcomplex_ini["k_order_neighbours"];
         if (collection.has("neighbours_order"))
@@ -1017,6 +1034,9 @@ void config_reader_subcomplex(std::string &source_path, std::string &sctype, dou
     Out_logfile_stream << "Subcomplex type:\t"s << sctype << endl;
     if (sctype == "H"s) {
         Out_logfile_stream << "Half-plane length:\t"s << cut_length << endl << endl;
+    }
+    if (sctype == "P"s || sctype == "H"s) {
+        Out_logfile_stream << "Plane normal:\t"s << plane_orientation[0] << "  " << plane_orientation[1] << "  " << plane_orientation[2] << "Plane position D:\t" << plane_orientation[3] << endl;
     }
     else if(sctype == "N"s){
         Out_logfile_stream << "Grain k-neighbours order:\t"s << grain_neighbour_orders << endl << endl;

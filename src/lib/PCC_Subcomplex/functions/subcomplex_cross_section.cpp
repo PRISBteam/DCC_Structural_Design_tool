@@ -22,8 +22,8 @@
 using namespace std; // standard namespace
 
 /// External variables
-extern std::vector<unsigned int> CellNumbs; //number of cells in a PCC defined globally
-extern std::vector<char*> PCCpaths; //PCCpaths to PCC files
+extern std::vector<unsigned int> CellNumbs; // number of cells in a PCC defined globally
+extern std::vector<std::string> PCCpaths; // PCCpaths to PCC files
 extern int dim; // PCC dimension: dim = 1 for graphs, dim = 2 for 2D plane polytopial complexes and dim = 3 for 3D bulk polyhedron complexes, as it is specified in the main.ini file.
 extern std::vector<std::tuple<double, double, double>> node_coordinates_vector, edge_coordinates_vector, face_coordinates_vector, grain_coordinates_vector; // coordinate vectors defined globally
 
@@ -32,6 +32,71 @@ extern std::vector<std::tuple<double, double, double>> node_coordinates_vector, 
 ///* ========================================================================================================================================= *///
 
 /// ======# 1 #================= std::vector<unsigned int> PCC_Plane_cut () function ==============================================================///
+std::vector<unsigned int> PCC_Plane_cut (std::vector<double> &plane_orientation) {
+/// The plane parameters: a_coeff*X + b_coeff*Y + c_coeff*Z = D
+    double a_coeff = plane_orientation.at(0);
+    double b_coeff = plane_orientation.at(1);
+    double c_coeff = plane_orientation.at(2);
+    double D_coeff = plane_orientation.at(3);
+
+    vector<unsigned int> planecut_grains;
+
+    // Obtaining Faces (coloumns) - Edges (rows) incidence matrix from file PCCpaths.at(5 + (dim - 3))
+    Eigen::SparseMatrix<double> ENS = SMatrixReader(PCCpaths.at(4 + (dim - 3)), (CellNumbs.at(0)), (CellNumbs.at(1))); //all Nodes-Edges
+    //SpMat AES = SMatrixReader(PCCpaths.at(1 + (dim - 3)), (CellNumbs.at(1)), (CellNumbs.at(1))); //all Edges
+    ///  Full symmetric AES matrix instead of triagonal
+    //AES = 0.5 * (AES + SparseMatrix<double>(AES.transpose()));
+
+    Eigen::SparseMatrix<double> FES = SMatrixReader(PCCpaths.at(5 + (dim - 3)), CellNumbs.at(1), CellNumbs.at(2)); // Edges-Faces
+    //SpMat AFS = SMatrixReader(PCCpaths.at(2 + (dim - 3)), (CellNumbs.at(2)), (CellNumbs.at(2))); //all Faces
+    ///  Full symmetric AFS matrix instead of triagonal
+    //AFS = 0.5 * (AFS + SparseMatrix<double>(AFS.transpose()));
+
+    Eigen::SparseMatrix<double> AGS = SMatrixReader(PCCpaths.at(3 + (dim - 3)), (CellNumbs.at(3)), (CellNumbs.at(3))); //all Volumes
+    AGS = 0.5 * (AGS + Eigen::SparseMatrix<double>(AGS.transpose())); // Full symmetric AGS matrix instead of triagonal
+
+    Eigen::SparseMatrix<double> GFS = SMatrixReader(PCCpaths.at(6 + (dim - 3)), (CellNumbs.at(2)), (CellNumbs.at(3))); //all Faces-Grains
+
+    /// Grains
+    std:vector<Polytope> grains_list(CellNumbs.at(3),0); /// ?? vector of grains (class grain3D)
+    cout << " new " << endl;
+
+/// #pragma omp parallel for // parallel execution by OpenMP
+    for(unsigned int m = 0; m < CellNumbs.at(3); m++) {// each Grain
+        Polytope new_grain = Polytope(m);
+//        cout << new_grain.grain_id << endl;
+        grains_list.at(m) = new_grain;
+        cout <<  "grains_list: " << grains_list.size() << endl;
+//        cout << GFS.cols() << "  " << CellNumbs.at(3) << endl;
+        grains_list.at(m).Set_node_ids(m, GFS, FES, ENS);
+        cout << grains_list.at(m).grain_id << endl;
+//        cout << "m = " << m << " grain list: " << grains_list.at(m).Get_node_ids(m).size() << endl;
+        grains_list.at(m).Set_node_coordinates(m);
+                cout << grains_list.at(m).grain_id << endl;
+    } // end of for(unsigned int m = 0; m < CellNumbs.at(3); m++) - Grains
+    cout << " new " << endl;
+
+    /// For each grain minmax_coord vector grain_coordinate_extremums of two tuples: gmincoord{xmin,ymin,zmin},gmaxcoord{xmax,ymax,zmax}
+/// #pragma omp parallel for // parallel execution by OpenMP
+    for(unsigned int m = 0; m < CellNumbs.at(3); m++) {// each Grain
+        vector<tuple<double, double, double>> grain_coordinate_extremums = grains_list.at(m).Get_minmax_node_coordinates(m); // get<0>(grain_coordinate_extremums.at(0)) -> MIN X coordinate, get<1>(grain_coordinate_extremums.at(0)) -> MIN Y coordinate, get<0>(grain_coordinate_extremums.at(1)) -> MAX X coordinate, etc..
+//REPAIR cout <<" gain # : " << m << " " << grains_list.at(m).grain_id << endl;
+//REPAIR cout << "Xmin " << get<0>(grain_coordinate_extremums.at(0)) << " Ymin " <<get<1>(grain_coordinate_extremums.at(0)) << " Zmin " << get<2>(grain_coordinate_extremums.at(0)) << endl;
+//REPAIR cout << "Xmax " << get<0>(grain_coordinate_extremums.at(1)) << " Ymax " <<get<1>(grain_coordinate_extremums.at(1)) << " Zmax " << get<2>(grain_coordinate_extremums.at(1)) << endl;
+        ///MinMax condition: / a_coeff*X + b_coeff*Y + c_coeff*Z = D
+        if(a_coeff*get<0>(grain_coordinate_extremums.at(0)) + b_coeff*get<1>(grain_coordinate_extremums.at(0)) + c_coeff*get<2>(grain_coordinate_extremums.at(0)) < D_coeff  &&
+           a_coeff*get<0>(grain_coordinate_extremums.at(1)) + b_coeff*get<1>(grain_coordinate_extremums.at(1)) + c_coeff*get<2>(grain_coordinate_extremums.at(1)) > D_coeff ) // simultaneously: z_min < D < z_max
+            planecut_grains.push_back(m);
+    } // end of for(unsigned int m = 0; m < CellNumbs.at(3); m++) {// each Grain
+//a,b,c,d
+    cout << " new " << endl;
+
+//REPAIR    for (auto gid : planecut_grains)         cout << gid << endl;
+
+    return planecut_grains;
+} /// END of the std::vector<unsigned int> PCC_Plane_cut () function
+
+/// Overloaded function
 std::vector<unsigned int> PCC_Plane_cut (double a_coeff, double b_coeff, double c_coeff, double D_coeff) {
 /// The plane parameters: a_coeff*X + b_coeff*Y + c_coeff*Z = D
 

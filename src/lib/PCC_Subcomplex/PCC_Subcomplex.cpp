@@ -30,7 +30,7 @@ using namespace std; // standard namespace
 extern std::vector<unsigned int> CellNumbs; //number of cells in a PCC defined globally
 extern ofstream Out_logfile_stream;
 extern string source_path;
-extern std::vector<char*> PCCpaths; //PCCpaths to PCC files
+extern std::vector<std::string> PCCpaths; // PCCpaths to PCC files
 extern int dim; // PCC dimension: dim = 1 for graphs, dim = 2 for 2D plane polytopial complexes and dim = 3 for 3D bulk polyhedron complexes, as it is specified in the main.ini file.
 extern std::vector<std::tuple<double, double, double>> node_coordinates_vector, edge_coordinates_vector, face_coordinates_vector, grain_coordinates_vector; // coordinate vectors defined globally
 
@@ -52,6 +52,7 @@ std::vector<Subcomplex> new_cut; // function output
 // The source directory and simulation type from file config.txt
     std::string S_type; // 'P', 'H' or 'N' :: This char define the subsection type: 'P' for the whole Plane cut, 'H' for the half-plane cut like a crack, 'N' for a k-order neighbouring grain set
     double cut_length = 0;
+    std::vector<double> plane_orientation(4); // for 'P' and 'H' modes only
     unsigned int grain_neighbour_orders = 0;
 
 ///    std::vector<double> config_reader_main(char* config, string &Subcomplex_type, string &Processing_type, string &Kinetic_type, string &source_dir, string &output_dir); // Read and output the initial configuration from the config.txt file
@@ -60,28 +61,26 @@ std::vector<Subcomplex> new_cut; // function output
 // ini files reader - external (MIT license) library
 
     // Reading of the configuration from the 'config/subcomplex.ini' file
-    config_reader_subcomplex(source_path, S_type, cut_length, grain_neighbour_orders, Out_logfile_stream); // void function
-
-/**
+    config_reader_subcomplex(source_path, S_type, plane_orientation, cut_length, grain_neighbour_orders, Out_logfile_stream); // void function
 
     bool SubcomplexON(char* config, bool time_step_one); // Check the Subcomplex (Section) module status (On/Off) in the config.txt file
 
     std::vector <unsigned int>  sub_grains_sequence, common_faces_sequence, s_sub_faces_sequence, c_sub_faces_sequence;
 
-    Eigen::SparseMatrix<double> GFS = SMatrixReader(PCCpaths.at(6 + (dim - 3)), (CellNumbs.at(2)), (CellNumbs.at(3))); //all Faces-Grains
     Eigen::SparseMatrix<double> AGS = SMatrixReader(PCCpaths.at(3 + (dim - 3)), (CellNumbs.at(3)), (CellNumbs.at(3))); //all Volumes
-    ///  Full symmetric AGS matrix instead of triagonal
-    AGS = 0.5 * (AGS + Eigen::SparseMatrix<double>(AGS.transpose()));
+    AGS = 0.5 * (AGS + Eigen::SparseMatrix<double>(AGS.transpose()));  //  Full symmetric AGS matrix instead of triagonal
+    Eigen::SparseMatrix<double> GFS = SMatrixReader(PCCpaths.at(6 + (dim - 3)), (CellNumbs.at(2)), (CellNumbs.at(3))); //all Faces-Volumes
 
     /// Vertex coordinates reader into triplet double vector
 
     vector<tuple<double, double, double>> subcomplex_grain_coordinates, subcomplex_face_coordinates;
     vector<tuple<double, double, double>> common_faces_coordinates;
-
+/**
 /// All subcomplex grains (subcomplex_grain_sequence)
 /// Grains in a plane
-    sub_grains_sequence = PCC_Plane_cut(a_coeff, b_coeff, c_coeff, D_coeff);
-//REPAIR    for (auto u : sub_grains_sequence)  cout << "sub_grains_sequence_grains: " << u << endl; //    cout << "grain_coordinates_vector.size(): " << grain_coordinates_vector.size() << endl;
+    sub_grains_sequence = PCC_Plane_cut(plane_orientation);
+//REPAIR for (auto u : sub_grains_sequence) bcout << "sub_grains_sequence_grains: " << u << endl; //    cout << "grain_coordinates_vector.size(): " << grain_coordinates_vector.size() << endl;
+
 
 /// Common grain coordinates
 //--------------------------------------------
