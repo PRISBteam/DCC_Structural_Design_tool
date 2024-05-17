@@ -172,8 +172,8 @@ void config_reader_processing(std::string &source_path, std::vector<string> &seq
 
     if (processing_ini.has("polyhedrons")) {
         auto &collection = processing_ini["polyhedrons"];
-        if (collection.has("pp_index"))
-            pindex_vector.at(3) = stod(processing_ini.get("polyhedrons").get("pp_index"));
+        if (collection.has("p_multiplexity"))
+            pindex_vector.at(3) = stod(processing_ini.get("polyhedrons").get("p_multiplexity"));
         // R(0) - R, S(1) - Smax, S(0) - Smin, I(x.x) - index mode
     }
 
@@ -218,8 +218,8 @@ void config_reader_processing(std::string &source_path, std::vector<string> &seq
 
     if (processing_ini.has("faces")) {
         auto& collection = processing_ini["faces"];
-        if (collection.has("pf_index"))
-            pindex_vector.at(2) = stod(processing_ini.get("faces").get("pf_index"));
+        if (collection.has("f_multiplexity"))
+            pindex_vector.at(2) = stod(processing_ini.get("faces").get("f_multiplexity"));
         // R(0) - R, S(1) - Smax, S(0) - Smin, I(x.x) - index mode
     }
 
@@ -292,8 +292,8 @@ void config_reader_processing(std::string &source_path, std::vector<string> &seq
 
     if (processing_ini.has("edges")) {
         auto& collection = processing_ini["edges"];
-        if (collection.has("pe_index"))
-            pindex_vector.at(1) = stod(processing_ini.get("edges").get("pe_index"));
+        if (collection.has("e_multiplexity"))
+            pindex_vector.at(1) = stod(processing_ini.get("edges").get("e_multiplexity"));
         // R(0) - R, S(1) - Smax, S(0) - Smin, I(x.x) - index mode
     }
 
@@ -367,8 +367,8 @@ void config_reader_processing(std::string &source_path, std::vector<string> &seq
 
     if (processing_ini.has("nodes")) {
         auto& collection = processing_ini["nodes"];
-        if (collection.has("pn_index"))
-            pindex_vector.at(0) = stod(processing_ini.get("nodes").get("pn_index"));
+        if (collection.has("n_multiplexity"))
+            pindex_vector.at(0) = stod(processing_ini.get("nodes").get("n_multiplexity"));
         // R(0) - R, S(1) - Smax, S(0) - Smin, I(x.x) - index mode
     }
 

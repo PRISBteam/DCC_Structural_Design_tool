@@ -2,7 +2,7 @@
 #define PCC_PROCESSING_DESIGN_PROCESSING_ASSIGNED_LABELLING_H
 
 /*! ## 1 ##
- * @brief Basic Random generation machine for a new k-cell number and many other purposes: quasi-random choice of the element with # New2CellNumb from the list of numbers from 0 to OCellsNumb. OCellsNumb is the range of integer random numbers equal to the number of 'ordinary' k-cells.
+ * @brief Basic quasi-random generation function for a new k-cell number and many other purposes: quasi-random choice of an element from the list of numbers from 0 to OCellsNumb. OCellsNumb is the range of integer random numbers equal to the number of 'ordinary' k-cells.
  * @param OCellsNumb
  * @return random number
  */
@@ -11,7 +11,8 @@ unsigned int NewCellNumb_R(unsigned int OCellsNumb);
 /*! ## 2 ##
  * @brief Basic Random Walks generation machine (with possible 'leaps') for a new k-cell chains of labels.
  * Leap_distance = 1 // for the future possibility of leaps: probability (hence frequency) and distance ((?)fraction of the complex size in grains).
- * @param iniFaceNumber
+ * @param cell_type
+ * @param iniCellNumber
  * @param strip_length
  * @param Leap_frequency
  * @param Leap_distance
@@ -35,7 +36,8 @@ std::vector<double> Log_normal_distribution (double mu_f, double sigm_f, int bin
  * @param cell_type
  * @param Configuration_State
  * @param max_fractions_vectors
- * @return random state_vector of k-cells
+ * @param multiplexity
+ * @return random state_x_vector of k-cells
  */
 std::vector<std::vector<unsigned int>> Processing_Random(int cell_type, std::vector<std::vector<unsigned int>> &Configuration_State, std::vector<std::vector<double>> max_fractions_vectors, bool multiplexity);
 

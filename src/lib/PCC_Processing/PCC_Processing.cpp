@@ -82,26 +82,26 @@ CellDesign PCC_Processing(Config &configuration) {
 ///* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- *///
 /// Here '(dim - 3)' term is important for 1D and 2D cases (!) as in these cases there are no polyhedrons or even faces (2D) in the PCC                                      ///
     for (int cell_type = (3 + (dim - 3)); cell_type >= 0; --cell_type) { // Loop over all types of k-cells in the PCC
-    // clearence of vectors for each new cell type
-        special_x_sequence.clear(); special_x_series.clear();
+
+        special_x_sequence.clear(); special_x_series.clear(); // clearence of vectors for each new cell type
+        agglomeration_x_sequence.clear(); // clearence of agglomeration file
 
     /// I. Beginning of the processing of 'special' k-cells
     ///=======================================================
-        agglomeration_x_sequence.clear(); // clearence of agglomeration file
         if (stype_vector.at(cell_type) == "R" && max_sfractions_vectors.at(cell_type).size() > 0) { //  Random separate cells generation processing
             cout << "Random (R) mode processing in operation: cell_type : "s << cell_type << endl; Out_logfile_stream << "Random (R) mode processing in operation: cell_type : "s << cell_type << endl;
 
             multiplexity = (bool) pindex_vector.at(cell_type); // convert 'pindex' read from the 'config/processing.ini' file for the specific 'cell_type' to a bool variable 'multiplexity'.
-            special_x_series = Processing_Random(cell_type, Configuration_sState, max_sfractions_vectors, multiplexity); // defined in the assigned labelling library
+            special_x_series = Processing_Random(cell_type, Configuration_sState, max_sfractions_vectors, multiplexity); // defined in the assigned labelling library; "\functions" subfolder
 
         /// Writing 'special_x_sequence' - each k-cell number appeared only once in the sequence. Configuration_sState and State Vectors show possible 'agglomeration' - several similar label per k-cell
             special_x_sequence.clear();
             for (auto it = Configuration_sState[cell_type].begin(); it != Configuration_sState[cell_type].end(); ++it)
                 if(*it > 0) {
-                    special_x_sequence.push_back(distance(Configuration_sState[cell_type].begin(), it)); // add new element to the s_cells_sequence
+                    special_x_sequence.push_back(distance(Configuration_sState[cell_type].begin(), it)); // add new element to the special_x_cells_sequence
                 } // end if(it)
 
-            if(multiplexity != 0) {  /// Agglomeration counter
+            if(multiplexity != 0) {  /// Agglomerations counter
                 std::vector<unsigned int> probe_state_vector(CellNumbs.at(cell_type), 0); // probe vector of the total x_series size filled with 0s
                 std::fill(probe_state_vector.begin(), probe_state_vector.end(),0);
                 for (auto kcell_seq: special_x_series) {// each strip/chain in the series of strips
@@ -114,11 +114,11 @@ CellDesign PCC_Processing(Config &configuration) {
                     if (*it > 1) {
                         agglomeration_x_sequence.push_back( {(unsigned int) distance(probe_state_vector.begin(), it),*it} ); // Agglomeration(unsigned int AFace, unsigned int AglPower);
 //REPAIR     cout << " number2: " << agglomeration_x_sequence.back().Get_agglomeration_kcell_number()<< " power2: " << agglomeration_x_sequence.back().Get_agglomeration_power() << endl;
-                    }
-                }
-            }
+                    } // end if()
+                } // end for()
+            } // end of if(multiplexity != 0) - agglomerations counter
 
-        } // End of 'R' type simulations (if)
+        } // End of 'R' type simulations - // end  if (stype_vector.at(cell_type) == "R" && ..)
 
         else if (stype_vector.at(cell_type) == "L" && max_sfractions_vectors.at(cell_type).size() > 0) { //  Random lengthy strips (chains) of cells generation processing
             cout << "Random strips/chains (L) mode processing in operation: cell_type : "s << cell_type << endl << endl; Out_logfile_stream << "Random strips/chains (L) mode processing in operation: cell_type : "s << cell_type << endl << endl;
@@ -146,7 +146,7 @@ CellDesign PCC_Processing(Config &configuration) {
             for (auto it = Configuration_sState[cell_type].begin(); it != Configuration_sState[cell_type].end(); ++it)
                 if(*it > 0) {
                     special_x_sequence.push_back(distance(Configuration_sState[cell_type].begin(), it)); // add new element to the s_cells_sequence
-                } // end if(it)
+                } // end if()
 
             /// Agglomeration counter
             std::vector<unsigned int> probe_state_vector(CellNumbs.at(cell_type)); // probe vector of the total x_series size filled with 0s
@@ -162,11 +162,11 @@ CellDesign PCC_Processing(Config &configuration) {
                     if (*it > 1) {
                         agglomeration_x_sequence.push_back( {(unsigned int) distance(probe_state_vector.begin(),it), *it} ); // Agglomeration(unsigned int AFace, unsigned int AglPower);
 //REPAIR cout << " number2: " << agglomeration_x_sequence.back().Get_agglomeration_kcell_number()<< " power2: " << agglomeration_x_sequence.back().Get_agglomeration_power() << endl;
-                    }
-                }
-            }
+                    } // end if()
+                } // end for()
+            } // end for (unsigned int kcell : probe_state_vector)
 
-        } //End of 'L' type simulations (elseif)
+        } // End of 'L' type simulations - else if (stype_vector.at(cell_type) == "L" && .. )
 
         else if (stype_vector.at(cell_type) == "F" && max_sfractions_vectors[cell_type].size() > 0) { // Maximum <functional> production
             // processing index :: 0 - direct special faces assignment;  1 - crystallographic ; 2 - configurational TJs-based entropy (deviatoric); //        if (pindex_vector.at(cell_type) == 0) { //        } else if (pindex_vector.at(cell_type) == 1) {

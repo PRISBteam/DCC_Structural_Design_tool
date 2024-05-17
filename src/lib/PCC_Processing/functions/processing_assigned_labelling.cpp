@@ -6,11 +6,11 @@
 
 /// Standard C++ libraries (STL):
 #include <iostream>
+///#include <iomanip> // input and output formating
 #include <fstream>
 #include <string>
 #include <vector>
 #include <random> // Require C++ 11 and above
-#include <iomanip>
 // #include <execution> // Require C++ 17 and above
 
 // external libraries
@@ -30,30 +30,38 @@ extern ofstream Out_logfile_stream;
 extern std::vector<std::string> PCCpaths;
 
 #include "processing_assigned_labelling.h"
-///------------------------------------------------------------------
-/// Two basic function first :: choosing the particular cell(s) and randomly assign their type (labels)
-///------------------------------------------------------------------
+///--------------------------------------------------------------------------------------------------------------
+/// Two basic functions :: choosing the particular cell(s) and randomly assign their type (labels)
+///--------------------------------------------------------------------------------------------------------------
 
-/// (1.1) Quasi-random choice of the element with # New2CellNumb from the list of numbers from 0 to OCellsNumb.
+/*!
+ * @details Quasi-random choice of the new integer element from the list of numbers from 0 to OCellsNumb.The code employ the reliable, but computationally expensive advanced random engine based on the Mersenne Twister 19937 algorithm proposed in [M. Matsumoto and T. Nishimura, ACM Transactions on Modeling and Computer Simulation, Vol. 8, No. 1, January 1998, Pages 3–30, https://dl.acm.org/doi/pdf/10.1145/272991.272995]
+ * @param OCellsNumb
+ * @return a single random integer number
+ */
 unsigned int NewCellNumb_R(unsigned int OCellsNumb){ // Random generation machine for a new 2-Cell number
-    unsigned int New2CellNumb;
-    uniform_int_distribution<size_t> uni_rand (0, OCellsNumb - 1); // uniformly distributed from 0 to OCellsNumb-1 inclusive
-    std::random_device rd; // generates unsigned random integers
+    std::random_device rd; // seed for a device generating unsigned random integers
     std::mt19937 mt(rd()); // advanced random engine based on the Mersenne Twister 19937 algorithm proposed in [M. Matsumoto and T. Nishimura, ACM Transactions on Modeling and Computer Simulation, Vol. 8, No. 1, January 1998, Pages 3–30, https://dl.acm.org/doi/pdf/10.1145/272991.272995]
+    uniform_int_distribution<size_t> uni_rand (0, OCellsNumb - 1); // uniformly distributed from 0 to OCellsNumb-1 inclusive
 
-    New2CellNumb = uni_rand(mt); // random generation of the boundary number in the range from 0 to OrdinaryCellNumbs.size()-1
-    return New2CellNumb;
-// Fast standard generator instead::  return New2CellNumb = ::rand() % OCellsNumb;
-}
+    return uni_rand(mt); // random generation of the boundary number in the range from 0 to OrdinaryCellNumbs.size()-1
+// ATERNATIVE return ::rand() % OCellsNumb; // Fast standard generator instead of the mt19937 Mersenne Twister 19937 - about 100-1000 times faster quasi-random generation !
+} // END of NewCellNumb_R(unsigned int OCellsNumb)
 
-/// (1.2) Quasi-random choice of the element with # New2CellNumb from the list of numbers {0 to OCellsNumb}
-// This RW choose ANY faces, not necessary only ordinary ones (!)
-std::vector<unsigned int> NewCellsStrip_RW(int cell_type, unsigned int iniCellNumber, unsigned int strip_length, int Leap_friquency, double Leap_dist) { // Random generation machine for a strips of new 2-Cells
-    unsigned int New2CellNumb = iniCellNumber;
+/*!
+ * @details Random generation functions for a strips of k-cells. Use mt19937 Mersenne Twister 19937. This RW choose ANY faces, not necessary only ordinary ones (!)
+ * @param cell_type
+ * @param iniCellNumber
+ * @param strip_length
+ * @param Leap_friquency
+ * @param Leap_dist
+ * @return
+ */
+std::vector<unsigned int> NewCellsStrip_RW(int cell_type, unsigned int iniCellNumber, unsigned int strip_length, int Leap_friquency, double Leap_dist) {
     std::vector<unsigned int> NewStripVector_RW;
-    std::vector<double> neigh_Faces; // vector for all neighbours of each face
-    /// Sparse Face Adjacency matrix - reading from the file of the considered PCC
+    std::vector<double> neigh_Faces; // vector of doubles for all neighbours of each face
 
+    /// Sparse Face Adjacency matrix - reading from the file of the considered PCC
     SpMat AFS = SMatrixReader(PCCpaths.at(cell_type), CellNumbs.at(cell_type), CellNumbs.at(cell_type)); //all Faces
     AFS = 0.5 * (AFS + Eigen::SparseMatrix<double>(AFS.transpose())); //  Full symmetric AFS matrix instead of triagonal
     // Find ordinary-ONLY faces: Calculation OrdinaryCellNumbs vector based on a given S_Vector std::vector<unsigned int> OrdinaryCellNumbs(CellNumbs.at(2), 1); // Vector of the size equal to the total number of faces in PCC initialised with '1's for( unsigned int lit = 0; lit < OrdinaryCellNumbs.size(); lit++) OrdinaryCellNumbs[lit] = lit; // Then the vector with the sequence of integers 1,2,3,... #Faces // S_Vector with its non-zero elements set any pre-define structure of special element feeding to the function Processing_Random for( unsigned int itr : S_Vector) if(itr != 0) OrdinaryCellNumbs.erase(OrdinaryCellNumbs.begin() + itr); // !!! Delete its element from the vector decreasing its size BUT
@@ -63,19 +71,22 @@ std::vector<unsigned int> NewCellsStrip_RW(int cell_type, unsigned int iniCellNu
 
     /// (2) Loop over strip_length (in the current basket of the strip lengths distribution)
 //    #pragma omp parallel for // parallel execution by OpenMP
+    std::random_device rd; // seed for a device generating unsigned random integers
+    std::mt19937 mt(rd()); // advanced random engine based on the Mersenne Twister 19937 algorithm proposed in [M. Matsumoto and T. Nishimura, ACM Transactions on Modeling and Computer Simulation, Vol. 8, No. 1, January 1998, Pages 3–30, https://dl.acm.org/doi/pdf/10.1145/272991.272995]
+
     for (int strip_length_counter = 0; strip_length_counter < strip_length; strip_length_counter++) {
         // Looking for all the face neighbours
         //       #pragma omp parallel for // parallel execution by OpenMP
         for (int k = 0; k < CellNumbs.at(cell_type); ++k) // Loop over all the Faces in the PCC
-            if (AFS.coeff(New2CellNumb, k) == 1) neigh_Faces.push_back(k); // set of all the face neighbours
+            if (AFS.coeff(NewStripVector_RW.back(), k) == 1) neigh_Faces.push_back(k); // set of all the face neighbours
         // new random choice between all the face neighbours
-        New2CellNumb = (unsigned int) neigh_Faces.at(NewCellNumb_R(neigh_Faces.size()));
-        NewStripVector_RW.push_back(New2CellNumb); // add new element to the NewFacesStrip_RW face vector
+        uniform_int_distribution<size_t> uni_rand (0, neigh_Faces.size() - 1); // uniformly distributed from 0 to OCellsNumb-1 inclusive
+        NewStripVector_RW.push_back((unsigned int) neigh_Faces.at(uni_rand(mt))); // add new element to the NewFacesStrip_RW face vector
         neigh_Faces.clear(); // clear the vector for the next face neighbours
     } // end of  for (int strip_length_counter = 0; strip_length_counter < f_length; strip_length_counter++) {
 
     return NewStripVector_RW;
-}
+} // END of NewCellsStrip_RW(int cell_type, unsigned int iniCellNumber, unsigned int strip_length, int Leap_friquency, double Leap_dist)
 
 ///--------------------------------------------------------------------------------
 /// Several more complex generation function (generation of face sequences)
