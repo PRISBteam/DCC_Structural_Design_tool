@@ -1,0 +1,70 @@
+special_cells_fraction: 0.00125;  # of strips/chains: 1;  strip/chain size: 47
+special_cells_fraction: 0.0242;  # of strips/chains: 2;  strip/chain size: 602
+special_cells_fraction: 0.0619;  # of strips/chains: 3;  strip/chain size: 783
+special_cells_fraction: 0.101;  # of strips/chains: 4;  strip/chain size: 682
+special_cells_fraction: 0.134;  # of strips/chains: 5;  strip/chain size: 524
+special_cells_fraction: 0.161;  # of strips/chains: 6;  strip/chain size: 386
+special_cells_fraction: 0.183;  # of strips/chains: 7;  strip/chain size: 280
+special_cells_fraction: 0.199;  # of strips/chains: 8;  strip/chain size: 203
+special_cells_fraction: 0.213;  # of strips/chains: 9;  strip/chain size: 148
+special_cells_fraction: 0.224;  # of strips/chains: 10;  strip/chain size: 109
+special_cells_fraction: 0.232;  # of strips/chains: 11;  strip/chain size: 80
+special_cells_fraction: 0.239;  # of strips/chains: 12;  strip/chain size: 60
+special_cells_fraction: 0.244;  # of strips/chains: 13;  strip/chain size: 45
+special_cells_fraction: 0.248;  # of strips/chains: 14;  strip/chain size: 34
+special_cells_fraction: 0.252;  # of strips/chains: 15;  strip/chain size: 26
+special_cells_fraction: 0.254;  # of strips/chains: 16;  strip/chain size: 20
+special_cells_fraction: 0.257;  # of strips/chains: 17;  strip/chain size: 16
+special_cells_fraction: 0.259;  # of strips/chains: 18;  strip/chain size: 12
+special_cells_fraction: 0.261;  # of strips/chains: 19;  strip/chain size: 10
+special_cells_fraction: 0.262;  # of strips/chains: 20;  strip/chain size: 7
+special_cells_fraction: 0.263;  # of strips/chains: 21;  strip/chain size: 6
+special_cells_fraction: 0.264;  # of strips/chains: 22;  strip/chain size: 5
+special_cells_fraction: 0.264;  # of strips/chains: 23;  strip/chain size: 4
+special_cells_fraction: 0.265;  # of strips/chains: 24;  strip/chain size: 3
+special_cells_fraction: 0.265;  # of strips/chains: 25;  strip/chain size: 2
+special_cells_fraction: 0.266;  # of strips/chains: 26;  strip/chain size: 2
+special_cells_fraction: 0.266;  # of strips/chains: 27;  strip/chain size: 1
+special_cells_fraction: 0.266;  # of strips/chains: 28;  strip/chain size: 1
+special_cells_fraction: 0.266;  # of strips/chains: 29;  strip/chain size: 1
+special_cells_fraction: 0.267;  # of strips/chains: 30;  strip/chain size: 1
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.6
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 167 [MPa] 
+Von Mises stress is equal to 	 Sv: 500 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 5e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.01
+Series of crack sizes (number)  	6
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 120
+Poisson ratio  .................... 0.35
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 600
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+Material source: ../config/CPD_material_database/rGO.ini
+Material ID: rGO
+Material type: graphene
+Density [kg/m^3] .................... 2.27e+03
+Grain boundary energy density [J/m^2] .................... 0.4

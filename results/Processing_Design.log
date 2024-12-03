@@ -1,0 +1,806 @@
+
+The problem dimension that is the maximum value k_max of k-cells in the PCC:		|		dim = 3
+PCC standard ID:		pcc1s
+
+Simulation mode:		TASK
+Output directory:		../results/
+PCC source directory:		../PCC_sources/Voronoi_1k/
+
+ON    | PCC_Subcomplex
+OFF    | PCC_Processing
+OFF    | PCC_Characterisation
+ON    | PCC_Writer
+
+==========================================================================================================================================================================
+0-cells #	6234
+1-cells #	12464
+2-cells #	7231
+3-cells #	1000
+_____________________________________________________________________________________
+[0] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/A0.txt
+[1] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/A1.txt
+[2] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/A2.txt
+[3] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/A3.txt
+[4] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/B1.txt
+[5] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/B2.txt
+[6] PCCpaths:	../PCC_sources/Voronoi_1k/algebraic/B3.txt
+[7] PCCpaths:	../PCC_sources/Voronoi_1k/measures/face_areas.txt
+[8] PCCpaths:	../PCC_sources/Voronoi_1k/measures/polyhedron_volumes.txt
+[9] PCCpaths:	../PCC_sources/Voronoi_1k/coordinates/polyhedron_seeds.txt
+[10] PCCpaths:	../PCC_sources/Voronoi_1k/coordinates/vertex_seeds.txt
+[11] PCCpaths:	../PCC_sources/Voronoi_1k/other/face_normals.txt
+[12] PCCpaths:	PCC reading ERROR: there is no 'edge_seeds' file in the PCC directory
+[13] PCCpaths:	../PCC_sources/Voronoi_1k/coordinates/face_seeds.txt
+
+Size of Configuration_sState:	4
+Size of Configuration_cState:	4
+------------------------------------------------------------------------------------------------
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0;  # of strips/chains: 1;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 2;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 3;  strip/chain size: 0
+special_cells_fraction: 0.00138;  # of strips/chains: 4;  strip/chain size: 2
+special_cells_fraction: 0.0183;  # of strips/chains: 5;  strip/chain size: 22
+special_cells_fraction: 0.0498;  # of strips/chains: 6;  strip/chain size: 39
+special_cells_fraction: 0.0761;  # of strips/chains: 7;  strip/chain size: 29
+special_cells_fraction: 0.087;  # of strips/chains: 8;  strip/chain size: 12
+special_cells_fraction: 0.0916;  # of strips/chains: 9;  strip/chain size: 4
+special_cells_fraction: 0.0928;  # of strips/chains: 10;  strip/chain size: 1
+special_cells_fraction: 0.0928;  # of strips/chains: 11;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 12;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 13;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 14;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 15;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 16;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 17;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 18;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 19;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 20;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 21;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 22;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 23;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 24;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 25;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 26;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 27;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 28;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 29;  strip/chain size: 0
+special_cells_fraction: 0.0928;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0;  # of strips/chains: 1;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 2;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 3;  strip/chain size: 0
+special_cells_fraction: 0.00526;  # of strips/chains: 4;  strip/chain size: 8
+special_cells_fraction: 0.0552;  # of strips/chains: 5;  strip/chain size: 68
+special_cells_fraction: 0.146;  # of strips/chains: 6;  strip/chain size: 119
+special_cells_fraction: 0.215;  # of strips/chains: 7;  strip/chain size: 87
+special_cells_fraction: 0.244;  # of strips/chains: 8;  strip/chain size: 38
+special_cells_fraction: 0.255;  # of strips/chains: 9;  strip/chain size: 12
+special_cells_fraction: 0.258;  # of strips/chains: 10;  strip/chain size: 3
+special_cells_fraction: 0.258;  # of strips/chains: 11;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 12;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 13;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 14;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 15;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 16;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 17;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 18;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 19;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 20;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 21;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 22;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 23;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 24;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 25;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 26;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 27;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 28;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 29;  strip/chain size: 0
+special_cells_fraction: 0.258;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0;  # of strips/chains: 1;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 2;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 3;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 4;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 5;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 6;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 7;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 8;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 9;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 10;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 11;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 12;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 13;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 14;  strip/chain size: 0
+special_cells_fraction: 0.0018;  # of strips/chains: 15;  strip/chain size: 1
+special_cells_fraction: 0.00401;  # of strips/chains: 16;  strip/chain size: 1
+special_cells_fraction: 0.00622;  # of strips/chains: 17;  strip/chain size: 1
+special_cells_fraction: 0.00622;  # of strips/chains: 18;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 19;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 20;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 21;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 22;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 23;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 24;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 25;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 26;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 27;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 28;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 29;  strip/chain size: 0
+special_cells_fraction: 0.00622;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0;  # of strips/chains: 1;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 2;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 3;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 4;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 5;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 6;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 7;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 8;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 9;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 10;  strip/chain size: 0
+special_cells_fraction: 0.00152;  # of strips/chains: 11;  strip/chain size: 1
+special_cells_fraction: 0.00443;  # of strips/chains: 12;  strip/chain size: 2
+special_cells_fraction: 0.00927;  # of strips/chains: 13;  strip/chain size: 3
+special_cells_fraction: 0.0159;  # of strips/chains: 14;  strip/chain size: 4
+special_cells_fraction: 0.0245;  # of strips/chains: 15;  strip/chain size: 5
+special_cells_fraction: 0.0351;  # of strips/chains: 16;  strip/chain size: 5
+special_cells_fraction: 0.0444;  # of strips/chains: 17;  strip/chain size: 5
+special_cells_fraction: 0.0537;  # of strips/chains: 18;  strip/chain size: 4
+special_cells_fraction: 0.06;  # of strips/chains: 19;  strip/chain size: 3
+special_cells_fraction: 0.065;  # of strips/chains: 20;  strip/chain size: 2
+special_cells_fraction: 0.0678;  # of strips/chains: 21;  strip/chain size: 1
+special_cells_fraction: 0.0703;  # of strips/chains: 22;  strip/chain size: 1
+special_cells_fraction: 0.0703;  # of strips/chains: 23;  strip/chain size: 0
+special_cells_fraction: 0.0703;  # of strips/chains: 24;  strip/chain size: 0
+special_cells_fraction: 0.0703;  # of strips/chains: 25;  strip/chain size: 0
+special_cells_fraction: 0.0703;  # of strips/chains: 26;  strip/chain size: 0
+special_cells_fraction: 0.0703;  # of strips/chains: 27;  strip/chain size: 0
+special_cells_fraction: 0.0703;  # of strips/chains: 28;  strip/chain size: 0
+special_cells_fraction: 0.0703;  # of strips/chains: 29;  strip/chain size: 0
+special_cells_fraction: 0.0703;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0;  # of strips/chains: 1;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 2;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 3;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 4;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 5;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 6;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 7;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 8;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 9;  strip/chain size: 0
+special_cells_fraction: 0.00152;  # of strips/chains: 10;  strip/chain size: 1
+special_cells_fraction: 0.00539;  # of strips/chains: 11;  strip/chain size: 3
+special_cells_fraction: 0.0148;  # of strips/chains: 12;  strip/chain size: 6
+special_cells_fraction: 0.0288;  # of strips/chains: 13;  strip/chain size: 10
+special_cells_fraction: 0.0514;  # of strips/chains: 14;  strip/chain size: 14
+special_cells_fraction: 0.0787;  # of strips/chains: 15;  strip/chain size: 16
+special_cells_fraction: 0.108;  # of strips/chains: 16;  strip/chain size: 16
+special_cells_fraction: 0.135;  # of strips/chains: 17;  strip/chain size: 15
+special_cells_fraction: 0.161;  # of strips/chains: 18;  strip/chain size: 12
+special_cells_fraction: 0.179;  # of strips/chains: 19;  strip/chain size: 10
+special_cells_fraction: 0.193;  # of strips/chains: 20;  strip/chain size: 7
+special_cells_fraction: 0.202;  # of strips/chains: 21;  strip/chain size: 5
+special_cells_fraction: 0.21;  # of strips/chains: 22;  strip/chain size: 3
+special_cells_fraction: 0.215;  # of strips/chains: 23;  strip/chain size: 2
+special_cells_fraction: 0.218;  # of strips/chains: 24;  strip/chain size: 1
+special_cells_fraction: 0.218;  # of strips/chains: 25;  strip/chain size: 0
+special_cells_fraction: 0.218;  # of strips/chains: 26;  strip/chain size: 0
+special_cells_fraction: 0.218;  # of strips/chains: 27;  strip/chain size: 0
+special_cells_fraction: 0.218;  # of strips/chains: 28;  strip/chain size: 0
+special_cells_fraction: 0.218;  # of strips/chains: 29;  strip/chain size: 0
+special_cells_fraction: 0.218;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0;  # of strips/chains: 1;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 2;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 3;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 4;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 5;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 6;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 7;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 8;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 9;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 10;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 11;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 12;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 13;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 14;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 15;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 16;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 17;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 18;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 19;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 20;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 21;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 22;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 23;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 24;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 25;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 26;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 27;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 28;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 29;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0;  # of strips/chains: 1;  strip/chain size: 0
+special_cells_fraction: 0;  # of strips/chains: 2;  strip/chain size: 0
+special_cells_fraction: 0.000553;  # of strips/chains: 3;  strip/chain size: 1
+special_cells_fraction: 0.00166;  # of strips/chains: 4;  strip/chain size: 2
+special_cells_fraction: 0.00401;  # of strips/chains: 5;  strip/chain size: 3
+special_cells_fraction: 0.00678;  # of strips/chains: 6;  strip/chain size: 3
+special_cells_fraction: 0.00996;  # of strips/chains: 7;  strip/chain size: 3
+special_cells_fraction: 0.0134;  # of strips/chains: 8;  strip/chain size: 3
+special_cells_fraction: 0.0169;  # of strips/chains: 9;  strip/chain size: 3
+special_cells_fraction: 0.0207;  # of strips/chains: 10;  strip/chain size: 3
+special_cells_fraction: 0.0232;  # of strips/chains: 11;  strip/chain size: 2
+special_cells_fraction: 0.0264;  # of strips/chains: 12;  strip/chain size: 2
+special_cells_fraction: 0.0293;  # of strips/chains: 13;  strip/chain size: 2
+special_cells_fraction: 0.0324;  # of strips/chains: 14;  strip/chain size: 2
+special_cells_fraction: 0.0339;  # of strips/chains: 15;  strip/chain size: 1
+special_cells_fraction: 0.0358;  # of strips/chains: 16;  strip/chain size: 1
+special_cells_fraction: 0.0379;  # of strips/chains: 17;  strip/chain size: 1
+special_cells_fraction: 0.04;  # of strips/chains: 18;  strip/chain size: 1
+special_cells_fraction: 0.0423;  # of strips/chains: 19;  strip/chain size: 1
+special_cells_fraction: 0.0437;  # of strips/chains: 20;  strip/chain size: 1
+special_cells_fraction: 0.0437;  # of strips/chains: 21;  strip/chain size: 0
+special_cells_fraction: 0.0437;  # of strips/chains: 22;  strip/chain size: 0
+special_cells_fraction: 0.0437;  # of strips/chains: 23;  strip/chain size: 0
+special_cells_fraction: 0.0437;  # of strips/chains: 24;  strip/chain size: 0
+special_cells_fraction: 0.0437;  # of strips/chains: 25;  strip/chain size: 0
+special_cells_fraction: 0.0437;  # of strips/chains: 26;  strip/chain size: 0
+special_cells_fraction: 0.0437;  # of strips/chains: 27;  strip/chain size: 0
+special_cells_fraction: 0.0437;  # of strips/chains: 28;  strip/chain size: 0
+special_cells_fraction: 0.0437;  # of strips/chains: 29;  strip/chain size: 0
+special_cells_fraction: 0.0437;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0;  # of strips/chains: 1;  strip/chain size: 0
+special_cells_fraction: 0.000415;  # of strips/chains: 2;  strip/chain size: 1
+special_cells_fraction: 0.00263;  # of strips/chains: 3;  strip/chain size: 4
+special_cells_fraction: 0.00705;  # of strips/chains: 4;  strip/chain size: 7
+special_cells_fraction: 0.0147;  # of strips/chains: 5;  strip/chain size: 10
+special_cells_fraction: 0.0239;  # of strips/chains: 6;  strip/chain size: 11
+special_cells_fraction: 0.035;  # of strips/chains: 7;  strip/chain size: 11
+special_cells_fraction: 0.047;  # of strips/chains: 8;  strip/chain size: 11
+special_cells_fraction: 0.0593;  # of strips/chains: 9;  strip/chain size: 10
+special_cells_fraction: 0.0703;  # of strips/chains: 10;  strip/chain size: 9
+special_cells_fraction: 0.0819;  # of strips/chains: 11;  strip/chain size: 8
+special_cells_fraction: 0.0925;  # of strips/chains: 12;  strip/chain size: 7
+special_cells_fraction: 0.102;  # of strips/chains: 13;  strip/chain size: 7
+special_cells_fraction: 0.113;  # of strips/chains: 14;  strip/chain size: 6
+special_cells_fraction: 0.122;  # of strips/chains: 15;  strip/chain size: 5
+special_cells_fraction: 0.128;  # of strips/chains: 16;  strip/chain size: 4
+special_cells_fraction: 0.135;  # of strips/chains: 17;  strip/chain size: 4
+special_cells_fraction: 0.141;  # of strips/chains: 18;  strip/chain size: 3
+special_cells_fraction: 0.146;  # of strips/chains: 19;  strip/chain size: 3
+special_cells_fraction: 0.151;  # of strips/chains: 20;  strip/chain size: 3
+special_cells_fraction: 0.155;  # of strips/chains: 21;  strip/chain size: 2
+special_cells_fraction: 0.158;  # of strips/chains: 22;  strip/chain size: 2
+special_cells_fraction: 0.163;  # of strips/chains: 23;  strip/chain size: 2
+special_cells_fraction: 0.165;  # of strips/chains: 24;  strip/chain size: 1
+special_cells_fraction: 0.167;  # of strips/chains: 25;  strip/chain size: 1
+special_cells_fraction: 0.17;  # of strips/chains: 26;  strip/chain size: 1
+special_cells_fraction: 0.173;  # of strips/chains: 27;  strip/chain size: 1
+special_cells_fraction: 0.176;  # of strips/chains: 28;  strip/chain size: 1
+special_cells_fraction: 0.179;  # of strips/chains: 29;  strip/chain size: 1
+special_cells_fraction: 0.179;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0;  # of strips/chains: 1;  strip/chain size: 0
+special_cells_fraction: 0.00124;  # of strips/chains: 2;  strip/chain size: 3
+special_cells_fraction: 0.00401;  # of strips/chains: 3;  strip/chain size: 5
+special_cells_fraction: 0.00678;  # of strips/chains: 4;  strip/chain size: 4
+special_cells_fraction: 0.00913;  # of strips/chains: 5;  strip/chain size: 3
+special_cells_fraction: 0.0108;  # of strips/chains: 6;  strip/chain size: 2
+special_cells_fraction: 0.0116;  # of strips/chains: 7;  strip/chain size: 1
+special_cells_fraction: 0.0126;  # of strips/chains: 8;  strip/chain size: 1
+special_cells_fraction: 0.0126;  # of strips/chains: 9;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 10;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 11;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 12;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 13;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 14;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 15;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 16;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 17;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 18;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 19;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 20;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 21;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 22;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 23;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 24;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 25;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 26;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 27;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 28;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 29;  strip/chain size: 0
+special_cells_fraction: 0.0126;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0.000277;  # of strips/chains: 1;  strip/chain size: 1
+special_cells_fraction: 0.00816;  # of strips/chains: 2;  strip/chain size: 19
+special_cells_fraction: 0.0207;  # of strips/chains: 3;  strip/chain size: 25
+special_cells_fraction: 0.0336;  # of strips/chains: 4;  strip/chain size: 21
+special_cells_fraction: 0.0445;  # of strips/chains: 5;  strip/chain size: 16
+special_cells_fraction: 0.0538;  # of strips/chains: 6;  strip/chain size: 12
+special_cells_fraction: 0.061;  # of strips/chains: 7;  strip/chain size: 8
+special_cells_fraction: 0.0673;  # of strips/chains: 8;  strip/chain size: 6
+special_cells_fraction: 0.0718;  # of strips/chains: 9;  strip/chain size: 4
+special_cells_fraction: 0.0761;  # of strips/chains: 10;  strip/chain size: 3
+special_cells_fraction: 0.0784;  # of strips/chains: 11;  strip/chain size: 2
+special_cells_fraction: 0.0795;  # of strips/chains: 12;  strip/chain size: 1
+special_cells_fraction: 0.0809;  # of strips/chains: 13;  strip/chain size: 1
+special_cells_fraction: 0.0827;  # of strips/chains: 14;  strip/chain size: 1
+special_cells_fraction: 0.0827;  # of strips/chains: 15;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 16;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 17;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 18;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 19;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 20;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 21;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 22;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 23;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 24;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 25;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 26;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 27;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 28;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 29;  strip/chain size: 0
+special_cells_fraction: 0.0827;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+special_cells_fraction: 0.00111;  # of strips/chains: 1;  strip/chain size: 4
+special_cells_fraction: 0.0236;  # of strips/chains: 2;  strip/chain size: 57
+special_cells_fraction: 0.062;  # of strips/chains: 3;  strip/chain size: 75
+special_cells_fraction: 0.1;  # of strips/chains: 4;  strip/chain size: 65
+special_cells_fraction: 0.133;  # of strips/chains: 5;  strip/chain size: 50
+special_cells_fraction: 0.162;  # of strips/chains: 6;  strip/chain size: 37
+special_cells_fraction: 0.183;  # of strips/chains: 7;  strip/chain size: 26
+special_cells_fraction: 0.199;  # of strips/chains: 8;  strip/chain size: 19
+special_cells_fraction: 0.213;  # of strips/chains: 9;  strip/chain size: 14
+special_cells_fraction: 0.223;  # of strips/chains: 10;  strip/chain size: 10
+special_cells_fraction: 0.23;  # of strips/chains: 11;  strip/chain size: 7
+special_cells_fraction: 0.236;  # of strips/chains: 12;  strip/chain size: 5
+special_cells_fraction: 0.241;  # of strips/chains: 13;  strip/chain size: 4
+special_cells_fraction: 0.245;  # of strips/chains: 14;  strip/chain size: 3
+special_cells_fraction: 0.247;  # of strips/chains: 15;  strip/chain size: 2
+special_cells_fraction: 0.248;  # of strips/chains: 16;  strip/chain size: 1
+special_cells_fraction: 0.248;  # of strips/chains: 17;  strip/chain size: 1
+special_cells_fraction: 0.25;  # of strips/chains: 18;  strip/chain size: 1
+special_cells_fraction: 0.25;  # of strips/chains: 19;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 20;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 21;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 22;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 23;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 24;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 25;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 26;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 27;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 28;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 29;  strip/chain size: 0
+special_cells_fraction: 0.25;  # of strips/chains: 30;  strip/chain size: 0
+The Subcomplex module type and initial parameters:		
+
+Subcomplex type:	H
+Half-plane length:	0.4
+
+Plane orientation:	a_coeff*X + b_coeff*Y + c_coeff*Z = D
+Plane normal vector:	 a: 1 b: 0 c: 0		Plane position:	 D: 0.4
+______________________________________________________________________________________
+The Multiphysics module specifications:		
+Sample dimensions are 			 x: 1e-05 [m] , y: 1e-05 [m] , z: 1e-05 [m] 
+Characteristic time is 			 tau: 2 [microseconds] 
+Pressure is equal to 			 P: 66.7 [MPa] 
+Von Mises stress is equal to 	 Sv: 200 [MPa] 
+External Stress [MPa]: 
+    0     0     0
+    0 2e+08     0
+    0     0     0
+
+Number of macrocracks  				1
+Crack mode  						1
+MAX crack lenghts (fraction)  		0.4
+MIN crack lenghts (fraction)  		0.02
+Series of crack sizes (number)  	10
+
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+Material source: ../config/CPD_material_database/Zr_NC.ini
+Material ID: Zr_NC
+Material type: ceramic
+Density [kg/m^3] .................... 3.99e+03
+Melting point [K] .................... 3e+03
+GB width [nm] .................... 1
+Grain boundary energy density [J/m^2] .................... 2
+Young modulus [GPa] .................... 170
+Poisson ratio  .................... 0.28
+Yield strength [MPa]  .................... 200
+Strength [MPa] .................... 200
+Fracture toughness [MPa*sqrt(metre)] .................... 4.8
+
+.............................*  INCLUSION MATERIAL  *.................................. 
+Inclusion material source: ../config/CPD_material_database/rGO.ini
+Inclusion ID: rGO
+Inclusion type: inclusion
+Inclusion density [kg/m^3] .............. 2.27e+03
+Agglomeration cohesion energy density [J/m^2] .............. 0.4
